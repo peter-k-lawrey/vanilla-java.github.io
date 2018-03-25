@@ -1,4 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:34:54 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Light weight Microservices]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:35:51 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[MicroServices is about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_microservices_denial">Microservices Denial</h3>
+<div class="paragraph">
+<p>A number of times I have heard that they can&#8217;t image their organisation using Microservices.
+The reason I find this surprising is that I know those people are using the principles already.</p>
+</div>
+<div class="paragraph">
+<p>I can understand that they feel no need to join the hype around microservices, but the reality is, like it or not,
+you are most likely using some best practices Microservices advocates.</p>
+</div>
+<div class="paragraph">
+<p>Stages of denial</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It all seems like hype, we don&#8217;t go in for that.</p>
+</li>
+<li>
+<p>Perhaps not all hype, but does it really mean anything.</p>
+</li>
+<li>
+<p>It sounds pretty familiar.</p>
+</li>
+<li>
+<p>It sounds like what we are doing already.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Formally or informally, most likely you have been following some best practices already.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adopting_best_practices">Adopting Best Practices.</h3>
+<div class="paragraph">
+<p>Perhaps you don&#8217;t like the name Microservices, and perhaps not all the different things people
+associate with Microservices are right for your team, your projects.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/30/Micro-Services-is-about-applying-a-group-of-Best-Practices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/30/Micro-Services-is-about-applying-a-group-of-Best-Practices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Best Practice]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 30 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Light weight Microservices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_what_do_we_see_as_light_weight_microservices">What do we see as light weight Microservices?</h3>
 <div class="paragraph">
 <p>A key requirements for productivity is a short development lifecycle.
