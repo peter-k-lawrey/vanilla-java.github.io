@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Microservices in the Chronicle World - Part 5</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Microservices in the Chronicle World - Part 5">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Microservices in the Chronicle World - Part 5">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522006363443"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522006363443"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522006363443"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522006363443"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Microservices in the Chronicle World - Part 5" />
+    <meta property="og:description" content="In this part we look at putting a micro service together as a collection of services, and consider how we can evaluate the performance of these services.  We introduce JLBH (Java Latency Benchmark Harness) to test these services. Building a Service Wrapper. For more complex services, we use an EventLoop" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html" />
+    <meta property="article:published_time" content="2016-04-02T00:00:00.000Z" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content="latency profile" />
+    <meta property="article:tag" content="JLBH" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Microservices in the Chronicle World - Part 5" />
+    <meta name="twitter:description" content="In this part we look at putting a micro service together as a collection of services, and consider how we can evaluate the performance of these services.  We introduce JLBH (Java Latency Benchmark Harness) to test these services. Building a Service Wrapper. For more complex services, we use an EventLoop" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Microservices in the Chronicle World - Part 5",
+    "url": "https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html",
+    "datePublished": "2016-04-02T00:00:00.000Z",
+    "keywords": "Microservices, latency profile, JLBH",
+    "description": "In this part we look at putting a micro service together as a collection of services, and consider how we can evaluate the performance of these services.  We introduce JLBH (Java Latency Benchmark Harness) to test these services. Building a Service Wrapper. For more complex services, we use an EventLoop"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Microservices tag-latency-profile tag-JLBH">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Microservices tag-latency-profile tag-JLBH">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-04-02" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/latency-profile/">latency profile</a>, <a href="https://vanilla-java.github.io/tag/JLBH/">JLBH</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Microservices in the Chronicle World - Part 5">Microservices in the Chronicle World - Part 5</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this part we look at putting a micro service together as a collection of services, and consider how we can evaluate the performance of these services.  We introduce JLBH (Java Latency Benchmark Harness) to test these services.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_building_a_service_wrapper">Building a Service Wrapper.</h3>
+<div class="paragraph">
+<p>For more complex services, we use an EventLoop in Chronicle Threads to manage multiple concurrent tasks. In this example we have only one task, so it is simpler to have a custom class to support it.</p>
+</div>
+<div class="paragraph">
+<p>This class is available at <a href="https://github.com/Vanilla-Java/Microservices/blob/master/src/main/java/net/openhft/samples/microservices/ServiceWrapper.java">ServiceWrapper</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class ServiceWrapper&lt;I extends ServiceHandler&gt; implements Runnable, Closeable {
+    private final ChronicleQueue inputQueue, outputQueue;
+    private final MethodReader serviceIn;
+    private final Object serviceOut;
+    private final Thread thread;
+    private final Pauser pauser = new LongPauser(1, 100, 500, 10_000, TimeUnit.MICROSECONDS); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    private volatile boolean closed = false;
+
+    public ServiceWrapper(String inputPath, String outputPath, I serviceImpl) {
+        Class outClass = ObjectUtils.getTypeFor(serviceImpl.getClass(), ServiceHandler.class); <i class="conum" data-value="2"></i><b>(2)</b>
+
+        outputQueue = SingleChronicleQueueBuilder.binary(outputPath).build(); <i class="conum" data-value="3"></i><b>(3)</b>
+        serviceOut = outputQueue.createAppender().methodWriter(outClass);
+        serviceImpl.init(serviceOut); <i class="conum" data-value="4"></i><b>(4)</b>
+
+        inputQueue = SingleChronicleQueueBuilder.binary(inputPath).build();
+        serviceIn = inputQueue.createTailer().methodReader(serviceImpl); <i class="conum" data-value="5"></i><b>(5)</b>
+
+        thread = new Thread(this, new File(inputPath).getName() + " to " + new File(outputPath).getName());
+        thread.setDaemon(true);
+        thread.start(); <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+    @Override
+    public void run() {
+        AffinityLock lock = AffinityLock.acquireLock(); <i class="conum" data-value="7"></i><b>(7)</b>
+        try {
+            while (!closed) {
+                if (serviceIn.readOne()) { <i class="conum" data-value="8"></i><b>(8)</b>
+                    pauser.reset(); <i class="conum" data-value="9"></i><b>(9)</b>
+                } else {
+                    pauser.pause(); <i class="conum" data-value="9"></i><b>(9)</b>
+                }
+            }
+        } finally {
+            lock.release();
+        }
+    }
+
+    @Override
+    public void close() {
+        closed = true;
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This Pauser controls the back off strategy in which no events are coming through. It will retry once, yield 100 times, then start sleeping from half a millisecond to 10 milliseconds.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Obtain the type of the parameter for the <code>ServiceHandler</code> and in this case it is a <code>Service</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create an output queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>And pass it to the implementation so it can write to it&#8217;s output queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Create a reader for the input queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Start a thread which will read from the <code>serviceIn</code> reader.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Bind this thread to an isolated CPU where possible.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Read and process one message.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code>reset()</code> the pauser if a message came, otherwise call it for a possible pause.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_timing_our_service">Timing our service.</h3>
+<div class="paragraph">
+<p>A simple service can time itself. This could be implmented as a wrapper, however for a more complex service you can use the builing in history recording and only examine the result at the end.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">class ServiceImpl implements Service, ServiceHandler&lt;Service&gt; {
+    private final NanoSampler nanoSampler;
+    private final NanoSampler endToEnd;
+    private Service output;
+
+    public ServiceImpl(NanoSampler nanoSampler) {
+        this(nanoSampler, t -&gt; {
+        });
+    }
+
+    public ServiceImpl(NanoSampler nanoSampler, NanoSampler endToEnd) {
+        this.nanoSampler = nanoSampler;
+        this.endToEnd = endToEnd;
+    }
+
+    @Override
+    public void init(Service output) {
+        this.output = output;
+    }
+
+    @Override
+    public void simpleCall(SimpleData data) {
+        data.number *= 10; // do something.
+
+        long time = System.nanoTime();
+        nanoSampler.sampleNanos(time - data.ts); <i class="conum" data-value="1"></i><b>(1)</b>
+        data.ts = time; // the start time for the next stage.
+
+        output.simpleCall(data); // pass the data to the next stage.
+
+        endToEnd.sampleNanos(System.nanoTime() - data.ts0); <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Take the timing since the last stage</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Take the timing from the start</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_jlbh_java_latency_benchamrk_harness">Using JLBH Java Latency Benchamrk Harness</h3>
+<div class="paragraph">
+<p>This tool is based on JMH (Java Microbenchmark Harness) where the main difference is support for testing asynchronous processes where you want to examine the timings at different stages, possibly in different theads.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">JLBHOptions jlbhOptions = new JLBHOptions()
+        .warmUpIterations(50_000)
+        .iterations(MESSAGE_COUNT)
+        .throughput(THROUGHPUT) <i class="conum" data-value="1"></i><b>(1)</b>
+        .runs(6)
+        .recordOSJitter(true) <i class="conum" data-value="2"></i><b>(2)</b>
+        .pauseAfterWarmupMS(500)
+        .accountForCoordinatedOmmission(ACCOUNT_FOR_COORDINATED_OMMISSION) <i class="conum" data-value="3"></i><b>(3)</b>
+        .jlbhTask(new MultiThreadedMainTask());
+new JLBH(jlbhOptions).start();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Benchmark for a target throughput.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add a thread to record the OS jitter over the interval.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Turn on correction for coordinated ommission.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To set up the test, we create three services. This models a gateway which accepting data from external systems such as aweb service or FIX Engine.  This is picked up by one service, which passes a message to a second service and finally this is written to a gateway service which can pass the data to an external system.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">UUID uuid = UUID.randomUUID();
+String queueIn = OS.TMP + "/MultiThreadedMain/" + uuid + "/pathIn";
+String queue2 = OS.TMP + "/MultiThreadedMain/" + uuid + "/stage2";
+String queue3 = OS.TMP + "/MultiThreadedMain/" + uuid + "/stage3";
+String queueOut = OS.TMP + "/MultiThreadedMain/" + uuid + "/pathOut";
+
+@Override
+public void init(JLBH jlbh) {
+    serviceIn = SingleChronicleQueueBuilder.binary(queueIn).build().createAppender().methodWriter(Service.class); <i class="conum" data-value="1"></i><b>(1)</b>
+    service2 = new ServiceWrapper&lt;&gt;(queueIn, queue2, new ServiceImpl(jlbh.addProbe("Service 2"))); <i class="conum" data-value="2"></i><b>(2)</b>
+    service3 = new ServiceWrapper&lt;&gt;(queue2, queue3, new ServiceImpl(jlbh.addProbe("Service 3"))); <i class="conum" data-value="3"></i><b>(3)</b>
+    serviceOut = new ServiceWrapper&lt;&gt;(queue3, queueOut, new ServiceImpl(jlbh.addProbe("Service Out"), jlbh)); <i class="conum" data-value="4"></i><b>(4)</b> <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Just a writer</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Reads that message and writes to the third service</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Reads from the second service and writes to the outbound service.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The output gateway reads from the third service and writes its result to a log/queue.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The last service also sets the end to end timing.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Every message is being persisted at each stage and is available on restart. As there is one output message for every input pmessage you could restart by winding to the same index as the output. A more robust strategy would be to record te history in the output as covered in the previous post.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_running_the_tests">Running the tests</h3>
+<div class="paragraph">
+<p>There are two important considerations when running performance tests</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>what is the percentile that you care about?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Typical,</p>
+</li>
+<li>
+<p>99%tile (worst 1 in 100)</p>
+</li>
+<li>
+<p>99.9%tile (worst 1 in 1000)</p>
+</li>
+<li>
+<p>99.99%tile ( worst 1 in 10000)</p>
+</li>
+<li>
+<p>worst, ever</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>what is the throughput you are looking to test.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is important that you control the throughput for the test so you can see how your system behaves at different sustained throuhgputs.  You system will run as fast as possible for short periods, however buffers and caches quickly fill up and cannot support this rate without getting large delays.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_looking_at_the_typical_performance">Looking at the typical performance.</h3>
+<div class="paragraph">
+<p>In this test on a E5-2650 v2, the throughput it can achieve for this test is 600,000 messages/second.  However, it wouldn&#8217;t be practical to do this for any long period of time as the system quickly gets to the point where it is behind with increasing delay the long this goes on.  This is because there is no head room to deal with any jitter or delay in the system. Every delay accumulates as the system struggle to keeps up. So what is a more practical throughput for this mock system.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/mtm-typical-vs-rate.png" alt="mtm typical vs rate.png">
+</div>
+<div class="title">Figure 1. Worst Typical was the highest of 15, 2 minute runs.</div>
+</div>
+<div class="paragraph">
+<p>This looks fine, for all the throughputs up to 400,000 messages per second, the typical performance is consistent.  However, for a throughput of 450,000 messages per second, the service could get a delay which it would struggle to recover from and the typical latency would jump to 20 - 40 seconds.</p>
+</div>
+<div class="paragraph">
+<p>In short, by looking at the typical performance our estimate of throughput we might prefer has dropped from 600K/s to 400K/s</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_looking_at_the_nines">Looking at the nines.</h3>
+<div class="paragraph">
+<p>By looking at the higher percentiles (worst results) we can for a view as to what delays would be acceptable and how often.  Typically, I would consider a 99%tile which 4x the typical and a 99.9%tile which 10x the typical latency.  This is rule of thumb I use, however the results vary between systems.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/mtm-99-vs-rate.png" alt="mtm 99 vs rate.png">
+</div>
+<div class="title">Figure 2. The worst 1 in 100 gets higher as the throughput increases.</div>
+</div>
+<div class="paragraph">
+<p>You might take the view that the 99%tile should be under 10 micro-seconds, and conclude the system can handle 300K messages/second.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/mtm-999-vs-rate.png" alt="mtm 999 vs rate.png">
+</div>
+<div class="title">Figure 3. The worst 1 in 1000 gets higher as the throughput increases.</div>
+</div>
+<div class="paragraph">
+<p>Looking at the 99.9%tile you can see that above 200K msg/second our latencies shoot up.  Up to 200 K/s our system has very stable latencies.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_can_we_sustain_200_k_msg_second">Can we sustain 200 K msg/second?</h3>
+<div class="paragraph">
+<p>The problem arises that we will not want to sustain this rate for long.  Bursts are fine, but do this all day long and you generate a lot of data. If all the messages are recorded and they total say 1/2 KB for each inbound message, this will be producing 200 MB/s, and while an SSD can do this easily it will run out of space pretty fast. 200 MB/s is 9 TB per day. Nine TB of usable high performance SSD is still pretty pricy.</p>
+</div>
+<div class="paragraph">
+<p>Lets say we wanted to record less than 2 TB per day.  A few high capacity HDD could persist all your messages for a week. This is 23 MB/s sustained. At 512 bytes per message (total) you are looking at a more modest 50K message/second sustained, but with burst of up to 200K/s - 600K/s depending on your requirements.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_in_summary">In summary</h3>
+<div class="paragraph">
+<p>We have a test harness for multi-threaded asynchronous processes and it can help you explore how your service might behave under various throughput loads.  While your system might be able to support high throughputs for very short periods of time, how sustained throughput impacts the latency of your system.</p>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">April 02, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522006363443"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
