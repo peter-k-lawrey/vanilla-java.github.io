@@ -1,4 +1,357 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:41:43 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Goldilocks Microservices]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:42:18 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Batching and Low Latency]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is testing the next release of Chronicle Queue 4.5.0
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_batch_your_data">Why batch your data?</h3>
+<div class="paragraph">
+<p>Batching of multiple messages or updates into a single transaction is a common technique for improving performance, in particular it is useful for increasing throughput (messages per second) when the latency (time to process a single message) is high.  However when latencies are low, can batching still help?</p>
+</div>
+<div class="paragraph">
+<p>A couple of weeks ago, I was looking at testing and optimising our Chronicle Queue replication over TCP.  One of the first tests I did was to see how batching changed the performance and it made a dramatic difference, and I assumed this was a bug, batching shouldn&#8217;t help a well tuned low latency system.  Now I have had a chance to optimise replication, does batching make much difference?</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_do_batches_help_hinder">Why do batches help/hinder?</h3>
+<div class="paragraph">
+<p>When your system has an operation with a significant latency, you can utilise more of the available bandwidth by increasing the batch size.</p>
+</div>
+<div class="paragraph">
+<p>Imagine you have a questionaire with 10 questions you want to ask someone. You could send an email for each question and wait for the response to each question before asking the next one. Say it takes 1 minute to answer each question but 10 minutes to send an email, have the person notice it and for you to notice the response.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>sending one question at a time, means each question takes 10 + 1 minutes or 110 minutes in total.</p>
+</li>
+<li>
+<p>sending all 10 questions at once means that the whole questionaire takes 10 + 1 * 10 minutes, or 20 minutes in total.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It makes sense to ask all your questions at once and get the replies in one go.</p>
+</div>
+<div class="paragraph">
+<p>However, there is a problem, what if you</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>don&#8217;t know all the questions in advance because you are still thinking of them. You have to wait to think of the questions, and you might not know how long this will take.</p>
+</li>
+<li>
+<p>might need to ask each question in response to a previous answer.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The longer you wait to build a batch, the more you delay the processing of the messages you have.</p>
+</div>
+<div class="paragraph">
+<p>Batching works best when you know how many messages you are about to get or you know what delay would be acceptable and you can delay sending the messages or committing the transaction for that amount of time.</p>
+</div>
+<div class="paragraph">
+<p>What if you want to process each message as soon as possible?</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_being_tested">What is being tested?</h3>
+<div class="paragraph">
+<p>I am testing the latency under a fixed throughput for publishing a small 40 byte message including time to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>write the message to the persisted queue.</p>
+</li>
+<li>
+<p>read the message and write over TCP.</p>
+</li>
+<li>
+<p>read the TCP socket and write it to a copy of the queue</p>
+</li>
+<li>
+<p>read the message from the queue copy.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To correct for co-ordinated omission, the sending timestamp used is the time the message should have been sent, indead of the time it was actually sent. For the received time, I used <code>System.nanoTime()</code> to get high resolution timing. The replication is over loopback for a consistent nanoTime(). As I am interested in the outliers, I am assuming the overhead using a low latency 10 GigE network wouldn&#8217;t impact these results significantly.  The highest throughput test here would use less than 20% of a 10 GigE network connection as each message is small.</p>
+</div>
+<div class="paragraph">
+<p>The test spends 30 seconds warming up, and 120 seconds running.  The distribution of latencies for each message is summarised.</p>
+</div>
+<div class="paragraph">
+<p>As I have discussed in prevous posts, I am focusing on minimising the 99%ile latency (worst 1 in 100).  On the system, I am reporting no more than 100 million messages per second as this is close to the point there the 99% starts to increase dramatically. i.e. it is close the limit of what this system can process in soft real time.</p>
+</div>
+<div class="paragraph">
+<p>A Centos 7 machine with i7-4790 and 32 GB of memory was used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_end_to_end_latency_for_different_batch_sizes">End to End latency for different batch sizes</h3>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. 99%ile latency end to end</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch Size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 million events per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="red">176 &micro;s</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">29 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">38 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">27 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">72 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">26 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">27 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">125 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">34 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">31 &micro;s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+1 &micro;s is 0.001 ms or 1 millionth of a second.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>So you can see that batching helps for size of one to five 40 byte messages when the delay between messages is small. However when the delay between messages is relatively large, in this case, every 6 &micro;s, having to wait for enough messages to build a batch hurts the latency.</p>
+</div>
+<div class="paragraph">
+<p>The high latency for the single message at a time for 100 Mmsg/s may yet prove to be a performance bug which can be solved later, but for now, batching could help reduce the jitter, but you don&#8217;t want any more batching so you need to avoid any impact.  In this case, I would consider a batch of two, rather than a larger batch size.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_not_look_at_the_typical_or_average_latency">Why not look at the typical or average latency?</h3>
+<div class="paragraph">
+<p>The typical/average latencies are usually better which is why vendors like to report them.  However, they only tell you what the performance looks like momentarily when everything is going well.  By looking at the 99%ile or 99.9%ile you are looking at how something performs when things are not going well.</p>
+</div>
+<div class="paragraph">
+<p>By comparison, the typical latencies all look fine, and you would not know that batching might help at 100 messages per minute.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. 50%ile latency end to end</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch Size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 million events per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">36 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">68 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15 &micro;s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Having to wait for a whole batch adds latency and this can be far higher than the time you save. You want your batching to be no larger than necessary.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_is_batching_used_internally">How is batching used internally?</h3>
+<div class="paragraph">
+<p>While batching messages published made a little difference in the example above, we use batching internally because it can make a big difference when passing lots of small messages over TCP.</p>
+</div>
+<div class="paragraph">
+<p>As the overhead of passing data over TCP is relatively high, it makes sense to group available data up to some threshold such as 4 KB.  When reading the queue you can determine whether more data is pending as you read it.</p>
+</div>
+<div class="paragraph">
+<p>In particular, making a socket write can be 5 - 10 &micro;s. However we are writing a message around a micro-second or less, this would add an enormous amount to every message if they were sent individually.  By having a background thread batching up these messages we can reduce the latency impact of the socket write.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Batching can be helpful in reducing the impact of latency to improve throughput.  When you are reaching the limit of the throughput you can achieve, batching can improve the overhead and give you higher throughputs and lower latencies.</p>
+</div>
+<div class="paragraph">
+<p>However, batching is not always possible or appropriate and you want a solution which has low latencies even when you are not reaching the limits of your throughput.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_quick_look_at_the_99_9_ile">A quick look at the 99.9%ile.</h3>
+<div class="paragraph">
+<p>These worst 1 in 1000 has mixed result which needs further investigation.  I suspect, the OS might be a cause of this jitter. Note: we didn&#8217;t use thread pinning and that might have made a difference.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. 99.9%ile latency end to end</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch Size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 million events per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">901 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">705 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5,370 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,610 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,540 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,160 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3,080 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,470 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">336 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,210 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,670 &micro;s</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. 99.9%ile latency to publish without replication</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch Size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60 million events per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 million events per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.2 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.3 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.2 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.3 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.4 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.6 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9.5 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.7 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.8 &micro;s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12 &micro;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.1 &micro;s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>More investigation is required to draw any conclusions.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Batching]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 09 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Goldilocks Microservices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_how_to_structure_microservices">How to structure microservices?</h3>
 <div class="paragraph">
 <p>When structuring microservices we have to consider;</p>
