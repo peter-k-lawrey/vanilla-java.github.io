@@ -1,4 +1,50 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:43:15 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Latency for a set Throughput]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:43:49 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Contributing to Chronicle]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Looking to contribute to a high peformance Open Source library in Java. This may be a good place to start.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="http://chronicle.software/wp-content/uploads/2014/09/Chronicle.png" alt="Chronicle.png"></span></p>
+</div>
+<div class="paragraph">
+<p>There is a number of ways to contribute to OpenHFT/Chronicle Software.  You need to;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>fork one of the projects,</p>
+</li>
+<li>
+<p>try an improvement such as adding documentation, a unit test, or a fix.</p>
+</li>
+<li>
+<p>issue a Pull Request.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_i_am_not_familiar_with_these_projects">I am not familiar with these projects</h3>
+<div class="paragraph">
+<p>A good way to get a feel of these projects is to look at our projects web site</p>
+</div>
+<div class="paragraph">
+<p><a href="http://chronicle.software/hft-products/">Chronicle Products</a></p>
+</div>
+<div class="paragraph">
+<p>I also suggest you read this blog as it contains more detailed information about using our products in context. My presentation on <a href="http://www.slideshare.net/PeterLawrey/low-latency-microservices-in-java-qcon-new-york-2016">Low Latency Microservices</a> may also help.</p>
+</div>
+<div class="paragraph">
+<p>Once you have found a product you are interested in, you can read the README for those products</p>
+</div>
+<div class="paragraph">
+<p>For example if you click <a href="http://chronicle.software/products/chronicle-queue/">Chronicle Queue</a> you can see links on getting started and the documentation on the right.</p>
+</div>
+<div class="paragraph">
+<p>If you get stuck, you can ask questions on our <a href="https://groups.google.com/forum/#!forum/java-chronicle">Google Group</a> and if you find a issue, please let us know via the Issue tab on GitHub for each project.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</guid><category><![CDATA[Getting Involved]]></category><category><![CDATA[Microservices]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 21 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Latency for a set Throughput]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of what latencies you find acceptable, the throughput you can achieve for an acceptable latency might not be the maximum throughput you can stress test your system up to.</p>
