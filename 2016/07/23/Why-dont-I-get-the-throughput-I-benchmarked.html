@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Why don&#x27;t I get the throughput I benchmarked?</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Why don&#x27;t I get the throughput I benchmarked?">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Why don&#x27;t I get the throughput I benchmarked?">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522007128221"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522007128221"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522007128221"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522007128221"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Why don&#x27;t I get the throughput I benchmarked?" />
+    <meta property="og:description" content="In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html" />
+    <meta property="article:published_time" content="2016-07-23T00:00:00.000Z" />
+    <meta property="article:tag" content="Performance" />
+    <meta property="article:tag" content="Low Latency" />
+    <meta property="article:tag" content="Benchmarking" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Why don&#x27;t I get the throughput I benchmarked?" />
+    <meta name="twitter:description" content="In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Why don&#x27;t I get the throughput I benchmarked?",
+    "url": "https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html",
+    "datePublished": "2016-07-23T00:00:00.000Z",
+    "keywords": "Performance, Low Latency, Benchmarking",
+    "description": "In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Performance tag-Low-Latency tag-Benchmarking">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Performance tag-Low-Latency tag-Benchmarking">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-07-23" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Performance/">Performance</a>, <a href="https://vanilla-java.github.io/tag/Low-Latency/">Low Latency</a>, <a href="https://vanilla-java.github.io/tag/Benchmarking/">Benchmarking</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Why don&#x27;t I get the throughput I benchmarked?">Why don&#x27;t I get the throughput I benchmarked?</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations for this comes from <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little&#8217;s Law</a></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_little_s_law">What is Little&#8217;s Law?</h3>
+<div class="paragraph">
+<p>This law comes from queuing theory, an example being the number of  <a href="https://en.wikipedia.org/wiki/Little%27s_law#Customers_In_The_Store">customers in a store</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Little's Law tells us that the average number of customers in the store L, is the effective arrival rate λ, times the average time that a customer spends in the store W</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong class="big">L=&lambda; &times; W</strong></p>
+</div>
+<div class="paragraph">
+<p>For a given latency, the higher the throughput you need to achieve, the higher the number of independant tasks you need. Say you have a shop where checking out at an automatic till takes 10 minutes on average. To achieve, a given throughput, how many tills, and people wanting to check out do you need?</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">People trying to check out at once</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 every 10 minutes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 people and 10 tills</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 people and 100 tills</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>There might not be 10 or 100 people trying to check out at once, so even if you have the tills, there might not be enough people/users to utlise the tills you have.</p>
+</div>
+<div class="paragraph">
+<p>Say instead it only takes 1 minute to pass through a till, how many people do you need to be checking out at once to get the throughput you are looking for.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">People trying to check out at once</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 every 10 minutes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 people and 10 tills</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Reducing the latency by a factor of 10 means you need one tenth of the resources. More importantly, you only need one tenth of the people trying to check out/tasks to achieve the desired throughput.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Some problems have inherent limits to the number of independant tasks you have. Trading systems and business applications might only have an intrinsic concurrency of between 1 and 10, in which case, latency rather than throughput is your main constraint.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chronicle_queue_vs_apache_kafka">Chronicle Queue vs Apache Kafka</h3>
+<div class="paragraph">
+<p>On the surface, Chronicle Queue and Apache Kafka do many of the same things.  They are both high throughput, persisted queues.  What difference do Chronicle&#8217;s much lower latencies make?</p>
+</div>
+<div class="paragraph">
+<p>In this benchmark, <a href="https://engineering.linkedin.com/kafka/benchmarking-apache-kafka-2-million-writes-second-three-cheap-machines">Apache Kafka</a> achieved a throughput of around 400,000/s - 800,000/s on one machine, with linear scalability to three machines. This is a very good throughput.  However the latency measured 2 ms and the 99%ile was 3 ms.  This means any individual task which must wait for replication before proceeding must wait around 2 milli-seconds, or more conservatively 3 milli-seconds.</p>
+</div>
+<div class="paragraph">
+<p>If the latency is 3 milli-seconds, how many independant tasks do you need to have to reach a desired throughput?</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency.png" alt="Chronicle vs Kafka Concurrency.png"></span></p>
+</div>
+<div class="paragraph">
+<p>To achieve higher throughputs, you need more independant tasks. What if you only have 1 to 100 independant tasks?</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency-Scaled.png" alt="Chronicle vs Kafka Concurrency Scaled.png">
+</div>
+</div>
+<div class="paragraph">
+<p>With a small set of tasks, you are not going to achieve a high throughput with a latency of 3 ms.  By comparison if we look at the 99%ile latency of Chroncile Queue synchronous replication, which is between <a href="https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html">20 - 40 micro-seconds</a>, you can achieve high throughputs with relatively few independant tasks.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Independant Task(s)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chronicle Queue Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Kafka Throughput</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50,000 per second</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">340 per second</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">290,000 per second</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3,400 per second</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000,000 per second (2 servers)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">34,000 per second</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To achieve, the benchmark throughput with Kafka, you need a problem which has a very high number of independant tasks (many thousands), or you either need asynchronous replication.</p>
+</div>
+<div class="paragraph">
+<p>If asynchronous replication is acceptable, then Chronicle Queue has a much lower latency of 1.2 micro-seconds for the 99%ile.  This means it can support close to one million messages per second with a single thread and only one task at a time. Two threads are enough to get 80 million events per minute which is our benchmark throughput for the E5-2650 v2 server we tested.</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_do_i_add_monitoring_to_my_application">When do I add monitoring to my application?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka was designed for web application monitoring.  It is widely used for this purpose today. As such it does the job very well.</p>
+</div>
+<div class="paragraph">
+<p>However, Chronicle Queue is design to be fast enough to be part of the critical path, recording all the inputs and outputs of your services. Since you are already recording all the data needed to recreate the state of your component at any point, little additional monitoring is required. (System monitoring is still required)  It is not a case of; Now our application is in production, how do we monitor it? Or how do we replay message to recreate an issue?</p>
+</div>
+<div class="paragraph">
+<p>Chronicle Queue is integral to the working of the application so you know no information is missing or the application wouldn&#8217;t work.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you have a problem with many thousands of independant tasks, then high number of tasks "in flight", or customers in the store, is a relatively simple way to get the throughput you need and the impact of latency is low.  If you have a few tasks, or just one task you can perform at a given moment, latency rather than throughput is critical.</p>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">July 23, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522007128221"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>

@@ -1,4 +1,179 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:44:20 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Improving performance with simple compression]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:45:28 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Why don't I get the throughput I benchmarked?]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations for this comes from <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little&#8217;s Law</a></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_little_s_law">What is Little&#8217;s Law?</h3>
+<div class="paragraph">
+<p>This law comes from queuing theory, an example being the number of  <a href="https://en.wikipedia.org/wiki/Little%27s_law#Customers_In_The_Store">customers in a store</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Little's Law tells us that the average number of customers in the store L, is the effective arrival rate λ, times the average time that a customer spends in the store W</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong class="big">L=&lambda; &times; W</strong></p>
+</div>
+<div class="paragraph">
+<p>For a given latency, the higher the throughput you need to achieve, the higher the number of independant tasks you need. Say you have a shop where checking out at an automatic till takes 10 minutes on average. To achieve, a given throughput, how many tills, and people wanting to check out do you need?</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">People trying to check out at once</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 every 10 minutes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 people and 10 tills</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 people and 100 tills</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>There might not be 10 or 100 people trying to check out at once, so even if you have the tills, there might not be enough people/users to utlise the tills you have.</p>
+</div>
+<div class="paragraph">
+<p>Say instead it only takes 1 minute to pass through a till, how many people do you need to be checking out at once to get the throughput you are looking for.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">People trying to check out at once</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 every 10 minutes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 person and 1 till</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 per minute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 people and 10 tills</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Reducing the latency by a factor of 10 means you need one tenth of the resources. More importantly, you only need one tenth of the people trying to check out/tasks to achieve the desired throughput.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Some problems have inherent limits to the number of independant tasks you have. Trading systems and business applications might only have an intrinsic concurrency of between 1 and 10, in which case, latency rather than throughput is your main constraint.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chronicle_queue_vs_apache_kafka">Chronicle Queue vs Apache Kafka</h3>
+<div class="paragraph">
+<p>On the surface, Chronicle Queue and Apache Kafka do many of the same things.  They are both high throughput, persisted queues.  What difference do Chronicle&#8217;s much lower latencies make?</p>
+</div>
+<div class="paragraph">
+<p>In this benchmark, <a href="https://engineering.linkedin.com/kafka/benchmarking-apache-kafka-2-million-writes-second-three-cheap-machines">Apache Kafka</a> achieved a throughput of around 400,000/s - 800,000/s on one machine, with linear scalability to three machines. This is a very good throughput.  However the latency measured 2 ms and the 99%ile was 3 ms.  This means any individual task which must wait for replication before proceeding must wait around 2 milli-seconds, or more conservatively 3 milli-seconds.</p>
+</div>
+<div class="paragraph">
+<p>If the latency is 3 milli-seconds, how many independant tasks do you need to have to reach a desired throughput?</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency.png" alt="Chronicle vs Kafka Concurrency.png"></span></p>
+</div>
+<div class="paragraph">
+<p>To achieve higher throughputs, you need more independant tasks. What if you only have 1 to 100 independant tasks?</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency-Scaled.png" alt="Chronicle vs Kafka Concurrency Scaled.png">
+</div>
+</div>
+<div class="paragraph">
+<p>With a small set of tasks, you are not going to achieve a high throughput with a latency of 3 ms.  By comparison if we look at the 99%ile latency of Chroncile Queue synchronous replication, which is between <a href="https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html">20 - 40 micro-seconds</a>, you can achieve high throughputs with relatively few independant tasks.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Independant Task(s)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chronicle Queue Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Kafka Throughput</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50,000 per second</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">340 per second</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">290,000 per second</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3,400 per second</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000,000 per second (2 servers)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">34,000 per second</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To achieve, the benchmark throughput with Kafka, you need a problem which has a very high number of independant tasks (many thousands), or you either need asynchronous replication.</p>
+</div>
+<div class="paragraph">
+<p>If asynchronous replication is acceptable, then Chronicle Queue has a much lower latency of 1.2 micro-seconds for the 99%ile.  This means it can support close to one million messages per second with a single thread and only one task at a time. Two threads are enough to get 80 million events per minute which is our benchmark throughput for the E5-2650 v2 server we tested.</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_do_i_add_monitoring_to_my_application">When do I add monitoring to my application?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka was designed for web application monitoring.  It is widely used for this purpose today. As such it does the job very well.</p>
+</div>
+<div class="paragraph">
+<p>However, Chronicle Queue is design to be fast enough to be part of the critical path, recording all the inputs and outputs of your services. Since you are already recording all the data needed to recreate the state of your component at any point, little additional monitoring is required. (System monitoring is still required)  It is not a case of; Now our application is in production, how do we monitor it? Or how do we replay message to recreate an issue?</p>
+</div>
+<div class="paragraph">
+<p>Chronicle Queue is integral to the working of the application so you know no information is missing or the application wouldn&#8217;t work.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you have a problem with many thousands of independant tasks, then high number of tasks "in flight", or customers in the store, is a relatively simple way to get the throughput you need and the impact of latency is low.  If you have a few tasks, or just one task you can perform at a given moment, latency rather than throughput is critical.</p>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</guid><category><![CDATA[Performance]]></category><category><![CDATA[Low Latency]]></category><category><![CDATA[Benchmarking]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 23 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving performance with simple compression]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data.</p>
