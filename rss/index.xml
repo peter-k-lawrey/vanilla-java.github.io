@@ -1,4 +1,124 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:40:50 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Reviewing Exception Handling]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:41:43 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Goldilocks Microservices]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_how_to_structure_microservices">How to structure microservices?</h3>
+<div class="paragraph">
+<p>When structuring microservices we have to consider;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>how fine grain should our components be?</p>
+</li>
+<li>
+<p>how distributed should they be?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>I believe it&#8217;s important to treat these as separate concerns, even to the extent of ensuring your business logic components are not dependant on the choice of transport, or even whether you have a transport at all.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_we_right_size_microservices">How do we right size microservices?</h3>
+<div class="paragraph">
+<p>The business component in your system are;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the smallest deployable unit of code and data.</p>
+</li>
+<li>
+<p>functionality which could makes sense to a business user based on your requirements.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The right size for your components can depend on why you chose microservices.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>is it to scale the development effort, allowing each developer to work as independently as possible. (Developer efficiency)</p>
+</li>
+<li>
+<p>is it to scale the utilisation of the hardware, allowing each CPU or server to work as independently as possible. (Computer efficiency)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Often we want some of each where the number of components under development is likely to be a function of the number of developers and the number of deployed instances of those components is likely to be a function of the number of CPU or servers.</p>
+</div>
+<div class="paragraph">
+<p>Unless you know performance is a key concern, I would make sure that you prioritise developer efficiency. I would expect for most projects to have around one to three business components per developer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_do_we_deploy_our_components">How do we deploy our components?</h3>
+<div class="paragraph">
+<p>A microservice is a business component with the option of a transport.  I believe having an optional transport is an important consideration because the business component shouldn&#8217;t be influenced too heavily by the choice of transport and not having a transport can be helpful at different stages of the project.</p>
+</div>
+<div class="paragraph">
+<p>When you are writing unit tests and debugging your business component, you shouldn&#8217;t need to have a transport involved.  If you want to see how two components interact you should be able to create a simple program which creates two or more compoenents, run from your IDE and see how they work together in the same thread.</p>
+</div>
+<div class="sect3">
+<h4 id="_levels_of_distribution">Levels of distribution</h4>
+<div class="paragraph">
+<p>There is different levels of distribution you want to consider.  Initially you might want no transport at all, provided you ensure these component can be distributed.  Later you need either fine grain or course grained distribution, but over time as the component matures you don&#8217;t need the overhead of managing lots of services and you want the ability to consolidate them.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Instances are in same logical task and are wired together with no layer between them.</p>
+</li>
+<li>
+<p>Instances are in separate logical tasks, but share the same thread pool <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup>.</p>
+</li>
+<li>
+<p>Instances are in separate thread pool, but in the same process.</p>
+</li>
+<li>
+<p>Instances are in separate OSes, but in the same physical machine.</p>
+</li>
+<li>
+<p>Instances are in the same data centre, but different machines.</p>
+</li>
+<li>
+<p>Instances are in different data centres.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For performance, I favour #1, #2 &amp; #3, for testing and development I favour #1 and #3 and for High Availability you need either #5 and #6.</p>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t need to distriibute instances across machines for HA, you want your instances to be no more seperate than needed.  The degree of separation desirable can change over time.  When a component is being added to production initially, it can be useful to be able to deploy, upgrade and restart that component without impacting the rest of the system.  However as the component stablises and is not changing so much you may want to reduce the overhead of managing this service and include it in a process which has multiple services.  You might find the service uses a trivial amount of CPU and you can combine it into the same thread pool as other services. If it turns out it&#8217;s interaction with another instance is highly coupled you might wire them together as a single component.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_migrating_to_microservices">Migrating to Microservices</h4>
+<div class="paragraph">
+<p>Say you have a monolith, how do you migrate to using microservices?  Do you have to re-engineer your entire solution? NO. Migrating is easier than it sounds as the main advantage for microservices is in the early stages of development when you are putting a service into production.  Anything which is running well in your monolith, leave it there.  Anything you need to add or make major changes to, move it into it&#8217;s own service while it&#8217;s under development and maturing.  You can imagine this as one monolith, planet sized microservice and a number of smaller satelite micro-services surrounding it.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_flexable_design">Flexable Design</h3>
+<div class="paragraph">
+<p>You want your developers to work efficiently and your system to make good utilisation of your servers.  You don&#8217;t want the choices you made at the start to bind you into a solution you will regret later.  If you use a flexable design, you can maximise productivity, and ensure you use microservices to the extend they are helping you, but without the disadvantages of over using this technique.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_further_reading">Further reading</h3>
+<div class="paragraph">
+<p>To read more see my other posts about <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a></p>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. a thread pool might have one thread
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Right Sizing]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 30 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Reviewing Exception Handling]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong.</p>
