@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Latency for a set Throughput</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Latency for a set Throughput">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Latency for a set Throughput">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522006995153"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522006995153"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522006995153"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522006995153"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Latency for a set Throughput" />
+    <meta property="og:description" content="Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html" />
+    <meta property="article:published_time" content="2016-07-20T00:00:00.000Z" />
+    <meta property="article:tag" content="Benchmarking" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Latency for a set Throughput" />
+    <meta name="twitter:description" content="Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Latency for a set Throughput",
+    "url": "https://vanilla-java.github.io/2016/07/20/Latency-for-a-set-Throughput.html",
+    "datePublished": "2016-07-20T00:00:00.000Z",
+    "keywords": "Benchmarking",
+    "description": "Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Benchmarking">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Benchmarking">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-07-20" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Benchmarking/">Benchmarking</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Latency for a set Throughput">Latency for a set Throughput</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of what latencies you find acceptable, the throughput you can achieve for an acceptable latency might not be the maximum throughput you can stress test your system up to.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_benchmarketing">Benchmarketing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you are reporting on the throughput, or latencies of your software, you want to put forward the best numbers you can.  However, you don&#8217;t want to fall into the trap of believing your own benchmarketing.  As a technologist, you want tools that will help you find problems you need to solve.</p>
+</div>
+<div class="paragraph">
+<p>A common question I get is; how do I convince my manager to allow me to spend more time optimising the application.  The simple solution is to avoid benchmarketing and use tools which help you find problems.</p>
+</div>
+<div class="paragraph">
+<p>To start with, look at the latencies of your system at given throughputs.  Look not at the average latency or typical latency, but rather start with the 99%ile (worst 1 in 100 latency). After you have worked on the 99%ile, you can try improving the 99.9%ile.  The 99%ile is often 4x higher than the typical latencies, even in well tuned systems, and can be many orders of magnitude higher if not tuned.</p>
+</div>
+<div class="sect2">
+<h3 id="_co_ordinated_ommission">Co-ordinated ommission</h3>
+<div class="paragraph">
+<p>One of the ways in which your testing tools can lie to you is to back off whenever your tested system isn&#8217;t performing well.  Often this is a consequence of flow control.</p>
+</div>
+<div class="paragraph">
+<p>Flow control is a very useful technique for avoiding overloading your system and improves performance.  Flow control does a good job of smoothing out any bad latencies.  However, if your purpose is to look for problems, it is not what you want.  You don&#8217;t want a system to be able to tell a load generator: 'can you hold off for a while, I am having trouble keeping up'.</p>
+</div>
+<div class="paragraph">
+<p>Gil Tene coined this benchmarking blind spotting of your load testing tool <a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU">Co-ordinate Ommission</a>, as your testing tool is effectively conspiring with the tested system to hide or dramatatically down play the importance of poor latencies.</p>
+</div>
+<div class="paragraph">
+<p>A simple way to correct for this is to measure the end-to-end latency from the time a test should have started, not when it actually started.  By doing this you bias the result to include any failure of the testing tool to start the test on time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_setting_the_throughput">Setting the Throughput</h3>
+<div class="paragraph">
+<p>How can we calculate the time a test should have started? We need to test for a given throughput.  The simplest approach is to have a spacing between tasks and wait for that time to be reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">long ratePerSecond = 1_000_000;
+long intervalBetweenTasks = 1_000_000_000 / ratePerSecond;
+
+long next = System.nanoTime() + intervalBetweenTasks;
+
+for (int i = 0; i &lt; tests; i++) {
+    while (System.nanoTime() &lt; next) {
+        // busy wait
+    }
+
+    long start = next; <i class="conum" data-value="1"></i><b>(1)</b>
+    performTask();
+    long time = System.nanoTime() - start;
+
+    next += intervalBetweenTasks;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The important step is to not use the time it actually started, rather, the time it should have started.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_can_we_measure_latency_without_a_set_throughput">How can we measure latency without a set throughput?</h3>
+<div class="paragraph">
+<p>The simple answer is; you can&#8217;t. A latency by itself only tells you what can be achived for some throughput, and you might assume this is the latency for low throughputs, but it might not be.</p>
+</div>
+<div class="paragraph">
+<p>Some systems perform worse with lower throughputs. For our software, we tend to see a small worsening of the performance below 50K events/second.  This is due to the CPU not running as hot and the underlying interruptions of the system becoming more prominent. e.g. Your OS has a timer interrupt, typically 100 times a second, which you cannot turn off.  At 100K events per second, this will impact your 99.9%ile, at 10K events per second this will impact your 99%ile, and below 100 events second it will impact every event.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_latency_test_for_chronicle_queue_replication">Latency Test for Chronicle Queue replication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following charts time how long it takes to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Write a 40 byte message to a Chronicle Queue.</p>
+</li>
+<li>
+<p>Have the write replicated over TCP.</p>
+</li>
+<li>
+<p>Have the second copy acknowledge receipt of the message.</p>
+</li>
+<li>
+<p>Have a thread read the acknowledged message.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The test is run for ten minutes and the distribution of latenices plotted.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-to-993.png" alt="Latency to 993.png"></span></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+There is a step in latency at around 10 million message per second jumps as the messages start to batch. At rates below this, each message can be sent individually.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The 99.99%ile and above are believed to be delays in passing the message over TCP. Further reserach is needed to prove this. In any case, these delays are much the same regardless of the throughput.</p>
+</div>
+<div class="paragraph">
+<p>The 99.9%ile and 99.93%ile are a function of how quickly the system can recover after a delay.  The higher the throughput, the less head room the system has to recover form a delay.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-from-993.png" alt="Latency from 993.png"></span></p>
+</div>
+<div class="sect2">
+<h3 id="_summary">Summary</h3>
+<div class="paragraph">
+<p>In the test above, the typical latency varied between 14 and 40 micro-seconds, the 99%ile varied between 17 and 56 micro-seconds depending on the throughput being tested. Notably, the 99.93% latency varied between 21 micro-seconds and 41 milli-seconds, a factor of 2000.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Possible Throughput results depending on acceptable latencies</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acceptable Latency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 30 micro-seconds 99.3% of the time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7 million message per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 20 micro-seconds 99.9% of the time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20 million messages per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 1 milli-seconds 99.9% of the time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50 million messages per minute</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 60 micro-seconds 99.3% of the time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80 million message per minute</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your choice of what is an acceptable latency can determine the throughput a suspect can support and meet your Service Level Agreement. Conversely, your choice of throughput can change the latency distribution you get.</p>
+</div>
+<div class="paragraph">
+<p>When measuring performance you have to consider both latency distribution and throughput.</p>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">July 20, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522006995153"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
