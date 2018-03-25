@@ -267,7 +267,7 @@ https://github.com/Vanilla-Java/Microservices/tree/master/src/main/java/net/open
 
 We have shown how easy it is to test and debug our components. https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html[How do we turn these into services in Part 2].
 
-== Glossery
+== Glossary
 
 *Microservices*- Independantly deployable programmes that act as components in a larger network.
 
