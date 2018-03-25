@@ -1,4 +1,124 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:50:09 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Object Pools revisited]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:50:43 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[StringBuffer, and how hard it is to get rid of legacy code]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In 2006, Java 5.0 was released with StringBuilder, a more light weight and sane version of StringBuffer. The <a href="https://docs.oracle.com/javase/1.5.0/docs/api/java/lang/StringBuffer.html">Javadoc for Java 5.0 for StringBuffer</a> notes</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>As of release JDK 5, this class has been supplemented with an equivalent class designed for use by a single thread, StringBuilder. The StringBuilder class should generally be used in preference to this one, as it supports all of the same operations but it is faster, as it performs no synchronization.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Having <code>synchronized</code> on <code>StringBuffer</code> was never a good idea. The basic problem is that one operation is never enough. A single <code>.append(x)</code> is not useful without another <code>.append(y)</code> and a <code>.toString()</code>. While individual methods were thread safe, you couldn&#8217;t make multiple calls to StringBuffer without race conditions.  Your only option is external synchronized or using <code>ThreadLocal</code> StringBuilders (or more obviously create them on demand)</p>
+</div>
+<div class="paragraph">
+<p>So more than ten years later, no one uses StringBuffer!? Certainly not for new functionality!?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_many_objects_does_this_create">How many objects does this create?</h3>
+<div class="paragraph">
+<p>As I have noted before, the JVM creates many objects on start up or starting core libraries.  Much more than you might expect making question like the following are a bit meaningless;</p>
+</div>
+<div class="listingblock">
+<div class="title">How many objects does this create?</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Main {
+    public static void main(String... args) {
+        System.out.println("Hello " + "world");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Oracle JVM version 8 creates about 10,000 objects running this program.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_many_stringbuffers_does_this_create">How many StringBuffers does this create?</h3>
+<div class="paragraph">
+<p>Ok, so it has to create lots of objects to start the JVM, but legacy classes with a drop in replacement which have been around for 10+ years wouldn&#8217;t be used right?</p>
+</div>
+<div class="listingblock">
+<div class="title">How many StringBuffers does this create?</div>
+<div class="content">
+<pre>public class Main {
+    public static void main(String[] args) throws IOException {
+        System.out.println("Waiting");
+        System.in.read();
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>While the process is running we can run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">jmap -histo {pid} | grep StringBuffer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and this prints</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">  18:           129           3096  java.lang.StringBuffer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>129</code> is for the number of instances produced on Java 8 update 121.  This is lower than the last time I checked about a year ago, but still a little surprising.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_so_there_is_still_some_legacy_code">So there is still some legacy code</h3>
+<div class="paragraph">
+<p>What about a new feature like lambdas and Streams.  They were written entirely in the last ten years and they use some external libraries such as Objectwebs ASM, but these developers really know the internals of the JVM and is designed to be as light weight as possible.</p>
+</div>
+<div class="listingblock">
+<div class="title">How many StringBuffers does this create?</div>
+<div class="content">
+<pre>public class Main {
+    public static void main(String[] args) throws IOException {
+        IntStream.range(0, 4).forEach(System.out::println);
+        System.out.println("Waiting");
+        System.in.read();
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So running <code>jmap</code> again, what do we see?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">  17:           545          13080  java.lang.StringBuffer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So an additional 416 objects using a simple Stream and a lambda!</p>
+</div>
+<div class="paragraph">
+<p>BTW The above program creates</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">Total         35486        4027224</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or 35,486 objects!</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Using <code>StringBuffer</code> on startup doesn&#8217;t make much difference, but given it has a well known, drop in replacement, and it is still used, even in new functionality more than ten years later shows how hard it can be to clean up legacy code or to change thinking to get people to use best practice libraries.</p>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</guid><category><![CDATA[Pet Hates]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 13 Apr 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Object Pools revisited]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Object pools were popular before Java 5.0 however more efficient allocation made most of these pools a needless complication. Can a Object Pool still make sense and how fast do they need to be?</p>
