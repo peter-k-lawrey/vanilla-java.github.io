@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:48:27 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Can you have encryption and low latency in Java]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:48:54 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Can you have encryption and low latency in Java]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>While using encryption is slower than writing raw messages, how much slower is it and does it have to be a performance problem?</p>
@@ -42,7 +42,48 @@ The timestamp used is the time the message should have been written rather than 
 For the purposes of this test we are looking at what throughput do we get low latency as well .</p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</guid><category><![CDATA[Encryption]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving percentile latencies in Chronicle Queue]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</guid><category><![CDATA[Encryption]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Low latency encrypted messages with Chronicle Queue Enterprise]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Chronicle Queue Enterprise supports replication in a cluser and system monitoring. We recently added encrypted messages and the inital results are encouraging.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_did_we_test">What did we test?</h3>
+<div class="paragraph">
+<p>This test s similar to our previous non-encrypted version: <a href="https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html">Latency tests with Chronicle Queue</a>, except we added Salted AES 128 encryption.  We chose AES as a fast encryption, and we added salting to make it harder to obtain the key</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_use_salting">Why use Salting?</h3>
+<div class="paragraph">
+<p>Most messages start with the same bytes. Whether the message is XML, JSON, FIX, Java Serialization, the first few bytes are predictable.  The start of every encrypted message can end up the same. This makes brute force cracking of the key easier because you know what you are looking for.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this we add a 64 bit random number to the start of every message using SecureRandom, which makes brute force attack harder.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_results">The results.</h3>
+<div class="paragraph">
+<p>In short the 99%ile latencies were great, the 99.9%ile latencies were also good if you ignore co-ordinated omission as a problem. Unfortunately, with co-ordinated omission correction, the 99.9%ile numbers need to be improved.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/AES128-latency.png" alt="AES128 latency.png">
+</div>
+</div>
+<div class="paragraph">
+<p>Nevertheless, the early results look good.  We can achieve throughputs of 400K/s and still get latencies around 2 micro-seconds 99% of the time. In addition, at 1.1 million messages per second we can get around 10 microseconds, 99% of the time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Using encryption is slower, however it might still be fast enough for your needs.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2017/02/07/Low-latency-encrypted-messages-with-Chronicle-Queue-Enterprise.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/02/07/Low-latency-encrypted-messages-with-Chronicle-Queue-Enterprise.html</guid><category><![CDATA[Chronicle Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 07 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving percentile latencies in Chronicle Queue]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100).
