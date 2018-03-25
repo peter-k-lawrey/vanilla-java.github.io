@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:54:38 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Blockchain basics]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 20:02:04 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Blockchain basics]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>The key difference between blockchain and traditional databases is the level of trust needed in those running the service.  With blockchain you trust the protocol, not those running it.</p>
@@ -104,7 +104,40 @@
 <div class="paragraph">
 <p>In the future, like databases, we will see a variety of solutions to suit different use cases, and many more solution built on top of them to provide services and fill customer needs.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2018/03/21/Blockchain-basics.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/03/21/Blockchain-basics.html</guid><category><![CDATA[Blockchain]]></category><category><![CDATA[Guide]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 21 Mar 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Object Pools revisited]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2018/03/21/Blockchain-basics.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/03/21/Blockchain-basics.html</guid><category><![CDATA[Blockchain]]></category><category><![CDATA[Guide]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 21 Mar 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[StringBuffer and how hard it is to get rid of legacy code]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In 2006, Java 5.0 was released with StringBuilder, a more light weight and sane version of StringBuffer. The <a href="https://docs.oracle.com/javase/1.5.0/docs/api/java/lang/StringBuffer.html">Javadoc for Java 5.0 for StringBuffer</a> notes</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>As of release JDK 5, this class has been supplemented with an equivalent class designed for use by a single thread, StringBuilder. The StringBuilder class should generally be used in preference to this one, as it supports all of the same operations but it is faster, as it performs no synchronization.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Having <code>synchronized</code> on <code>StringBuffer</code> was never a good idea. The basic problem is that one operation is never enough. A single <code>.append(x)</code> is not useful without another <code>.append(y)</code> and a <code>.toString()</code>. While individual methods were thread safe, you couldn&#8217;t make multiple calls to StringBuffer without race conditions.  Your only option is external synchronized or using <code>ThreadLocal</code> StringBuilders (or more obviously create them on demand)</p>
+</div>
+<div class="paragraph">
+<p>So more than ten years later, no one uses StringBuffer!? Certainly not for new functionality!?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_many_objects_does_this_create">How many objects does this create?</h3>
+<div class="paragraph">
+<p>As I have noted before, the JVM creates many objects on start up or starting core libraries.  Much more than you might expect making question like the following are a bit meaningless;</p>
+</div>
+<div class="listingblock">
+<div class="title">How many objects does this create?</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Main {
+    public static void main(String... args) {
+        System.out.println("Hello " + "world");
+    }
+}</code></pre>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</guid><category><![CDATA[Pet Hates]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 13 Apr 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Object Pools revisited]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Object pools were popular before Java 5.0 however more efficient allocation made most of these pools a needless complication. Can a Object Pool still make sense and how fast do they need to be?</p>
