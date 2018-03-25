@@ -1,4 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:33:45 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Bad String]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:34:20 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservice with a Websocket transport]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this post, we will look at a simple component to publish market data and accept orders.  How can this be accessed using websockets as a transport?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_our_service">Our service</h3>
+<div class="listingblock">
+<div class="title">Interface for messages from the client to the server</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface GUIGateway {
+    void enableMarketData(boolean enabled);
+    void newOrder(Order order);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Interface for messages from the server to the client</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface GUIGatewayListener {
+    void market(MarketData marketData);
+    void order(OrderStatus orderStatus);
+}</code></pre>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/25/Microservice-with-a-Websocket-transport.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/25/Microservice-with-a-Websocket-transport.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Websockets]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 25 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Bad String]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>This program has two threads printing messages alternatively.  However if you change a <code>String</code> from <code>"cC"</code> to <code>"cc"</code> it doesn&#8217;t print anything, WHY?</p>
