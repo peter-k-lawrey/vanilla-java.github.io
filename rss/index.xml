@@ -1,4 +1,84 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:37:13 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices are about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:38:14 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Simple Asynchronous Microservices using Lambda Architecture.]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_lambda_architecture">Lambda Architecture</h3>
+<div class="paragraph">
+<p>Lambda Architecture is a simple, powerful, though limited example of a Microservice. As it is so simple, you want to use it as much as possible, to expose the more complex services/component in your system which cannot support this interaction model.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Lambda_architecture">Lambda Architecture</a> depends on a data model with an append-only, immutable data source that serves as a system of record. It is intended for ingesting and processing timestamped events that are appended to existing events rather than overwriting them. State is determined from the natural time-based ordering of the data.</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_translation_function">A translation function</h3>
+<div class="paragraph">
+<p>The microservice takes messages in and produces messages out. It&#8217;s input is an append only data structure, and the function has no state of it&#8217;s own which is not derived from it&#8217;s inputs.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture.jpg" alt="Lambda Architecture.jpg">
+</div>
+</div>
+<div class="paragraph">
+<p>This simple translator is useful for taking messages from external systems and normalising those messages into an internal format.  Conversely, you can convert messages from an internal message format to an external format.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_history">Working with history</h3>
+<div class="paragraph">
+<p>Notionally, all the messages to date form an input of the function.  Replaying every message on every new message is too expensive.  You can instead cache key information derived from those messages to provide a real time solution.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-With-State.jpg" alt="Lambda Architecture With State.jpg">
+</div>
+</div>
+<div class="paragraph">
+<p>This is a variation on the standard function where state is retained based on it&#8217;s inputs.  Provided this is only an optimisation, rather than a change in behaviour, this is still a function. i.e. a function of all the messages, rather than just one message.</p>
+</div>
+<div class="paragraph">
+<p>Having a function with private state gives it memory and makes it practical for more complex operations such as control (permissioning, turning functionality on and off), matching of messages over time (e.g. order matching)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_putting_these_together">Putting these together</h3>
+<div class="paragraph">
+<p>By having translators for messages in and out, as well as a central control system, you can build a more complex processing system.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Chained.jpg" alt="Lambda Architecture Services Chained.jpg">
+</div>
+</div>
+<div class="paragraph">
+<p>The functionality here should form your critical path.  You want a simple message to be able to pass from one end of your system to the other in the shortest time possible.  In Java this can mean as low as 10 micro-seconds 99% of the time. As well as being fast it is simple to test each function independently, as well as test this without transports for ease of debugging.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_non_critcial_path_functions">Non-critcial path functions.</h3>
+<div class="paragraph">
+<p>Not everything can or should be on the critical path.  There will be operations which either use a lot of CPU, or need to obtain data from external systems such as databases.  You need a way to interact with these systems without impacting the critcial path. Using feedback is a simple way to achieve this.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Feedback.jpg" alt="Lambda Architecture Services Feedback.jpg">
+</div>
+</div>
+<div class="paragraph">
+<p>In this diagram, the slower functions are CPU bound strategies, but you could have components which obtain data from a database for example, without slowing the critical path.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reading_more">Reading more</h3>
+<div class="paragraph">
+<p>You can read my earlier posts on how to implement these Lambda Architecture components in Java and easily test them. <a href="https://vanilla-java.github.io/2016/03/22/Micro-services-for-performance.html">Micro services for Performance</a> as well has how you can implement a simple service to asynchronously access a JDBC database <a href="https://vanilla-java.github.io/2016/04/12/A-J-D-B-C-Gateway-Microservice.html">A JDBC Gateway Microservice</a></p>
+</div>
+<div class="paragraph">
+<p>For low latency, high throughput persistence we recommend using <a href="http://chronicle.software/products/chronicle-queue/">Chronicle Queue</a> which is Apache 2.0 open source project available at <a href="https://github.com/OpenHFT/Chronicle-Queue" class="bare">https://github.com/OpenHFT/Chronicle-Queue</a> and on <a href="http://search.maven.org/#search%7Cga%7C1%7Cchronicle%20queue">Maven Central</a></p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Lambda Architecture]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 16 May 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices are about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_microservices_denial">Microservices Denial</h3>
 <div class="paragraph">
 <p>A number of times clients have said; they can&#8217;t imagine their organisation using Microservices.
