@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Reviewing Exception Handling</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Reviewing Exception Handling">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Reviewing Exception Handling">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522006850833"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522006850833"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522006850833"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522006850833"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/06/21/Reviewing-Exception-Handling.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Reviewing Exception Handling" />
+    <meta property="og:description" content="When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong. I have asked a number of developers recently what they do when they get an exception and usually they log it or pass it" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/06/21/Reviewing-Exception-Handling.html" />
+    <meta property="article:published_time" content="2016-06-21T00:00:00.000Z" />
+    <meta property="article:tag" content="Exceptions" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Reviewing Exception Handling" />
+    <meta name="twitter:description" content="When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong. I have asked a number of developers recently what they do when they get an exception and usually they log it or pass it" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/06/21/Reviewing-Exception-Handling.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Reviewing Exception Handling",
+    "url": "https://vanilla-java.github.io/2016/06/21/Reviewing-Exception-Handling.html",
+    "datePublished": "2016-06-21T00:00:00.000Z",
+    "keywords": "Exceptions",
+    "description": "When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong. I have asked a number of developers recently what they do when they get an exception and usually they log it or pass it"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Exceptions">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Exceptions">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-06-21" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Exceptions/">Exceptions</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Reviewing Exception Handling">Reviewing Exception Handling</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong.</p>
+</div>
+<div class="paragraph">
+<p>I have asked a number of developers recently what they do when they get an exception and usually they log it or pass it back to the user.</p>
+</div>
+<div class="paragraph">
+<p>What are some alternatives? If you have to pass on the exception how might you do that?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_when_to_consider_exception_handling">When to consider exception handling?</h3>
+<div class="paragraph">
+<p>Ideally, you should be only catching an exception when you know what to do with it. If you don&#8217;t think you can add value, pass it back to the caller.  I highly recommend letting your IDE manage the updating of the method signature, as this can be tedious to do manually.</p>
+</div>
+<div class="paragraph">
+<p>Even if you give exception handling some consideration in your code, it is worth doing a periodic review of your exception handling code to make sure that they are being handled appropriately.</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handling_the_exception">Handling the Exception</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_catch_an_exception_to_fall_back">Catch an Exception to fall back.</h3>
+<div class="paragraph">
+<p>When an expected Exception occurs you can fall back to a default result.</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple fallback</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">private static String getHostName0() {
+    try {
+        return InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException e) {
+        return "localhost";
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method looks for a field in a class. If this fails it looks for a field in it&#8217;s super class. This fall back behaviour requires that the appropriate exception is caught.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The discard exception is added to the original with <code>addSuppressed</code>.  Whether this is a good idea, depends on each case.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Fallback on a specific exception</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">/**
+ * Get the Field for a class by name.
+ *
+ * @param clazz to get the field for
+ * @param name  of the field
+ * @return the Field.
+ * @throws IllegalArgumentException if no field with that name could be found.
+ */
+public static Field getField(Class clazz, String name) throws IllegalArgumentException {
+     try {
+         Field field = clazz.getDeclaredField(name);
+         field.setAccessible(true);
+         return field;
+
+     } catch (NoSuchFieldException e) {
+         Class superclass = clazz.getSuperclass();
+         if (superclass != null)
+             try {
+                 return getField(superclass, name);
+             } catch (Exception e2) {
+                 e.addSuppressed(e2);
+             }
+         throw new IllegalArgumentException(clazz + " does not have a public field " + name, e);
+     }
+ }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_signal_for_special_handling">Signal for special handling.</h3>
+<div class="paragraph">
+<p>Special handling may be a delibrate exception to say this component is no longer valid and shouldn&#8217;t be used again.</p>
+</div>
+<div class="listingblock">
+<div class="title">Catch an Exception in a nested call and remove a subscriber which is no longer valid.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">try {
+ for (int i = 0; i &lt; kvStore.segments(); i++)
+     kvStore.entriesFor(i, e -&gt; subscriber.onMessage(e.getKey(), e.getValue()));
+
+} catch (InvalidSubscriberException dontAdd) {
+ topicSubscribers.remove(subscriber);
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The checked exception is thrown inside a lambda which expects this specific exception.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_wrap_an_exception_with_assertionerror">Wrap an Exception with AssertionError</h3>
+<div class="paragraph">
+<p>In this case, the Field returned by getField shouldn&#8217;t ever throw an IllegalAccessException, so it has been wrapped with an AssertionError.</p>
+</div>
+<div class="paragraph">
+<p>It only make senses to wrap an Exception with an AssertionError when you know this is something which should never happen (not something you hope will never happen)</p>
+</div>
+<div class="listingblock">
+<div class="title">Exception is not possible</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">/**
+ * get a the value of a field by name.
+ * &lt;p&gt;
+ * If the name has a path with a / it is split into names and navigated into the object. e.g. "a/b" will look for a field "b" in the object in field "a"
+ * &lt;p&gt;
+ * If any reference in the path is null, the return is null.
+ *
+ * @param obj  Object to extract the value from
+ * @param name path to the field.
+ * @return the value of the field as an object if found, or null if any field in the path was null.
+ * @throws IllegalArgumentException if the field could not be found.
+ */
+public static &lt;V&gt; V getValue(Object obj, String name) throws IllegalArgumentException {
+    for (String n : name.split("/")) {
+        Field f = getField(obj.getClass(), n);
+        try {
+            obj = f.get(obj);
+            if (obj == null)
+                return null;
+        } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
+        }
+    }
+    return (V) obj;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_the_interrupted_flag_if_caught">Set the interrupted flag if caught</h3>
+<div class="paragraph">
+<p>When a thread is interrupted, it should remain so until the overall task is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">/**
+ * Silently pause for milli seconds.
+ *
+ * @param millis to sleep for.
+ */
+public static void pause(long millis) {
+    long timeNanos = millis * 1000000;
+    if (timeNanos &gt; 10e6) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupted();
+        }
+    } else {
+        LockSupport.parkNanos(timeNanos);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_passing_on_the_exception">Passing on the exception</h3>
+<div class="sect3">
+<h4 id="_using_a_callback_to_handle_the_exception">Using a callback to handle the exception.</h4>
+<div class="paragraph">
+<p>Using a callback allows a developer using a library to control how exceptions should be handled.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for production you might want to shutdown the whole server on a fatal error, log warnings and ignore debug messages.</p>
+</li>
+<li>
+<p>for unit tests you might wish to capture your exceptions to see if any error occurred, or only the expected error occured.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">An interface you could call in the event of an Exception.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">@FunctionalInterface
+public interface ExceptionHandler {
+    default void on(Class clazz, Throwable thrown) {
+        on(clazz, "", thrown);
+    }
+
+    default void on(Class clazz, String message) {
+        on(clazz, message, null);
+    }
+
+    /**
+     * A method to call when an exception occurs. It assumes there is a different handler for different levels.
+     *
+     * @param clazz the error is associated with, e.g. the one in which it was caught
+     * @param message any message associated with the error, or empty String.
+     * @param thrown any Thorwable caught, or null if there was no exception.
+     */
+    void on(Class clazz, String message, Throwable thrown);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have an ExceptionHandler which opens a web page on Google or Stackoverflow approriate for the error, or using a fallback Exception handler.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    try {
+        if (Jvm.isDebug() &amp;&amp; Desktop.isDesktopSupported())
+            Desktop.getDesktop().browse(new URI(uri));
+        else
+            fallBack.on(clazz, message, t);
+
+    } catch (Exception e) {
+        fallBack.on(clazz, message, t);
+        fallBack.on(getClass(), "Failed to open browser", e);
+    }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_additional_printing_for_debugging_only">Additional printing for debugging only.</h4>
+<div class="paragraph">
+<p>Sometimes an error which would be too "noisy" for production code might be useful in trying to trace a bug in the code.</p>
+</div>
+<div class="paragraph">
+<p>In this case, we check whether the code is running in the debugger and log an exception we normally expect to handle queiter or silently.</p>
+</div>
+<div class="listingblock">
+<div class="title">Additional logging when attempting to reconnect to a TCP server.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">if (Jvm.isDebug())
+    e.printStackTrace();
+// continue handling the exception.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using <code>printStackTrace</code> makes it clearer this is not intended for production use and makes it easier to find and remove later.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_adding_the_exception_to_the_result">Adding the Exception to the result.</h4>
+<div class="paragraph">
+<p>In a method which does a best attempt at decoding some data, and the caller wants to see as much as could be decoded, even if an exception occurred.</p>
+</div>
+<div class="listingblock">
+<div class="title">Add the Exception to the StringWriter.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">} catch (Exception e) {
+    e.printStackTrace(new PrintWriter(writer));
+    }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_passing_on_a_check_exception_so_it_can_be_caught">Passing on a check exception so it can be caught</h3>
+<div class="sect3">
+<h4 id="_rethrow_as_an_unchecked_exception">Rethrow as an unchecked exception.</h4>
+<div class="paragraph">
+<p>In this case, rather than wrap the checked exception as an unchecked one, the Exception can be blindly re-thrown as the original exception</p>
+</div>
+<div class="paragraph">
+<p>This is useful when a checked exception is thrown inside a lambda which doesn&#8217;t expect a checked exception.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public List&lt;String&gt; collectFiles(List&lt;String&gt; filenames) throws IOException {
+    return filenames.stream()
+            .flatMap(f -&gt; {
+                try {
+                    return Files.lines(Paths.get(f));
+                } catch (IOException e) {
+                    throw Jvm.rethrow(e);
+                }
+            })
+            .collect(Collectors.toList());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Where Jvm.rethrow is implemented as follows</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">/**
+ * Cast a CheckedException as an unchecked one.
+ *
+ * @param throwable to cast
+ * @param &lt;T&gt;       the type of the Throwable
+ * @return this method will never return a Throwable instance, it will just throw it.
+ * @throws T the throwable as an unchecked throwable
+ */
+@SuppressWarnings("unchecked")
+public static &lt;T extends Throwable&gt; RuntimeException rethrow(Throwable throwable) throws T {
+    throw (T) throwable; // rely on vacuous cast
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However, this is really a hack to get around the fact that the <code>Function</code> used, doesn&#8217;t support a checked exception.
+A better solution, if you can choose the type of lambda is to have one which expects an Exception. See next.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_capturing_a_throwable_thrown_in_a_plain_thread_in_a_unit_test">Capturing a Throwable thrown in a plain thread in a unit test.</h4>
+<div class="paragraph">
+<p>Instead of an Executor service or a parallelStream(), sometimes you just want to use a plain thread for testing purposes.  You still need an exception thrown in that thread to cause the test to fail.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">Throwable[] thrown = { null };
+
+Thread t = new Thread(() -&gt; {
+    try {
+        // something
+    } catch (Throwable e) {
+        thrown[0] = e;
+    }
+});
+t.start();
+
+// check something.
+
+t.join();
+
+if (thrown[0] != null)
+    throw thrown[0];</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_a_lambda_which_expects_a_checked_exception">Using a lambda which expects a checked exception.</h3>
+<div class="paragraph">
+<p>We have a number of functional interfaces which work just like the built in classes of a similar name except they expect to throw a checked exception.</p>
+</div>
+<div class="listingblock">
+<div class="title">Three of the FunctionalLambdas which can throw a Checked Exception</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">@FunctionalInterface
+public interface ThrowingConsumer&lt;I, T extends Throwable&gt; {
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param in the input argument
+     */
+    void accept(I in) throws T;
+}
+
+@FunctionalInterface
+public interface ThrowingFunction&lt;I, R, T extends Throwable&gt; {
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param in the function argument
+     * @return the function result
+     */
+    R apply(I in) throws T;
+}
+
+@FunctionalInterface
+public interface ThrowingSupplier&lt;V, T extends Throwable&gt; {
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     */
+    V get() throws T;
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_a_throwingconsumer">Using a ThrowingConsumer</h4>
+<div class="paragraph">
+<p>In the following example, you can pass a consumer to <code>forEachChild</code> which can throw a checked exception, which is then thrown back to the caller.</p>
+</div>
+<div class="listingblock">
+<div class="title">If the acceptor throws a checked Exception, the method throws the same Exception</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public &lt;T extends Throwable&gt; void forEachChild(@NotNull ThrowingConsumer&lt;Asset, T&gt; consumer) throws T {
+    for (Asset child : children.values()) {
+        consumer.accept(child);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">onMessage can throw an InvalidSubscriberException which throw out of this method.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">void bootstrapTree(@NotNull Asset asset, @NotNull Subscriber&lt;TopologicalEvent&gt; subscriber) throws InvalidSubscriberException {
+    asset.forEachChild(c -&gt; {
+        subscriber.onMessage(ExistingAssetEvent.of(asset.fullName(), c.name()));
+        bootstrapTree(c, subscriber);
+    });
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_temporarily_checked_exception">Using temporarily checked exception.</h3>
+<div class="paragraph">
+<p>One way to ensure your documentation and handling of unchecked exception is correct is to make them temporarily checked.  I recently did this for one of our custom exceptions and ended up changing 65 files. In many cases, the exception was documented as occuring, but didn&#8217;t and in many cases it could occur but wasn&#8217;t documented.  In a couple of cases, this forced me to consider whether this was the most appropriate exception to be throwing and I changed it.  I would say I ended up fixing around 6 bugs as a part of this review.</p>
+</div>
+<div class="paragraph">
+<p>We also have a checked version of many built in unchecked exceptions and we use this to review those as well from time to time. <a href="https://github.com/OpenHFT/Chronicle-Core/tree/master/checked-exceptions" class="bare">https://github.com/OpenHFT/Chronicle-Core/tree/master/checked-exceptions</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_do_we_do_in_our_libraries">What do we do in our libraries?</h3>
+<div class="paragraph">
+<p>I reviewed our OpenHFT libraries in terms of exception handling and refactored it quite a bit as well as fixing a number of issues. Afterwards the profile looked like this</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/Exception-handling-mix.png" alt="Exception handling mix.png">
+</div>
+</div>
+<div class="paragraph">
+<p>In the end about 30% were hndled in the code itself. The FATAL ones mean the code is broken, and the DEBUG ones are expected to be ignored, possibly logged.  The wrapped and rethrown exceptions expect the caller to handle the exception in some way.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Knowing when to consider about exception handling and what to do about it is not easy.  Having checked exceptions can help you with that revirew when you are ready to do that.</p>
+</div>
+<div class="paragraph">
+<p>Until you are ready to think about how to handle these exceptions I suggest passing the exception to the caller rather than logging them and pretending they didn&#8217;t happen.</p>
+</div>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">June 21, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522006850833"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
