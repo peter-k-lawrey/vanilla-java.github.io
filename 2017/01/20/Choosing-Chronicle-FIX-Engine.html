@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Choosing Chronicle FIX Engine</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Choosing Chronicle FIX Engine">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Choosing Chronicle FIX Engine">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522007203174"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522007203174"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522007203174"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522007203174"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Choosing Chronicle FIX Engine" />
+    <meta property="og:description" content="Overview The FIX Trading Community web site has posted a list of common questions about FIX Engines. This page brings together our answers for these questions. For more details on Chronicle FIX Capabilities/throughput Chronicle FIX supports; 100,000 messages per second per core. (NewOrderSingle / ExecutionReport sized messages) FIX Services" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html" />
+    <meta property="article:published_time" content="2017-01-20T00:00:00.000Z" />
+    <meta property="article:tag" content="Chronicle FIX" />
+    <meta property="article:tag" content="FAQ" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Choosing Chronicle FIX Engine" />
+    <meta name="twitter:description" content="Overview The FIX Trading Community web site has posted a list of common questions about FIX Engines. This page brings together our answers for these questions. For more details on Chronicle FIX Capabilities/throughput Chronicle FIX supports; 100,000 messages per second per core. (NewOrderSingle / ExecutionReport sized messages) FIX Services" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Choosing Chronicle FIX Engine",
+    "url": "https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html",
+    "datePublished": "2017-01-20T00:00:00.000Z",
+    "keywords": "Chronicle FIX, FAQ",
+    "description": "Overview The FIX Trading Community web site has posted a list of common questions about FIX Engines. This page brings together our answers for these questions. For more details on Chronicle FIX Capabilities/throughput Chronicle FIX supports; 100,000 messages per second per core. (NewOrderSingle / ExecutionReport sized messages) FIX Services"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Chronicle-FIX tag-FAQ">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Chronicle-FIX tag-FAQ">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2017-01-20" itemprop="datePublished">
+                  a year ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Chronicle-FIX/">Chronicle FIX</a>, <a href="https://vanilla-java.github.io/tag/FAQ/">FAQ</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Choosing Chronicle FIX Engine">Choosing Chronicle FIX Engine</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div class="sect1">
+<h2 id="_overview">Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The FIX Trading Community web site has posted a <a href="http://www.fixtradingcommunity.org/pg/structure/tech-specs/implementation-guide/choosing-a-fix-engine">list of common questions about FIX Engines</a>. This page brings together our answers for these questions.</p>
+</div>
+<div class="paragraph">
+<p>For more details on <a href="http://chronicle.software/products/chronicle-fix/">Chronicle FIX</a></p>
+</div>
+<div class="sect2">
+<h3 id="_capabilities_throughput">Capabilities/throughput</h3>
+<div class="paragraph">
+<p>Chronicle FIX supports;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>100,000 messages per second per core. (NewOrderSingle / ExecutionReport sized messages)</p>
+</li>
+<li>
+<p>FIX Services which need to have a 30 micro-seconds tick to trade.</p>
+</li>
+<li>
+<p>FIX 4.0, 4.1, 4.2, 4.3, 4.4, 5.0, 5.0 sp 1, 5.0 sp2, FIXT 1.1 is planned.</p>
+</li>
+<li>
+<p>failover of a FIX server to a hot spare via replication</p>
+</li>
+<li>
+<p>encryption of all message logged and replicated.</p>
+</li>
+<li>
+<p>zero copy between the FIX message and your data model. An intermediate data model is provided for convenience but is not required.</p>
+</li>
+<li>
+<p>designed for ultra low GC systems (minor GC less than once a day)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_technologies_used">Technologies used</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Core Java 8.</p>
+</li>
+<li>
+<p>Build on largely Open Source libraries, also from Chronicle.</p>
+</li>
+<li>
+<p>YAML for configuration.</p>
+</li>
+<li>
+<p>QuickFIX style XML Schema files.</p>
+</li>
+<li>
+<p>Source on GitHub.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_support_and_services_offered">Support and services offered</h3>
+<div class="paragraph">
+<p>Chonicle Software offers Silver support (long London day, 5 days a week) and Gold support (24/7)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_versions_supported">Versions supported</h3>
+<div class="paragraph">
+<p>Q: Does the engine support all current FIX versions<br>
+A: FIX 4.0, 4.1, 4.2, 4.3, 4.4, 5.0, 5.0 sp 1, 5.0 sp2, FIXT 1.1 is planned.</p>
+</div>
+<div class="paragraph">
+<p>Q: Does it support all tags of each version<br>
+A: All tags for these version are supported.</p>
+</div>
+<div class="paragraph">
+<p>Q: Can it support more than one version at once<br>
+A: An Engine supports being an acceptor and an intiliator and each session can have a different FIX version and/or custom FIX schema.</p>
+</div>
+<div class="paragraph">
+<p>Q: What is involved in supporting new versions of FIX?<br>
+A: You start with an XML Schema to generate the code for that schema. You can customise the behaviour further in plugin code. You could add a version of FIX which which we don&#8217;t have on our supported list.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_support_for_asset_classes_other_than_equities">Support for asset classes other than equities</h3>
+<div class="paragraph">
+<p>Q: Can the engine support fixed income, derivatives, FX etc.<br>
+A: We support all the standard messages/field/components, for any asset class.</p>
+</div>
+<div class="paragraph">
+<p>Q: What is involved in adding support for additional products?<br>
+A: The level of support you need is orthogonal to the products you want. If you have Gold SUpport that covers the open source products and any licensed products. You can have Gold Support for the open source products alone.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_high_availability_load_balancing_and_scalability">High availability, load balancing, and scalability</h3>
+<div class="paragraph">
+<p>Q: Does the FIX engine support a software-based high availability option for high-volume, many-connection implementations<br>
+A: We support failover to a hot spare using replication. When a message is published we can choose to wait for the message to be replicated/acknowledge before sending it to ensure it isn&#8217;t lost. We don&#8217;t offer a load balancing facility at the moment, however one dual socket server can comfortably handle one million messages per second.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_speed_and_robustness">Speed and robustness</h3>
+<div class="paragraph">
+<p>Q: How many messages a second can the engine process<br>
+A: Chronicle FIX can comfortably handle 100,000 messages per second per core and one million message per second per server.</p>
+</div>
+<div class="paragraph">
+<p>Q: What fall-back and redundancy options are available<br>
+A: You can set a hot spare using Chronicle Queue Entperise to provide replication of the logs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_encryption_options">Encryption options</h3>
+<div class="paragraph">
+<p>Q: Does the engine support common encryption methodologies, Is SSL supported<br>
+A: Not currently, but this could be added if you need it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ability_to_implement_per_connection_business_logic">Ability to implement per-connection business logic</h3>
+<div class="paragraph">
+<p>Q: Each FIX connection tends to be slightly different. Can you embed counterparty specific logic within the engine rather than having to implement from outside within your systems?<br>
+A: You can have per session</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>data model for storing messages</p>
+</li>
+<li>
+<p>custom parser</p>
+</li>
+<li>
+<p>message validation</p>
+</li>
+<li>
+<p>message handling</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also share this logic to minimise the overhead of managing different providers. e.g. Youc an combine the custom schema of 20 providers into a single Uber schema even if they use different versions of FIX. This allows you to code to one aggregate data model.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is assumed each session will have at most one connection.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_platforms_supported">Platforms supported</h3>
+<div class="paragraph">
+<p>Q: Not all FIX engines run on all platforms. Some FIX engines sell themselves on the basis that they will run on all platforms, others take the opposite view and market themselves on the basis that they are optimized to run on one platform only.<br>
+A: Chronicle FIX only supports Oracle Java 8, OpenJDK 8, Azul Zing/Zulu 8 on x64 processors. We support Linux, Windows and MacOSX.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_architectural_flexibility">Architectural flexibility</h3>
+<div class="paragraph">
+<p>Q: Does the engine restrict your implementation to a specific architecture<br>
+A: Realistically it has to be in Java.</p>
+</div>
+<div class="paragraph">
+<p>Q: Are you forced to use a database for persistence or a particular type of middleware for example<br>
+A: Your must data store must be accessible from Java.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_provided_as_a_set_of_class_libraries_or_a_fix_in_a_box_solution">Provided as a set of class libraries or a FIX-in-a-box solution</h3>
+<div class="paragraph">
+<p>While we offer a set of class libraries you could customise heavily (we use the same libraries to implement our non FIX Engine) most clients use it as FIX-in-a-box.  We feel the like the fact they could take it apart and build it however they need covers potential technical risks.</p>
+</div>
+<div class="paragraph">
+<p>Q: FIX engines supplied as class libraries (APIs) offer complete flexibility over your implementation but you have to do the work.<br>
+A: We want to offer complete flexability even if you won&#8217;t use a fraction of the flexability. As the product matures we want to reduce the amount of work you need to do, but teher will always be some customisation you will need to do to suit your soluton.</p>
+</div>
+<div class="paragraph">
+<p>Q: FIX-in-a-box solutions provide ready-made functionality for many commonly used activities and seamlessly handle network connectivity. They are easier to implement but aren&#8217;t so flexible.<br>
+A: We attempt to handle all the session messages and details automatically from configuration. You should only have to worry about the application messages most of the time. We support custom session messages as well.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_access_to_source_code">Access to source code</h3>
+<div class="paragraph">
+<p>Q: Some FIX engine vendors make available the source-code so that you can modify their product. Typically this is only done for a fee and for the largest clients.<br>
+A: Our FIX engine is in a closed source repository on GitHub.  Once you have a license and have access you can fork the code, issue Pull Request and add issue just as you can on GitHub. Out support agreements includes some days a month for bespoke development so you can get us to make the changes if you prefer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_support_offered">Support offered</h3>
+<div class="paragraph">
+<p>Q: What level of support is offered and at what times.<br>
+A: Silver support is a long London day, 5 days a week. Gold is 24/7 and &#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Q: Is on-site support available<br>
+A: Platnium support includes three months a year on site on days of your choice.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_upgrades_and_updates">Upgrades and updates</h3>
+<div class="paragraph">
+<p>Q: How many updates and upgrades does your license entitle you to<br>
+A: The perpetual license alone entitles you to updates/upgrades for 120 days. If you get support it includes updates for the period under support.</p>
+</div>
+<div class="paragraph">
+<p>Q: Does the vendor charge a license fee for an engine in a disaster recovery / stand-by environment<br>
+A: How you use the product doesn&#8217;t affect the price.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cost_and_pricing_options">Cost and pricing options</h3>
+<div class="paragraph">
+<p>Q: Is the cost reasonable? Is the vendor flexible around how you would like to pay?<br>
+A: We can be flexable for smaller clients. To date we have only had real interest and sales for business unit license covering a development team.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_monitoring_tools">Monitoring tools</h3>
+<div class="paragraph">
+<p>Q: Does the engine come with tools that allow monitoring of your FIX sessions. A good error translator can prevent you spending of a great deal of time trying to find an error message.<br>
+A: We have a HTML5 GUI for monitoring sessions and querying logs of messages.</p>
+</div>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">January 20, 2017</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522007203174"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
