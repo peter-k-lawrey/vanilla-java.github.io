@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Improving performance with simple compression</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Improving performance with simple compression">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Improving performance with simple compression">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522007060083"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522007060083"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522007060083"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522007060083"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/07/22/Improving-performance-with-simple-compression.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Improving performance with simple compression" />
+    <meta property="og:description" content="Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data. Compression of serialized objects using delta-ring." />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/07/22/Improving-performance-with-simple-compression.html" />
+    <meta property="article:published_time" content="2016-07-22T00:00:00.000Z" />
+    <meta property="article:tag" content="Chronicle Wire" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Improving performance with simple compression" />
+    <meta name="twitter:description" content="Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data. Compression of serialized objects using delta-ring." />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/07/22/Improving-performance-with-simple-compression.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Improving performance with simple compression",
+    "url": "https://vanilla-java.github.io/2016/07/22/Improving-performance-with-simple-compression.html",
+    "datePublished": "2016-07-22T00:00:00.000Z",
+    "keywords": "Chronicle Wire",
+    "description": "Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data. Compression of serialized objects using delta-ring."
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Chronicle-Wire">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Chronicle-Wire">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-07-22" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Chronicle-Wire/">Chronicle Wire</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Improving performance with simple compression">Improving performance with simple compression</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_compression_of_serialized_objects_using_delta_ring">Compression of serialized objects using delta-ring.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delta Wire automatically detects which fields in an object have changed and sends only those fields.  If the field is a number it can send the difference using less bytes.  It does this for nested objects individually as well.</p>
+</div>
+<div class="paragraph">
+<p>You can still utilised generic compression like GZIP, LZW or Snappy to achieve further compression. However, these compression techniques are releatively more expensive and they can be ten times slower than no compression.  What if you want a compression technique which is actually faster?</p>
+</div>
+<div class="listingblock">
+<div class="title">A sample data structure in Java</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">class MyDataType extends AbstractMarshallable implements KeyedMarshallable {
+    long firstId; <i class="conum" data-value="1"></i><b>(1)</b>
+    int secondId; <i class="conum" data-value="1"></i><b>(1)</b>
+    String thirdId; <i class="conum" data-value="1"></i><b>(1)</b>
+
+    String staticOne; <i class="conum" data-value="2"></i><b>(2)</b>
+    long staticTwo; <i class="conum" data-value="2"></i><b>(2)</b>
+    ZonedDateTime staticThree; <i class="conum" data-value="2"></i><b>(2)</b>
+    double staticFour; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    long changesA; <i class="conum" data-value="3"></i><b>(3)</b>
+    double changesB; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Override
+    public void writeKey(@NotNull Bytes bytes) {
+        bytes.writeLong(firstId).writeInt(secondId).writeUtf8(thirdId); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Composite key for this data transfer object</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Fields which rarely change</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Fields which often change</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Write a key to signify when two objects represent the same data.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To write this object you can use the Chronicle Wire library to write in different formats.</p>
+</div>
+<div class="listingblock">
+<div class="title">Update message as YAML - 268 bytes</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">update: !MyDataType {
+  firstId: 1010101010101,
+  secondId: 2222,
+  thirdId: thirdId-1234,
+  staticOne: staticOne-1234,
+  staticTwo: 2020202020202,
+  staticThree: "2016-07-22T12:34:56.789Z[UTC]", <i class="conum" data-value="1"></i><b>(1)</b>
+  staticFour: 1000000.0,
+  changesA: 3000000000,
+  changesB: 123456.0
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the date/time is in quotes as it contains [ and ]</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Update message as JSON - 242 bytes, smaller without formatting</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"update":{"firstId":1010101010101,"secondId":2222,"thirdId":"thirdId-1234","staticOne":"staticOne-1234","staticTwo":2020202020202,"staticThree":"2016-07-22T12:34:56.789Z[UTC]","staticFour":1000000.0,"changesA":3000000001,"changesB":123457.0}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Update message as Binary YAML - 205 bytes</div>
+<div class="content">
+<pre class="highlight"><code>Æupdate¶⒑MyDataType\u0082µ٠٠٠ÇfirstId§µ&gt;¶.ë٠٠٠ÈsecondId¥®⒏ÇthirdIdìthirdId-1234ÉstaticOneîstaticOne-1234ÉstaticTwo§j}l]Ö⒈٠٠ËstaticThreeµ\u001D2016-07-22T12:34:56.789Z[UTC]ÊstaticFour\u0090٠$tIÈchangesA£⒉^Ð²ÈchangesB\u0090٠!ñG</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>While Binary YAML is slightly smaller (&lt; 20%) it&#8217;s main purpose is speed of encoding and decoding. This is most evident when you have lots of primitive types, and less of a benefit when you have string/datetime fields which are encoded as strings anyway.</p>
+</div>
+<div class="paragraph">
+<p>By comparison DeltaWire is designed to compact the message by reducing duplication with a loss-less compression. This reduces the time writing to memory, which can speed up the serialization operation.</p>
+</div>
+<div class="listingblock">
+<div class="title">Two updates, one change for the <code>changesA</code> and one change for <code>changesB</code> - 10 bytes average</div>
+<div class="content">
+<pre class="highlight"><code>00000000 BA 00 89 00 80 04 BA 08  A8 C5 BA 00 89 00 80 04 ········ ········
+00000010 BA 09 9A 05                                      ····</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wire Format</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Size per message</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">YAML</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">268 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">242 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary YAML</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">205 bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delta Binary YAML</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 bytes</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>One of the challenges of using binary formats is human readability (as binary formats emphasis machine readability)  For this reason, we have ensured you can automatically convert both Binary YAML and Delta Binary YAML to YAML without knowledge of the application or schema.  The messages are still self describing allowing you to use this data even if the application&#8217;s data structure changes over time.</p>
+</div>
+<div class="sect2">
+<h3 id="_doesn_t_compression_makes_it_slower">Doesn&#8217;t compression makes it slower?</h3>
+<div class="paragraph">
+<p>It doesn&#8217;t have to be slower if the compression is simple enough.  In fact writing/reading less data can improve performance.  Writing/reading less data to memory, let alone to disk or a network, can improve latency and throughput by touching less memory and writing less data.</p>
+</div>
+<div class="paragraph">
+<p>The test above is repeated 2,500 times resulting in 5,000 updates. The average time to serialize each message/udpate is recorded below.</p>
+</div>
+<div class="listingblock">
+<div class="title">Average time to serialize each update.</div>
+<div class="content">
+<pre class="highlight"><code>TextWire Took an average of 3,446 ns
+JSONWire Took an average of 2,972 ns
+BinaryWire Took an average of 1,473 ns
+DeltaWire Took an average of 554 ns</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What I find interesting is that the compressed wire format is also approximately 3-5x faster to serialize, as well as being approximately 20x smaller.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Using simple compression such as delta-ring can not only be much smaller such as 1/20 th the size, it can also be faster to serialize the data due to less memory being touched. In this example it as at least 3 times faster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+After delta-ring you can still use generic compression to obtain a further reduction of the size of data.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">July 22, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522007060083"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
