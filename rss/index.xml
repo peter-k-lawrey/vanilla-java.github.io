@@ -1,4 +1,494 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:45:28 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Why don't I get the throughput I benchmarked?]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:45:56 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[IT experts you should follow on twitter]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>When I read lists like this they always seem to be male dominated, so here is a list of experts I follow which isn&#8217;t.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_dr_sue_black_obe">Dr Sue Black OBE</h3>
+<div class="paragraph">
+<p>UK Govt Advisor @gdsteam | Tech Evangelist | Hon Prof Comp Sci @UCL | Author @SavingBletchley | Founder @techmumsHQ @BCSWomen | Agents: @NoelGay19 @TobyMundy 39K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://blackse.wordpress.com/">Dr Sure Black&#8217;s Home Page</a></p>
+</div>
+<div class="paragraph">
+<p>#CMTV speaks to Dr Sue Black; Award-Winning Computer Scientist <a href="https://www.youtube.com/watch?v=eqcYiVECYFk">Part One</a> <a href="https://www.youtube.com/watch?v=DVmgpS34K04">Part Two</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://unbound.com/books/saving-bletchley-park">Saving Bletchley Park</a> "The story of the saving of the home of modern computing by Sue Black"</p>
+</div>
+<div class="paragraph">
+<p><a href="http://techmums.co/">Tech Mums</a> "Empowering mums, their families and communities through technology"</p>
+</div>
+<a href="https://twitter.com/Dr_Black" class="twitter-follow-button" data-show-count="false">Follow @Dr_Black</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_sara_rey_chipps">Sara Rey Chipps</h3>
+<div class="paragraph">
+<p>Just a girl, standing in front of a microprocessor, asking it to love her. I made @girldevelopit. I&#8217;m making @jewelbots. Pull requests welcomed. 30 K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://sarajchipps.com/">Sara Rey Chipps' Blog</a></p>
+</div>
+<a href="https://twitter.com/SaraJChipps" class="twitter-follow-button" data-show-count="false">Follow @SaraJChipps</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_kelly_sommers">Kelly Sommers</h3>
+<div class="paragraph">
+<p>4x Windows Azure MVP &amp; Former 2x DataStax MVP for Apache Cassandra, Backend brat, big data, distributed diva. Relentless learner. I void warranties. 25.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://kellabyte.com/">Kellabyte&#8217;s blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/user/kellabyte">Kelly Sommers YouTube Channel</a></p>
+</div>
+<a href="https://twitter.com/kellabyte" class="twitter-follow-button" data-show-count="false">Follow @kellabyte</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_julie_lerman">Julie Lerman</h3>
+<div class="paragraph">
+<p>Vermont Geekette, DDD, .NET (&amp; EF) Mentor, Author, MS MVP, MS Regional Director, VTdotNET, Pluralsight, MSDN Mag. Talk to me about mentoring your dev team! 22.5K</p>
+</div>
+<div class="paragraph">
+<p><a href="http://thedatafarm.com/blog/">The Data Farm</a> "Julie Lerman&#8217;s World of Data"</p>
+</div>
+<div class="paragraph">
+<p><a href="https://channel9.msdn.com/Events/Speakers/Julie-Lerman">Julie Lerman&#8217;s Channel 9</a> "Julie Lerman is a Microsoft MVP, mentor and consultant who lives in the hills of Vermont. You can find Julie presenting on Entity Framework , Domain-Driven Design and other topics at user groups and conferences around the world"</p>
+</div>
+<a href="https://twitter.com/julielerman" class="twitter-follow-button" data-show-count="false">Follow @julielerman</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_jessfraz">jessfraz</h3>
+<div class="paragraph">
+<p>I contribute to open source software for fun and as my job. 'Weird sun beam of awesome.' <a href="http://git.j3ss.co" class="bare">http://git.j3ss.co</a> 21.7k followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://blog.jessfraz.com/">Jessie Frazelle&#8217;s Blog</a></p>
+</div>
+<a href="https://twitter.com/jessfraz" class="twitter-follow-button" data-show-count="false">Follow @jessfraz</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_jennmoneydollars">jennmoneydollars</h3>
+<div class="paragraph">
+<p>my father&#8217;s strongest most handsome daughter. i came to win, 19K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://jennmoney.biz/">Jenn Schiffer&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://youtu.be/wewAC5X_CZ8">No one expects the lady code troll</a> "@jennschiffer’s hilarious talk on how and why she satirizes the tech industry." - @xoxo</p>
+</div>
+<div class="paragraph">
+<p><a href="https://society6.com/jennmoneydollars">Jenn Schiffer&#8217;s Pixel Art</a></p>
+</div>
+<a href="https://twitter.com/jennschiffer" class="twitter-follow-button" data-show-count="false">Follow @jennschiffer</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_iris_classon">Iris Classon</h3>
+<div class="paragraph">
+<p>The world’s happiest .NET developer &amp; Microsoft C# MVP! More energy than a 5 year old, talks more than your grandmother, and does anything to make you smile! 18.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://irisclasson.com/">Iris Classon&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://stackoverflow.com/users/984153/iris-classon">Iris Classon&#8217;s StackOverflow profile</a></p>
+</div>
+<a href="https://twitter.com/IrisClasson" class="twitter-follow-button" data-show-count="false">Follow @IrisClasson</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_jessica_kerr">Jessica Kerr</h3>
+<div class="paragraph">
+<p>Functional developer, speaker, mother, crazy nut. Stripe. Learning and growing. All tweets are mine, licensed CC0. she/her. 16.6K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://blog.jessitron.com/">Jessitron&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.infoq.com/author/Jessica-Kerr">Jessica Ker&#8217;s InfoQ videos</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://jessitron.com/">Jessitron&#8217;s Home Page</a></p>
+</div>
+<a href="https://twitter.com/jessitron" class="twitter-follow-button" data-show-count="false">Follow @jessitron</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_jen_myers">Jen Myers</h3>
+<div class="paragraph">
+<p>Technologist &amp; writer. Curriculum director at @pluralsight. Advisor at @girldevelopit. Founder of @codecupcakeschi. Likes adventure, changing the world, otters. 15.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://jenmyers.net/">Jen Myer&#8217;s Home Page</a></p>
+</div>
+<a href="https://twitter.com/antiheroine" class="twitter-follow-button" data-show-count="false">Follow @antiheroine</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_lucy_leiderman">Lucy Leiderman</h3>
+<div class="paragraph">
+<p>Funnier than you&#8217;d expect. Full-stack growth marketer. Building @helloretreaver. Scrum master. I have 5 minutes, come say hi. 13.2K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://lucyleiderman.com/">Lucy Leidrman&#8217;s Home Page</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://plus.google.com/LucyLeiderman[Lucy Leiderman's Google" class="bare">https://plus.google.com/LucyLeiderman[Lucy Leiderman's Google</a> page]</p>
+</div>
+<a href="https://twitter.com/lucyleid" class="twitter-follow-button" data-show-count="false">Follow @lucyleid</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="__bodil">☭ 🚀 🐶 Bodil  🐶 🚀☭</h3>
+<div class="paragraph">
+<p>The Hound of the SJWs. 11.1K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://bodil.lol/">Bodil&#8217;s Home Page</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=SPgPhKLE1wg">Bodil Stokke - The Miracle of Generators</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=3_YzTL5yrFQ">Bodil Stokke - Reactive Game Development For The Discerning Hipster</a></p>
+</div>
+<a href="https://twitter.com/bodil" class="twitter-follow-button" data-show-count="false">Follow @bodil</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_femgineer">Femgineer</h3>
+<div class="paragraph">
+<p>We empower techies and provide courses and workshops to: educate, empower, and encourage professionals in the high-tech industry. 10K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/channel/UCr3v8cEC5IGfWBS03PpsfKw">Femginerr&#8217;s YouTube Channel</a></p>
+</div>
+<a href="https://twitter.com/femgineer" class="twitter-follow-button" data-show-count="false">Follow @femgineer</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_caitie_mccaffrey">Caitie McCaffrey</h3>
+<div class="paragraph">
+<p>Backend Brat &amp; Distributed Systems Diva @twitter Formerly #343i building @Halo Services with @projectorleans. Valkyrie AF. 9.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://caitiem.com/">CaitieM&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://speakerdeck.com/caitiem20">Talks by Caitie McCaffrey</a></p>
+</div>
+<a href="https://twitter.com/caitie" class="twitter-follow-button" data-show-count="false">Follow @caitie</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_trisha_gee">Trisha Gee</h3>
+<div class="paragraph">
+<p>Coder/blogger/speaker, working for JetBrains. Human. More or less. 7.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://trishagee.github.io/">Trisha Gee&#8217;s Home Page</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://mechanitis.blogspot.co.uk/">Trisha Gee&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.infoq.com/author/Trisha-Gee">Trisha Gee&#8217;s content on InfoQ</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=XOWZ0Zr0HGY">Interview with Trisha Gee</a></p>
+</div>
+<a href="https://twitter.com/trisha_gee" class="twitter-follow-button" data-show-count="false">Follow @trisha_gee</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_jen_golbeck">Jen Golbeck</h3>
+<div class="paragraph">
+<p>Prof at Univ. of MD., Computer Scientist. Tweets about social media, research, zombies. My new book is Social Media Investigation -how to track people online! 5.9K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://jengolbeck.com/">Jen Golbeck&#8217;s Home Page</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.cs.umd.edu/~golbeck/">Jennifer Golbeck&#8217;s Work Page</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Jen_Golbeck">Jen Golbeck&#8217;s Wikipedia Page</a></p>
+</div>
+<a href="https://twitter.com/jengolbeck" class="twitter-follow-button" data-show-count="false">Follow @jengolbeck</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_yara_m_h_senger">Yara M H Senger</h3>
+<div class="paragraph">
+<p>Yara is President of SouJava and co-founder and director of GlobalCode, the largest Java training company in Latin America, currently based in 13 different cities. 5.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/channel/UCdgpYryLQ8I5ZqNRb010K0g">GlobalCode YouTube Channel</a></p>
+</div>
+<a href="https://twitter.com/yarasenger" class="twitter-follow-button" data-show-count="false">Follow @yarasenger</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_lynn_langit">Lynn Langit</h3>
+<div class="paragraph">
+<p>Cloud architect who also codes, prefers AWS &amp; GCP.  5.3K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://lynnlangit.com/">Lynn Langit&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.slideshare.net/lynnlangit">Lynn Langit&#8217;s presentations</a></p>
+</div>
+<a href="https://twitter.com/lynnlangit" class="twitter-follow-button" data-show-count="false">Follow @lynnlangit</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_maxime_chevalier">Maxime Chevalier</h3>
+<div class="paragraph">
+<p>PhD in compiler design, dynamic languages and optimization. Interested in programming languages, graphics, electronics, music and DIY. All opinions are my own. 4.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://pointersgonewild.com/">Maxime Chevalier&#8217;s Blog</a> "Pointers Gone Wild A blog about compilers, programming and technology."</p>
+</div>
+<a href="https://twitter.com/Love2Code" class="twitter-follow-button" data-show-count="false">Follow @Love2Code</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_fabianenardon">fabianenardon</h3>
+<div class="paragraph">
+<p>Data Scientist, Java Champion and impossible projects expert. Founder of <a href="http://toolscloud.com" class="bare">http://toolscloud.com</a>  and partner at <a href="http://tailtarget.com" class="bare">http://tailtarget.com</a> 4.1K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=9rO6qnBTpOI">Fabiane Nardon - Java Champion Brasil &amp; impossible projects expert</a></p>
+</div>
+<a href="https://twitter.com/fabianenardon" class="twitter-follow-button" data-show-count="false">Follow @fabianenardon</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_susan_potter">Susan Potter</h3>
+<div class="paragraph">
+<p>Post-postmodern infrastructure engineer (Scala, Haskell, Nix) obsessed with finance, Charlotte Brontë, bad pop, and abstract algebra. 4.0K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://susanpotter.net/">Susan Petter&#8217;s Home Page</a></p>
+</div>
+<a href="https://twitter.com/SusanPotter" class="twitter-follow-button" data-show-count="false">Follow @SusanPotter</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_script_kitty">script kitty</h3>
+<div class="paragraph">
+<p>I write the softest software you&#8217;ve ever touched @uber engineering. I wanna be an indie game dev when I grow up. oh, and kelly is my middle name 4.0K followers</p>
+</div>
+<a href="https://twitter.com/marthakelly" class="twitter-follow-button" data-show-count="false">Follow @marthakelly</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_stacey_mason">Stacey Mason</h3>
+<div class="paragraph">
+<p>Researcher/creator of games &amp; playable stories. Twitch critic. Contributor: @cerebralarcade, @ScholarsPlay, @igdafoundation Prev: @zynga, @eastgate 3.8K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.staceymason.net/">Stacey Mason&#8217;s Home Page</a></p>
+</div>
+<a href="https://twitter.com/stcymsn" class="twitter-follow-button" data-show-count="false">Follow @stcymsn</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_wendydevolder">wendydevolder</h3>
+<div class="paragraph">
+<p>Helping #community learn and share skills to write better software by producing talks, conferences, magazine, workshops, skillscasts on #agile #opensource 3.7 K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=uSRzhe_fzzk">What is Skills Matter</a> Wendy Devolder is the CEO of Skills Matter.</p>
+</div>
+<a href="https://twitter.com/wendydevolder" class="twitter-follow-button" data-show-count="false">Follow @wendydevolder</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_mathilde_lemee">Mathilde Lemee</h3>
+<div class="paragraph">
+<p>CoFounder @SoFizzApp - L&#8217;appli pour partager tes activités à proximité avec de nouvelles personnes ! CoFounder @duchessfr - Réseau de femmes devs 2.8K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.duchess-france.org/">Duchess France - Women in Tech</a> "Mathilde Rigabert Lemée [is a] co-founder and active member of Duchess France"</p>
+</div>
+<a href="https://twitter.com/MathildeLemee" class="twitter-follow-button" data-show-count="false">Follow @MathildeLemee</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_andrea_mcats">Andrea McAts</h3>
+<div class="paragraph">
+<p>All tweets about Programming. For everything else @roundcrisis 2.7K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.roundcrisis.com/">Andrea McAts' Blog</a></p>
+</div>
+<a href="https://twitter.com/silverSpoon" class="twitter-follow-button" data-show-count="false">Follow @silverSpoon</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_tiffany_conroy">Tiffany Conroy</h3>
+<div class="paragraph">
+<p>Interaction designer. Developer. Cutter of bullshit. Made @weareallawesome. Micro diary: @whattiffanydid. she/her. Has strong opinions, loosely held.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=f_J8mXgavBs">Tiffany Conroy: Workplace confidence</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=_qzLmsaUwOs">Tiffany Conroy, Beautiful authentication: Tear down the barbed wire</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://speakerdeck.com/theophani">Talks by Tiffany Conroy</a></p>
+</div>
+<a href="https://twitter.com/theophani" class="twitter-follow-button" data-show-count="false">Follow @theophani</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_karen_catlin">Karen Catlin</h3>
+<div class="paragraph">
+<p>Advocate for women in tech. Leadership coach, TEDx speaker, co-author of Present! Board member @TheCLUBSV. Former VP @Adobe. Happy mom. 2.6K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://karencatlin.com/">Karen Catlin&#8217;s Home Page</a> "Advocating for women in the tech industry"</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.slideshare.net/KarenCatlin">Karen Catlin&#8217;s presentations</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=VTBWPTp1Rrk">Poornima Vijayashanker &amp; Karen Catlin on Mentoring</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=7_EeG0vLCi8">A Techie&#8217;s Guide to Public Speaking Karen Catlin</a></p>
+</div>
+<a href="https://twitter.com/kecatlin" class="twitter-follow-button" data-show-count="false">Follow @kecatlin</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_ludwine_probst">Ludwine Probst</h3>
+<div class="paragraph">
+<p>Data Engineer / Scientist 💻 open source contributor @@ousmotards 🏍 @L@diesCodeParis co-founder 🌍 Tech blogger #TechBeyondBorders 2.6K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://nivdul.wordpress.com/">Ludwine Probst&#8217;s Blog</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=wfSIpkRaEPM">Tech Beyond Borders by Ludwine Probst</a></p>
+</div>
+<a href="https://twitter.com/nivdul" class="twitter-follow-button" data-show-count="false">Follow @nivdul</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_amy_chen">Amy Chen</h3>
+<div class="paragraph">
+<p>Ramblings of a 20 something software engineer. 2.0K followers</p>
+</div>
+<div class="paragraph">
+<p><a href="https://medium.com/@amy">Amy Chen&#8217;s Blog</a></p>
+</div>
+<a href="https://twitter.com/TheAmyDance" class="twitter-follow-button" data-show-count="false">Follow @TheAmyDance</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_amira_lakhal">Amira LAKHAL</h3>
+<div class="paragraph">
+<p>#Agile #Java #Scala #Developer at @Valtech_fr || one of @duchessfr leaders || running addict #WomenInTech #yesWeCode</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/watch?v=EkXhPG1U6zk">IOT, timeseries and prediction with Android, Cassandra and Spark</a></p>
+</div>
+<div class="paragraph">
+<p><a href="http://nighthacking.com/amira-lakhal-iot-timeseries-and-prediction/">Nighhacker Interview</a></p>
+</div>
+<a href="https://twitter.com/MiraLak" class="twitter-follow-button" data-show-count="false">Follow @MiraLak</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect1">
+<h2 id="_1_k_followers">1+K followers</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_claude_falgui_re">Claude Falguière</h3>
+<div class="paragraph">
+<p>Java, Performance, DevOps, Clojure, DataScience, funny ways to learn programming, Devoxx4Kids, ParisJUG, Devoxx, Duchess</p>
+</div>
+<a href="https://twitter.com/cfalguiere" class="twitter-follow-button" data-show-count="false">Follow @cfalguiere</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_st_phanie_hertrich">Stéphanie Hertrich</h3>
+<div class="paragraph">
+<p>Developer Evangelist Girl @Microsoft, Technical Angel for #startup ❤️, I&#8217;m a coder and a speaker for Tech event, Proud @duchessfr</p>
+</div>
+<a href="https://twitter.com/stepheUp" class="twitter-follow-button" data-show-count="false">Follow @stepheUp</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_agn_s_crepet">Agnès Crepet</h3>
+<div class="paragraph">
+<p>Java Champion &amp; JS Newbie, @ninjasquad Co-Founder, @MINES_StEtienne CS Teacher &amp; Agile Learning Facilitator, @mixIT_lyon Co-Founder, @duchessfr Leader</p>
+</div>
+<a href="https://twitter.com/agnes_crepet" class="twitter-follow-button" data-show-count="false">Follow @agnes_crepet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_heather_vancura">Heather VanCura</h3>
+<div class="paragraph">
+<p>Community Builder, Connector, Java Connoisseur (for JCP tweets see @jcp_org); Women &amp; Girls in Tech, Open Source, Fitness, Fashion, Fun.</p>
+</div>
+<a href="https://twitter.com/heathervc" class="twitter-follow-button" data-show-count="false">Follow @heathervc</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_aysylu_greenberg">Aysylu Greenberg</h3>
+<div class="paragraph">
+<p>Programmer, Artist, Lifelong Learner, distributed infrastructure @google</p>
+</div>
+<a href="https://twitter.com/aysylu22" class="twitter-follow-button" data-show-count="false">Follow @Aysylu22</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_holly_cummins">Holly Cummins</h3>
+<div class="paragraph">
+<p>IBMer, developer, author, hat-hacker and duvet-cover-maker. My views are my own.</p>
+</div>
+<a href="https://twitter.com/holly_cummins" class="twitter-follow-button" data-show-count="false">Follow @holly_cummins</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_kasia_mrowca">Kasia Mrowca</h3>
+<div class="paragraph">
+<p>Product magician, IT passionate, agile &amp; lean enthusiast, PhD candidate, conference junkie. Love skiing and hiking :)</p>
+</div>
+<a href="https://twitter.com/MrowcaKasia" class="twitter-follow-button" data-show-count="false">Follow @MrowcaKasia</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_katia_aresti">Katia Aresti</h3>
+<div class="paragraph">
+<p>Freelance Developer, Open-source enthusiast, drama and dance passionate. @duchessfr Paris MUG</p>
+</div>
+<a href="https://twitter.com/karesti" class="twitter-follow-button" data-show-count="false">Follow @karesti</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_monica_beckwith">Monica Beckwith</h3>
+<div class="paragraph">
+<p>(Java/JVM/GC) performance consultant. Mother of 2 awesome kids. Enjoys country living. Java community editor for InfoQ.</p>
+</div>
+<a href="https://twitter.com/mon_beck" class="twitter-follow-button" data-show-count="false">Follow @mon_beck</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_anne_gabrillagues">Anne Gabrillagues</h3>
+<div class="paragraph">
+<p>Agile coach / CSM / CSPO at @ippontech - interested in everything about #agile #lean #designThinking #devops #ux &#8230;&#8203; - member of @LeanKanbanFr team</p>
+</div>
+<a href="https://twitter.com/agabrillagues" class="twitter-follow-button" data-show-count="false">Follow @agabrillagues</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+<div class="sect2">
+<h3 id="_amelia_eiras">Amelia Eiras</h3>
+<div class="paragraph">
+<p>Ecuatoriana-Española-American, #badass #usualsuspect #iloveourITcommunity. Brutal honesty trumps hypocritical politeness. The backbone @Tomitribe</p>
+</div>
+<a href="https://twitter.com/ameliaeiras" class="twitter-follow-button" data-show-count="false">Follow @ameliaeiras</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p/>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For now, I have limited the list to those with at least 1000 followers, but I will continue to update it.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_groups_supporting_women_in_tech">Groups supporting women in tech</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_ieee_women_in_engineering">IEEE Women in Engineering</h3>
+<div class="paragraph">
+<p><a href="https://www.youtube.com/channel/UClrcXvuwAbpdE6o9NUXaLxA">IEEE Women in Engineering YouTube page</a></p>
+</div>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/09/03/IT-experts-you-should-follow-on-twitter.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/09/03/IT-experts-you-should-follow-on-twitter.html</guid><category><![CDATA[Twitter]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 03 Sep 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Why don't I get the throughput I benchmarked?]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In synthetic benchmarks, you can achieve a high throughput for your system by throwing lots of independant tasks/clients at it to see what the theoretical limit of your system is, however in real world situations, the throughput you achieve is often much, much lower.  One of of the explanations for this comes from <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little&#8217;s Law</a></p>
