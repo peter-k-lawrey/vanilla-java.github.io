@@ -1,4 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:34:20 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservice with a Websocket transport]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:34:54 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Light weight Microservices]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_what_do_we_see_as_light_weight_microservices">What do we see as light weight Microservices?</h3>
+<div class="paragraph">
+<p>A key requirements for productivity is a short development lifecycle.
+Every time you have to wait between changing code and knowing there is an error to be fixed, increases the cost of fixing that error.
+You want fast feedback to ensure you stay productive.</p>
+</div>
+<div class="paragraph">
+<p>Another key requirement is simple components which are easy to reason about.  One of the simplest is services which follow the Lambda Architecture.</p>
+</div>
+<div class="sect3">
+<h4 id="_using_your_ide_as_much_as_possible">Using your IDE as much as possible.</h4>
+<div class="paragraph">
+<p>You should be able to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>see most errors in your IDE as you type, before you even compile your code.</p>
+</li>
+<li>
+<p>run your program using the Run button on your IDE.</p>
+</li>
+<li>
+<p>debug your program by running it in your IDE.</p>
+</li>
+<li>
+<p>profile your application from your IDE</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_run_your_application_quickly_on_your_desktop">Run your application quickly on your desktop</h4>
+<div class="paragraph">
+<p>It is essential to be able to run your service entirely from your desktop.  This allows you to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>write repeatable unit tests for key components of your system.</p>
+</li>
+<li>
+<p>run your application using state which is local to you.</p>
+</li>
+<li>
+<p>work without contention on shared resources such as a shared development database.</p>
+</li>
+<li>
+<p>reproduce production issues from your development environment.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_microservices_which_meets_your_business_needs">Microservices which meets your business needs.</h4>
+<div class="paragraph">
+<p>The components which make up you microservices should be</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>directly releated to a business requirement. If you couldn&#8217;t explain to an end user/business representaive why the component is needed to fulfill what they need, it&#8217;s not a business component.</p>
+</li>
+<li>
+<p>the transport fo messages between services should be a seperate concern and even optional. e.g. for unit tests and debugging.</p>
+</li>
+<li>
+<p>a microservice is not a browser, and how a browser talks to a web service is not the only model for how microservices can talk to each other.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_to_define_components">How to define components.</h3>
+<div class="paragraph">
+<p>When you define your components, it should be a direct reflection of the business function it performs.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>microservices should be coding in terms of top down design, sarting with <strong>what</strong> it needs to do at the highest level, calling methods which implement the <strong>how</strong> this is done.</p>
+</li>
+<li>
+<p>transport considerations should be defined externally to the component.  The transport should not have any influence on the business requirements, and should be interchangeable.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lambda_architecture">Lambda Architecture.</h3>
+<div class="paragraph">
+<p>Lambda Architecture (not the same as Lambdas in Java which are closures) provides a simple model for microservices to follow.  Not all microservices can follow the Lambda Architecture, however the more service which do follow it the easier your system will be to reason about.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/30/Light-weight-Microservices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/30/Light-weight-Microservices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Architecture]]></category><category><![CDATA[Design principles]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 30 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservice with a Websocket transport]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this post, we will look at a simple component to publish market data and accept orders.  How can this be accessed using websockets as a transport?</p>
