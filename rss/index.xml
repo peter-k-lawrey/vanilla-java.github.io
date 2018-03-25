@@ -1,4 +1,103 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:33:10 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[A JDBC Gateway Microservice]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:33:45 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Bad String]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This program has two threads printing messages alternatively.  However if you change a <code>String</code> from <code>"cC"</code> to <code>"cc"</code> it doesn&#8217;t print anything, WHY?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class PingPongMain {
+    public static void main(String[] args) throws InterruptedException {
+        new Thread(() -&gt; {
+            try {
+                synchronized ("bb") {
+                    while (true) {
+                        "bb".wait();
+                        "bb".notifyAll();
+                        System.out.println("b");
+                    }
+                }
+            } catch (InterruptedException e) {
+                throw new AssertionError(e);
+            }
+        }).start();
+        Thread.sleep(100);
+        setString("bb", 'c', 'C');
+        new Thread(() -&gt; {
+            try {
+                // change "cC" to "cc" and this program prints nothing.
+                synchronized ("cC") {
+                    while (true) {
+                        "cC".notifyAll();
+                        "cC".wait();
+                        System.out.println("c");
+                    }
+                }
+            } catch (InterruptedException e) {
+                throw new AssertionError(e);
+            }
+        }).start();
+
+    }
+
+    public static void setString(String s, char... chars) {
+        try {
+            Field value = String.class.getDeclaredField("value");
+            value.setAccessible(true);
+            value.set(s, chars);
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The solution is below</p>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/omg_wtf.jpg" alt="omg wtf.jpg">
+</div>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+<div class="paragraph">
+<p>.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_a_combination_of_strangeness">A combination of strangeness</h4>
+<div class="paragraph">
+<p>There is a couple of elements to this puzzle</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>using a String literal as a Object to lock on.</p>
+</li>
+<li>
+<p>corrupting a String in the literal pool.</p>
+</li>
+<li>
+<p>replacing one String with another with the same hashCode so the replacement is found. "bb".hashCode() == "cC".hashCode()</p>
+</li>
+</ul>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/21/Bad-String.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/21/Bad-String.html</guid><category><![CDATA[Puzzler]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 21 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[A JDBC Gateway Microservice]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_a_deep_dive_into_a_low_latency_microservice">A deep dive into a low latency microservice</h3>
 <div class="paragraph">
 <p>We look at a microservice which can run in it&#8217;s own JVM, can perform JDBC updates and queries via a persistent queue for in bound request and a queue for results.</p>
