@@ -1,4 +1,138 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:31:42 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices in the Chronicle World - Part 3]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:32:12 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices in the Chronicle world - Part 4]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A common issue we cover in our workshops is, <em>how to restart a queue reader after a failure.</em></p>
+</div>
+<div class="paragraph">
+<p>The answer is not a simple as you might think.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We do an on-site one week workshop to help kick start a new project, with a look at ensuring the infrastructure has a good balance of speed and simplicity.  Often, simplicity is the most important and it will also be fast enough. You can contact <a href="mailto:sales@chronicle.software">Chronicle Software Sales</a> for more details.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_knowing_when_a_message_should_be_replayed_on_startup">Knowing when a message should be replayed on startup.</h3>
+<div class="paragraph">
+<p>It&#8217;s not enough to know which messages have been played.  You need to know which messages were completed successfully in a transaction. This assumes you must have each message processed exactly once. Simpler alternatives are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Play every message again and ignore duplicates.</p>
+</li>
+<li>
+<p>Play every message from the end (or the last <em>N</em> minutes) and assume anything older than that has expired.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When updating a database, one way to achieve this is to update the index read in a row in the database, this way either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The transaction succeeds and the message doesn&#8217;t need to be played again.</p>
+</li>
+<li>
+<p>The transaction fails and the message does need to be played again.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The important detail is that there is no situation where it is unclear whether the input message should be replayed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_restarting_a_reader_when_writing_to_a_queue_as_output">Restarting a reader when writing to a queue as output.</h3>
+<div class="paragraph">
+<p>In general, we suggest you write your results to an output queue.  An output queue can be a replacement for logging and a means of monitoring, but can also record where each event came from.
+In particular, and output queue can help:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Replay messages in the same order, which were sourced from multiple input queue.</p>
+</li>
+<li>
+<p>Ensure that after an upgrade of your software, you honour the decisions you made earlier. i.e. new software replaying the input message might make different decisions. By reading from the output, you ensure that after an upgrade you know what state you should be in.</p>
+</li>
+<li>
+<p>Restart an input queue from the last message successfully outputed for an input from that queue.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this example, it reads just one unprocessed message.</p>
+</div>
+<div class="listingblock">
+<div class="title">Read one message which hasn&#8217;t been processed.</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">try (SingleChronicleQueue in = SingleChronicleQueueBuilder.binary(queuePath)
+        .sourceId(1) <i class="conum" data-value="1"></i><b>(1)</b>
+        .build();
+     SingleChronicleQueue out = SingleChronicleQueueBuilder.binary(queuePath2)
+             .rollCycle(RollCycles.TEST_DAILY)
+             .build()) {
+
+    MarketDataListener mdListener = out.createAppender()
+            .methodWriterBuilder(MarketDataListener.class)
+            .recordHistory(true) <i class="conum" data-value="2"></i><b>(2)</b>
+            .get();
+    SidedMarketDataCombiner combiner = new SidedMarketDataCombiner(mdListener);
+    MethodReader reader = in.createTailer()
+            .afterLastWritten(out) <i class="conum" data-value="3"></i><b>(3)</b>
+            .methodReader(combiner);
+    assertTrue(reader.readOne());
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Give the queue a unique id for tracing purposes.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Write a history for timings and sources for each message processed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Read the output queue to see what the last message processed was.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It would be really inefficient to do all this every time. The only line which is required for each message is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">reader.readOne();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>While there is a number of ways you could implement restart, if you need it, it is useful to have built-in support for one of the most common ways to do this.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_in_the_next_part">In the next part.</h3>
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html">How does this perform end to end with multiple asynchronous services are how can we measure there?</a></p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Restarting]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 29 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle World - Part 3]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>One of the problems with using microservices is performance.  <strong>Latencies</strong> can be higher due to the cost of <strong>serialization</strong>, messaging and deserialization, and this reduces <strong>throughput</strong>.  In particular, poor throughput is a problem because the reason we are designing a <a href="http://searchdatacenter.techtarget.com/definition/scalability">scalable system</a><sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> is to increase throughput.</p>
