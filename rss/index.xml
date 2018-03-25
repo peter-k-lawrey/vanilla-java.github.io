@@ -1,4 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:47:12 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:47:42 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Can you have encryption and low latency in Java]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>While using encryption is slower than writing raw messages, how much slower is it and does it have to be a performance problem?</p>
+</div>
+<div class="paragraph">
+<p>In this post, I look at Chronicle Queue, with and without encryption to see how much difference it makes to latency.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_test">The test</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this test, there is one writer or Appender, writing data at regular intervals using a Marshallable object, containing a nano-second timestamp. Another reader or "Tailer" is reading those messages.
+The timestamp used is the time the message should have been written rather than when it was written to avoid co-ordinated omission.</p>
+</div>
+<div class="paragraph">
+<p>The message is 32 bytes in length, and 5 million messages were sent in each case after ignoring the first 100 thousand to allow the JVM to warmup.</p>
+</div>
+<div class="paragraph">
+<p>The computer used is a Dell XPS 15 with an i7-6700HQ with 8 GB memory running Windows 10.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_salted_aes_encryption">Salted AES encryption.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>AES128 is a fast 128 bit encryption, though it has one weekness. If all the messages start the same (and in this test and is often the case) the first bytes become predictable.  This makes cracking the key easier.</p>
+</div>
+<div class="paragraph">
+<p>A standard soluton is to use a "salt", which is a random block at the start of the message. In our case we use a 64-bit psedo random number with the System.nanoTime() (also 64-bit)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_latency_distribution">The latency distribution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In throughput tests, the machine can write/read over one million messages per second with encryption, however the latency distribution is poor in this range.
+For the purposes of this test we are looking at what throughput do we get low latency as well .</p>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</guid><category><![CDATA[Encryption]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you use a standard JVM like the Oracle JVM, or the OpenJDK, you might find that as the heap size grows the performance of your JVM can drop as GC pause time escalates.  This tends to be a problem around 32 GB of heap, but it often depends on the application at which point the size of you heap becomes a problem.</p>
