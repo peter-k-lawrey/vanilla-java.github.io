@@ -1,4 +1,235 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:38:49 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Modelling Microservice Patterns in Code]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:40:14 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Distributing Common Java APIs]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_distributing_data_stores_vs_private_data_stores_in_microservices">Distributing data stores vs Private data stores in Microservices</h3>
+<div class="paragraph">
+<p>Distributing data containers e.g. Maps, can be a way of avoiding having to think too much about distributing your application.  Your business logic is much the same, and it is your data collections which are visible to all your services.</p>
+</div>
+<div class="paragraph">
+<p>Using centralised or even distributed data stores have a number of scalability issues, as it requires every low level data access to be distributed in a generic way which isn&#8217;t optimised for particular business requirements.</p>
+</div>
+<div class="paragraph">
+<p>Distributing business components with private data stores is the favoured approach of Microservices and it limits the "surface area" of each service which reduces security issues, performance considerations and gives you more freedom for independant changes to service&#8217;s data structures.</p>
+</div>
+<div class="paragraph">
+<p>In this review, I will be focusing on distributed data containers, largely because the interfaces are available in the JDK and available for everyone to look at.  I expect the conclusions drawn here are broadly similar for Business focused APIs, though each business component will vary.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_review_of_different_interaction_types_for_common_data_store_apis_in_the_jdk">Review of different interaction types for common Data store APIs in the JDK.</h3>
+<div class="paragraph">
+<p>I have reviewed a number of APIs in the JDK using a <a href="https://github.com/OpenHFT/Chronicle-Essence/tree/master/src/main/java/net/openhft/chronicle/essence/classify">tool available here</a></p>
+</div>
+<div class="paragraph">
+<p>The interfaces reviewed were:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ScheduledExecutorService (incl ExecutorService)</p>
+</li>
+<li>
+<p>ReadWriteLock</p>
+</li>
+<li>
+<p>Lock</p>
+</li>
+<li>
+<p>BlockingDeque (incl BlockingQueue)</p>
+</li>
+<li>
+<p>List (incl Collection)</p>
+</li>
+<li>
+<p>ConcurrentNavigableMap (Incl SortedMap)</p>
+</li>
+<li>
+<p>ConcurrentMap (incl Map)</p>
+</li>
+<li>
+<p>NavigableSet (incl SortedSet, Set)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Interfaces higher up the inheritance tree where not included to avoid duplication. However there is still some duplication e.g. Set and List are Collection(s).</p>
+</div>
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Request-Response">Request-Response</a> - 104 methods</p>
+</div>
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Request-Proxy">Request-Proxy</a> - 29 methods</p>
+</div>
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Request-Visitor">Request-Visitor</a> - 26 methods</p>
+</div>
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html">Asynchronous Lambda</a> - 18 methods</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>7 methods</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default Call - 22 methods</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+"Default Call" means the default implimentation of the interface is appropriate an can be executed on the caller.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Request-Visitor">Request-Visitor</a> is variation on Request-Repsonse but rather than passing a Data Transfer Object, a Command Object is passed.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Request-Callback">Request-Callback</a> is a variation of Request Subscription where you expect to get exactly one invocation. There where no examples here.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As I have noted in the past, while I believe using Lambda style asynchronous calls is ideal, this is not a natural interaction for many APIs and wouldn&#8217;t work so well in these methods.</p>
+</div>
+<div class="paragraph">
+<p>Lastly, the <a href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html#Client-Injected-Handler">Client Injected Handler</a> might only make sense for a distributed component, and I wouldn&#8217;t expect it to occur in an API which wasn&#8217;t designed to utilise it.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request-Response examples</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from Map
+V get(Object key);
+
+// from NavigableMap
+V lastEntry();
+
+// from Lock
+boolean tryLock();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Request-Proxy examples</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from ReadWriteLock
+Lock readLock()
+
+// from Lock
+Condition newCondition();
+
+// from ConcurrentNavigableMap
+NavigableSet&lt;K&gt; descendingKeySet();
+
+// from ScheduledExecutorService
+ScheduledFuture scheduleAtFixedRate(Runnable run, long delay, long period, TimeUnit timeUnit)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Request-Visitor examples</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from List
+Collection removeIf(Predicate test);
+
+// from ConcurrentMap
+V ConcurrentMap.computeIfPresent(K key, BiFunction mergeFunction);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Asynchronous Lambda examples</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from BlockingDeque
+void addFirst(E element);
+
+// from Executor
+void execute(Runnable runnable);
+
+// from List
+void replaceAll(UnaryOperator oper); // also a Visitor</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Default Call examples</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from ConcurrentMap
+default V getOrDefault(Object key, V defaultValue) {
+    V v;
+    return ((v = get(key)) != null) ? v : defaultValue;
+}
+
+// from BlockingDeque
+Stream&lt;E&gt; parallelStream(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>later the paralellStream itself could have it&#8217;s work distributed across a grid of machines.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>The Request-Response call is the most often used in this example.  While you can avoid using it in a  distributed system, there is often cases where using Request-Response is just simpler e.g. for control functions which don&#8217;t have to scale as much as events which occur thousands of times a second.</p>
+</div>
+<div class="paragraph">
+<p>The Request Proxy and Asynchronous Lambda calls have some natural use cases and have been around for some time.</p>
+</div>
+<div class="paragraph">
+<p>The Request Visitor use cases where all added in Java 8 with the inclusion of Lambdas.</p>
+</div>
+<div class="paragraph">
+<p>In some cases, a default method on the client might be enough.  This will usually call through to a method which does have to go across the transport. Ideally this should result in just one method call.  If a default method has more than one method call it might be more efficient to execute this on the server.</p>
+</div>
+<div class="paragraph">
+<p>The Request Callback wasn&#8217;t use in these cases, but it can be an effective way to transform a Request-Response call into an asynchronous call, although it requires an API change.</p>
+</div>
+<div class="sect3">
+<h4 id="_footnote_on_request_callback">Footnote on Request-Callback</h4>
+<div class="paragraph">
+<p>What I have done in the past is make Request-Callback interchangeable with Request-Response where the Callback is added as the last argument.  This could be kept visible only to the client, and the server doesn&#8217;t need to know. e.g.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request-Callback examples calling Request-Response</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">// from Map
+default void get(Object key, ThrowableConsumer&lt;V&gt; consumer) {
+    V v;
+    try {
+        v = get(key);
+    } catch (Throwable t) {
+        consumer.onException(t);
+        return;
+    }
+    consumer.accept(v);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-AP-I.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-AP-I.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Data Containers]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Modelling Microservice Patterns in Code]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_service_interactions">Service Interactions</h3>
 <div class="paragraph">
 <p>There is a number of simple interactions a service can support.  Which pattern is best for your application can depend on what an existing application expects, and what latency requirements you have.  Broadly speaking these interactions fall into client-server and peir-to-peir messaging.</p>
