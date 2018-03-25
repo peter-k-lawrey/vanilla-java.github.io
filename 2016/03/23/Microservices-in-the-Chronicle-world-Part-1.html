@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Microservices in the Chronicle world - Part 1</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Microservices in the Chronicle world - Part 1">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Microservices in the Chronicle world - Part 1">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522005415428"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522005415428"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522005415428"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522005415428"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Microservices in the Chronicle world - Part 1" />
+    <meta property="og:description" content="At a high level, different Microservice strategies have a lot in common.  They subscribe to the same ideals. When it comes to the details of how they are actually implemented, they can vary. Microservices in the Chronicle world are designed around: Simplicity- simple is fast, flexable and easier to maintain." />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html" />
+    <meta property="article:published_time" content="2016-03-23T00:00:00.000Z" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content="examples" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Microservices in the Chronicle world - Part 1" />
+    <meta name="twitter:description" content="At a high level, different Microservice strategies have a lot in common.  They subscribe to the same ideals. When it comes to the details of how they are actually implemented, they can vary. Microservices in the Chronicle world are designed around: Simplicity- simple is fast, flexable and easier to maintain." />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Microservices in the Chronicle world - Part 1",
+    "url": "https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html",
+    "datePublished": "2016-03-23T00:00:00.000Z",
+    "keywords": "Microservices, examples",
+    "description": "At a high level, different Microservice strategies have a lot in common.  They subscribe to the same ideals. When it comes to the details of how they are actually implemented, they can vary. Microservices in the Chronicle world are designed around: Simplicity- simple is fast, flexable and easier to maintain."
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Microservices tag-examples">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Microservices tag-examples">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-03-23" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/examples/">examples</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html" itemprop="url" data-pjax title="Microservices in the Chronicle world - Part 1">Microservices in the Chronicle world - Part 1</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>At a high level, different <strong>Microservice</strong> strategies have a lot in common.  They subscribe to the same ideals.
+When it comes to the details of how they are actually implemented, they can vary.</p>
+</div>
+<div class="paragraph">
+<p>Microservices in the Chronicle world are designed around:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Simplicity- simple is fast, flexable and easier to maintain.</p>
+</li>
+<li>
+<p>Transparency- you can&#8217;t control what you don&#8217;t understand.</p>
+</li>
+<li>
+<p>Reproduceablity- this must be in your design to ensure a quality solution.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_do_we_mean_by_simple">What do we mean by simple?</h3>
+<div class="paragraph">
+<p>A key part of the microservices design is how messages are passed between services/components. The simplest messages could be called <em>asynchronous method calls</em>.</p>
+</div>
+<div class="paragraph">
+<p>An asynchronous method call is one which;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>doesn&#8217;t return anything,</p>
+</li>
+<li>
+<p>doesn&#8217;t alter it&#8217;s arguments;</p>
+</li>
+<li>
+<p>doesn&#8217;t throw any exceptions (although the underlying transport could).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The reason this approach is used, is that the simplest transport is no transport at all.  One component calls another.  This is not only fast ( and with inlining might not take any time at all), but it is simple to setup, debug and profile.  For most unit tests you don&#8217;t need a real transport so there is no advantage in making the test more complicated than it needs to be.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_let_s_look_at_an_example">Let&#8217;s look at an example.</h3>
+<div class="paragraph">
+<p>Say we have a service/component which is taking incremental market data updates. In the simplest case, this could be a market update with only one side, a buy or a sell.  The component could transform this into a full market update combining both the buy and sell price and quantity.</p>
+</div>
+<div class="paragraph">
+<p>In this example, we have only one message type to start with, however we can add more message types. I suggest you create a different message name/method for each message rather than overloading a method.</p>
+</div>
+<div class="listingblock">
+<div class="title">Our inbound data structure</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class SidedPrice extends AbstractMarshallable {
+    final String symbol;
+    final long timestamp;
+    final Side side;
+    final double price, quantity;
+
+    public SidedPrice(String symbol, long timestamp, Side side, double price, double quantity) {
+        this.symbol = symbol;
+        this.timestamp = timestamp;
+        this.side = side;
+        this.price = price;
+        this.quantity = quantity;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Our outbound data structure</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class TopOfBookPrice extends AbstractMarshallable {
+    final String symbol;
+    final long timestamp;
+    final double buyPrice, buyQuantity;
+    final double sellPrice, sellQuantity;
+
+    public TopOfBookPrice(String symbol, long timestamp, double buyPrice, double buyQuantity, double sellPrice, double sellQuantity) {
+        this.symbol = symbol;
+        this.timestamp = timestamp;
+        this.buyPrice = buyPrice;
+        this.buyQuantity = buyQuantity;
+        this.sellPrice = sellPrice;
+        this.sellQuantity = sellQuantity;
+    }
+
+    // more methods <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>For the complete code <a href="https://github.com/Vanilla-Java/Microservices/blob/master/src/main/java/net/openhft/samples/microservices/orders/TopOfBookPrice.java">TopOfBookPrice.java</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The component which takes one sided prices could have an interface;</p>
+</div>
+<div class="listingblock">
+<div class="title">Inbound interface for the first component</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface SidedMarketDataListener {
+    void onSidedPrice(SidedPrice sidedPrice);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and it&#8217;s output also has one method;</p>
+</div>
+<div class="listingblock">
+<div class="title">Outbound interface for the first component</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface MarketDataListener {
+    void onTopOfBookPrice(TopOfBookPrice price);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_does_our_microservice_look_like">What does our microservice look like?</h3>
+<div class="paragraph">
+<p>At a high level, the combiner is very simple;</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class SidedMarketDataCombiner implements SidedMarketDataListener {
+    final MarketDataListener mdListener;
+    final Map&lt;String, TopOfBookPrice&gt; priceMap = new TreeMap&lt;&gt;();
+
+    public SidedMarketDataCombiner(MarketDataListener mdListener) {
+        this.mdListener = mdListener;
+    }
+
+    public void onSidedPrice(SidedPrice sidedPrice) {
+        TopOfBookPrice price = priceMap.computeIfAbsent(sidedPrice.symbol, TopOfBookPrice::new);
+        if (price.combine(sidedPrice))
+            mdListener.onTopOfBookPrice(price);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It implements our input interface and takes the output interface as a listener.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_does_abstractmarshallable_provide">What does AbstractMarshallable provide?</h3>
+<div class="paragraph">
+<p>The <a href="https://github.com/OpenHFT/Chronicle-Wire/blob/master/src/main/java/net/openhft/chronicle/wire/AbstractMarshallable.java">AbstractMarshallable</a> class is a convenience class which implements <code>toString()</code>, <code>equals(Object)</code> and <code>hashCode()</code>. It also supports Marshallable&#8217;s <code>writeMarshallable(WireOut)</code> and <code>readMarshallable(WireIn)</code>.</p>
+</div>
+<div class="paragraph">
+<p>The default implementations use all the non-static non-transient fields to either print, compare or build a hashCode.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+the resulting toString() can always be <strong>de-serialized</strong> with <code>Marshallable.fromString(CharSequence)</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at a couple of examples.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">SidedPrice sp = new SidedPrice("Symbol", 123456789000L, Side.Buy, 1.2345, 1_000_000);
+assertEquals("!SidedPrice {\n" +
+        "  symbol: Symbol,\n" +
+        "  timestamp: 123456789000,\n" +
+        "  side: Buy,\n" +
+        "  price: 1.2345,\n" +
+        "  quantity: 1000000.0\n" +
+        "}\n", sp.toString());
+
+// from string
+SidedPrice sp2 = Marshallable.fromString(sp.toString());
+assertEquals(sp2, sp);
+assertEquals(sp2.hashCode(), sp.hashCode());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, the <code>toString()</code> is in <a href="http://www.yaml.org/spec/1.2/spec.html">YAML</a><sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup>, concise, readable to a human and in code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">TopOfBookPrice tobp = new TopOfBookPrice("Symbol", 123456789000L, 1.2345, 1_000_000, 1.235, 2_000_000);
+assertEquals("!TopOfBookPrice {\n" +
+        "  symbol: Symbol,\n" +
+        "  timestamp: 123456789000,\n" +
+        "  buyPrice: 1.2345,\n" +
+        "  buyQuantity: 1000000.0,\n" +
+        "  sellPrice: 1.235,\n" +
+        "  sellQuantity: 2000000.0\n" +
+        "}\n", tobp.toString());
+
+// from string
+TopOfBookPrice topb2 = Marshallable.fromString(tobp.toString());
+assertEquals(topb2, tobp);
+assertEquals(topb2.hashCode(), tobp.hashCode());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>One of the advantages of using this format is that it makes it easier to find the reason for a failing test even in complex objects.</p>
+</div>
+<div class="listingblock">
+<div class="title">Even in a trivial test it&#8217;s not obvious what the problem is</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">TopOfBookPrice tobp = new TopOfBookPrice("Symbol", 123456789000L, 1.2345, 1_000_000, 1.235, 2_000_000);
+TopOfBookPrice tobp2 = new TopOfBookPrice("Symbol", 123456789000L, 1.2345, 1_000_000, 1.236, 2_000_000);
+
+assertEquals(tobp, tobp2);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However when you run this test in your  <a href="https://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a><sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>, you get a comparison window.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/TopOfBookPrice-comparison.png" alt="Top Of Book Price comparison" width="720">
+</div>
+<div class="title">Figure 1. Comparison Windows in your IDE</div>
+</div>
+<div class="paragraph">
+<p>If you have a large nested/complex object where <code>assertEquals</code> fails, it can really save you a lot of time finding what the discrepency is.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mocking_our_component">Mocking our component</h3>
+<div class="paragraph">
+<p>We can mock an interface using a tool like <a href="http://easymock.org/">EasyMock</a>. I find EasyMock is simpler when dealing with event driven interfaces. It is not as powerful as PowerMock or Mockito, however if you are keeping things simple, you might not need those features.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">// what we expect to happen
+SidedPrice sp = new SidedPrice("Symbol", 123456789000L, Side.Buy, 1.2345, 1_000_000);
+SidedMarketDataListener listener = createMock(SidedMarketDataListener.class);
+listener.onSidedPrice(sp);
+replay(listener);
+
+// what happens
+listener.onSidedPrice(sp);
+
+// verify we got everything we expected.
+verify(listener);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can also mock the expected output of a component the same way.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_our_component">Testing our component</h3>
+<div class="paragraph">
+<p>By mocking the output interface and calling the input interface for our compoonent we can check it behaves as expected.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">MarketDataListener listener = createMock(MarketDataListener.class);
+listener.onTopOfBookPrice(new TopOfBookPrice("EURUSD", 123456789000L, 1.1167, 1_000_000, Double.NaN, 0)); <i class="conum" data-value="1"></i><b>(1)</b>
+listener.onTopOfBookPrice(new TopOfBookPrice("EURUSD", 123456789100L, 1.1167, 1_000_000, 1.1172, 2_000_000)); <i class="conum" data-value="2"></i><b>(2)</b>
+replay(listener);
+
+SidedMarketDataListener combiner = new SidedMarketDataCombiner(listener);
+combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789000L, Side.Buy, 1.1167, 1e6)); <i class="conum" data-value="1"></i><b>(1)</b>
+combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Sell, 1.1172, 2e6)); <i class="conum" data-value="2"></i><b>(2)</b>
+
+verify(listener);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Setting the buy price</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Setting the sell price</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_a_series_of_components">Testing a series of components</h3>
+<div class="paragraph">
+<p>Lets add an OrderManager as a down stream component. This order manager will receive both market data updates and order ideas, and in turn will produce orders.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">// what we expect to happen
+OrderListener listener = createMock(OrderListener.class);
+listener.onOrder(new Order("EURUSD", Side.Buy, 1.1167, 1_000_000));
+replay(listener);
+
+// build our scenario
+OrderManager orderManager = new OrderManager(listener); <i class="conum" data-value="2"></i><b>(2)</b>
+SidedMarketDataCombiner combiner = new SidedMarketDataCombiner(orderManager); <i class="conum" data-value="1"></i><b>(1)</b>
+
+// events in
+orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1180, 2e6)); // not expected to trigger
+
+combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789000L, Side.Sell, 1.1172, 2e6));
+combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1160, 2e6));
+
+combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1167, 2e6));
+
+orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1165, 1e6)); // expected to trigger
+
+verify(listener);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The first component combines sided prices</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The second component listens to order ideas and top of book market data</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_debugging_our_components">Debugging our components</h3>
+<div class="paragraph">
+<p>You can see that one component just calls another. When debugging this single threaded code, each event from the first component is a call to the second component. When that finishes it returns to the first one and the tests.</p>
+</div>
+<div class="paragraph">
+<p>When any individual event triggers an error, you can see in the <strong>stack trace</strong> which event caused the issue. However, if you are expecting an event which doesn&#8217;t happen, this is tricker unless your tests are simple (or you do a series of simple tests with <code>verify()</code>, <code>reset()</code> and <code>replay()</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+it takes almost no time at all to start up the test and debug it in your IDE.  You can run hundreds of tests like this in less than a second.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_source_for_examples">Source for examples</h3>
+<div class="paragraph">
+<p><a href="https://github.com/Vanilla-Java/Microservices/tree/master/src/main/java/net/openhft/samples/microservices" class="bare">https://github.com/Vanilla-Java/Microservices/tree/master/src/main/java/net/openhft/samples/microservices</a></p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_do_we_create_these_as_services">How do we create these as services?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have shown how easy it is to test and debug our components. <a href="https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html">How do we turn these into services in Part 2</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_glossary">Glossary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Microservices</strong>- Independantly deployable programmes that act as components in a larger network.</p>
+</div>
+<div class="paragraph">
+<p><strong>Serialization</strong>- <a href="https://en.wikipedia.org/wiki/Serialization">"The process of translating data structures or object state into a format that can be stored"</a><sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup><em>See also</em> <strong>Serialization libraries</strong>- The process that translates data into a format that can be consumed by another system.</p>
+</div>
+<div class="paragraph">
+<p><strong>Stack trace</strong>- "A report of the active <a href="http://stackoverflow.com/questions/10057443/explain-the-concept-of-a-stack-frame-in-a-nutshell">stack frames</a> at a certain point in time during the execution of a program."  <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup> // = Your Blog title</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. Ben-Kiki, et al (2009). YAML Ain’t Markup Language (YAML™) Version 1.2. Online. Available at: <a href="http://www.yaml.org/spec/1.2/spec.html" class="bare">http://www.yaml.org/spec/1.2/spec.html</a>. Accessed Jul. 2016
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. Wikipedia. (2016). Integrated development environment. Online. Available at: <a href="https://en.wikipedia.org/wiki/Integrated_development_environment" class="bare">https://en.wikipedia.org/wiki/Integrated_development_environment</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. Wikipedia. (2016). Serialization. Online. Available at: <a href="https://en.wikipedia.org/wiki/Serialization" class="bare">https://en.wikipedia.org/wiki/Serialization</a>. Accessed Jul. 2016.
+</div>
+<div class="footnote" id="_footnote_4">
+<a href="#_footnoteref_4">4</a>. Wikipedia. (2016). Stack trace. Online. Available at: <a href="https://en.wikipedia.org/wiki/Stack_trace" class="bare">https://en.wikipedia.org/wiki/Stack_trace</a>. Accessed Jul. 2016
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">March 23, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522005415428"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
