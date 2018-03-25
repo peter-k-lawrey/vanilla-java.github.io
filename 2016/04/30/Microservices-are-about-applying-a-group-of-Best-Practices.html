@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Microservices are about applying a group of Best Practices</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Microservices are about applying a group of Best Practices">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Microservices are about applying a group of Best Practices">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522006633221"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522006633221"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522006633221"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522006633221"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Microservices are about applying a group of Best Practices" />
+    <meta property="og:description" content="Microservices Denial A number of times clients have said; they can&amp;#8217;t imagine their organisation using Microservices. I found this surprising as I know those people are using many of the principles of Microservices already. I can understand that they feel no need to join the hype around microservices," />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html" />
+    <meta property="article:published_time" content="2016-04-30T00:00:00.000Z" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content="Best Practice" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Microservices are about applying a group of Best Practices" />
+    <meta name="twitter:description" content="Microservices Denial A number of times clients have said; they can&amp;#8217;t imagine their organisation using Microservices. I found this surprising as I know those people are using many of the principles of Microservices already. I can understand that they feel no need to join the hype around microservices," />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Microservices are about applying a group of Best Practices",
+    "url": "https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html",
+    "datePublished": "2016-04-30T00:00:00.000Z",
+    "keywords": "Microservices, Best Practice",
+    "description": "Microservices Denial A number of times clients have said; they can&amp;#8217;t imagine their organisation using Microservices. I found this surprising as I know those people are using many of the principles of Microservices already. I can understand that they feel no need to join the hype around microservices,"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Microservices tag-Best-Practice">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Microservices tag-Best-Practice">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-04-30" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Best-Practice/">Best Practice</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Microservices are about applying a group of Best Practices">Microservices are about applying a group of Best Practices</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div class="sect2">
+<h3 id="_microservices_denial">Microservices Denial</h3>
+<div class="paragraph">
+<p>A number of times clients have said; they can&#8217;t imagine their organisation using Microservices.
+I found this surprising as I know those people are using many of the principles of Microservices already.</p>
+</div>
+<div class="paragraph">
+<p>I can understand that they feel no need to join the hype around microservices, but the reality is, like it or not,
+you are most likely using some of the best practices Microservices advocates.</p>
+</div>
+<div class="paragraph">
+<p>Stages of denial</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It all seems like hype, we don&#8217;t go in for that.</p>
+</li>
+<li>
+<p>Perhaps not all hype, but does it really mean anything.</p>
+</li>
+<li>
+<p>It all sounds pretty familiar.</p>
+</li>
+<li>
+<p>It sounds like what we are doing already.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Formally or informally, most likely you have been following some best practices already.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adopting_best_practices">Adopting Best Practices.</h3>
+<div class="paragraph">
+<p>Perhaps you don&#8217;t like the name Microservices, and perhaps not all the different things people
+associate with Microservices are right for your team, your projects.  Instead lets consider how do you formalise what you are trying to achieve and finding a clearer path to adopting best practices.</p>
+</div>
+<div class="sect3">
+<h4 id="_why_do_this_at_all">Why do this at all?</h4>
+<div class="paragraph">
+<p>Within larger teams there can be some disagreement as to how to proceed.  There can be strong feelings on what is bad, or broken about what you have and the temptation is to just throw away large portions of what you have or throw away everything.</p>
+</div>
+<div class="paragraph">
+<p>The problem with doing this is you risk taking out the old known problems and putting in more new unknown ones.  You need to make changes, possibly selectively radical changes, which are manageable and achieveable for your team.</p>
+</div>
+<div class="paragraph">
+<p>By formalising what you are talking about, even using buzz words, you can state more clearly what you are trying to achieve and why.  It gives you a common language in which to communicate your ideas.  It can give you a better perspective of where you are today and where you need to be.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_best_practices_scorecard">Best Practices Scorecard.</h3>
+<div class="paragraph">
+<p>Using a scorecard you can quickly see where you are today, where the quick wins are and where you need to be in the medium term.  A big part of the question; where are we today, is just rebranding what you have already.  This review can lead you to see in some ways you are not in as bad position as you might have imagined, while putting in to stark contrast the areas with the most opportunity to improve.</p>
+</div>
+<div class="sect3">
+<h4 id="_initial_steps">Initial steps</h4>
+<div class="paragraph">
+<p>The initial steps I suggest are</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>rebrand what you have; you will have some best practices already.</p>
+</li>
+<li>
+<p>quick wins; low risk changes could help improve your position.</p>
+</li>
+<li>
+<p>medium term improvements; what do you need to achieve in the next six months.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_an_example">An example.</h3>
+<div class="paragraph">
+<p>This is a score card I put together for a senior manager for firm of over 60 developers. In the space of an hour we went from not considering Microservices, to being convinced it was a path to enhance their solutions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Best Practice Scorecard</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Today</th>
+<th class="tableblock halign-left valign-top">Quick Wins</th>
+<th class="tableblock halign-left valign-top">6 Months</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simple bsuiness component based design.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distributed by JVM and Machine</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service Discovery</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resilience to failure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transport agnostic</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asynchronous messaging.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automated, dynamic deployment of services.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service local private data sets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transparent messaging.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lambda Architecture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★★</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is not intended to be an exhaustive list. It is what we reviewed in the first hour.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The last two areas were recognised as the most significant areas for improvement as they are both low risk but highly likely to reveal the cause of some of the recurring issues they have been having.</p>
+</div>
+<div class="paragraph">
+<p>In particular, performance and stability issues require quality, detailed information about what your system is doing so you can take an informed view as what needs to be changed to fix it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Whether you love or loath Microservices, most likely you are using some Best Practices, and a review of the Best Practices used in Microservices may prove to be useful in seeing how you can improve what you have.</p>
+</div>
+<div class="sect3">
+<h4 id="_contact_us">Contact Us.</h4>
+<div class="paragraph">
+<p><a href="http://chronicle.software/">Chronicle Software</a> provides one and two week workshop for starting new projects, training and consulting.  We provide <a href="http://chronicle.software/support/">Professional Support</a>. We sponsor open source software on github as well as a low latency FIX Engine and enterprise versions of a high performance <a href="http://chronicle.software/products/chronicle-queue/">Queue</a>, a key value store <a href="http://chronicle.software/products/chronicle-map/">Map</a> and a data distributions <a href="http://chronicle.software/products/chronicle-engine/">Engine</a></p>
+</div>
+<div class="paragraph">
+<p>You can email us on <a href="mailto:sales@chronicle.software">sales@chronicle.software</a></p>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">April 30, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522006633221"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>

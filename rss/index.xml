@@ -1,4 +1,198 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:36:43 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Light weight Microservices]]></title><description><![CDATA[<div class="sect2">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:37:13 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices are about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
+<h3 id="_microservices_denial">Microservices Denial</h3>
+<div class="paragraph">
+<p>A number of times clients have said; they can&#8217;t imagine their organisation using Microservices.
+I found this surprising as I know those people are using many of the principles of Microservices already.</p>
+</div>
+<div class="paragraph">
+<p>I can understand that they feel no need to join the hype around microservices, but the reality is, like it or not,
+you are most likely using some of the best practices Microservices advocates.</p>
+</div>
+<div class="paragraph">
+<p>Stages of denial</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It all seems like hype, we don&#8217;t go in for that.</p>
+</li>
+<li>
+<p>Perhaps not all hype, but does it really mean anything.</p>
+</li>
+<li>
+<p>It all sounds pretty familiar.</p>
+</li>
+<li>
+<p>It sounds like what we are doing already.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Formally or informally, most likely you have been following some best practices already.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adopting_best_practices">Adopting Best Practices.</h3>
+<div class="paragraph">
+<p>Perhaps you don&#8217;t like the name Microservices, and perhaps not all the different things people
+associate with Microservices are right for your team, your projects.  Instead lets consider how do you formalise what you are trying to achieve and finding a clearer path to adopting best practices.</p>
+</div>
+<div class="sect3">
+<h4 id="_why_do_this_at_all">Why do this at all?</h4>
+<div class="paragraph">
+<p>Within larger teams there can be some disagreement as to how to proceed.  There can be strong feelings on what is bad, or broken about what you have and the temptation is to just throw away large portions of what you have or throw away everything.</p>
+</div>
+<div class="paragraph">
+<p>The problem with doing this is you risk taking out the old known problems and putting in more new unknown ones.  You need to make changes, possibly selectively radical changes, which are manageable and achieveable for your team.</p>
+</div>
+<div class="paragraph">
+<p>By formalising what you are talking about, even using buzz words, you can state more clearly what you are trying to achieve and why.  It gives you a common language in which to communicate your ideas.  It can give you a better perspective of where you are today and where you need to be.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_best_practices_scorecard">Best Practices Scorecard.</h3>
+<div class="paragraph">
+<p>Using a scorecard you can quickly see where you are today, where the quick wins are and where you need to be in the medium term.  A big part of the question; where are we today, is just rebranding what you have already.  This review can lead you to see in some ways you are not in as bad position as you might have imagined, while putting in to stark contrast the areas with the most opportunity to improve.</p>
+</div>
+<div class="sect3">
+<h4 id="_initial_steps">Initial steps</h4>
+<div class="paragraph">
+<p>The initial steps I suggest are</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>rebrand what you have; you will have some best practices already.</p>
+</li>
+<li>
+<p>quick wins; low risk changes could help improve your position.</p>
+</li>
+<li>
+<p>medium term improvements; what do you need to achieve in the next six months.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_an_example">An example.</h3>
+<div class="paragraph">
+<p>This is a score card I put together for a senior manager for firm of over 60 developers. In the space of an hour we went from not considering Microservices, to being convinced it was a path to enhance their solutions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Best Practice Scorecard</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Today</th>
+<th class="tableblock halign-left valign-top">Quick Wins</th>
+<th class="tableblock halign-left valign-top">6 Months</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simple bsuiness component based design.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distributed by JVM and Machine</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service Discovery</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resilience to failure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transport agnostic</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asynchronous messaging.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automated, dynamic deployment of services.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service local private data sets.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transparent messaging.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☆</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★☆</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lambda Architecture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">★★★</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is not intended to be an exhaustive list. It is what we reviewed in the first hour.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The last two areas were recognised as the most significant areas for improvement as they are both low risk but highly likely to reveal the cause of some of the recurring issues they have been having.</p>
+</div>
+<div class="paragraph">
+<p>In particular, performance and stability issues require quality, detailed information about what your system is doing so you can take an informed view as what needs to be changed to fix it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Whether you love or loath Microservices, most likely you are using some Best Practices, and a review of the Best Practices used in Microservices may prove to be useful in seeing how you can improve what you have.</p>
+</div>
+<div class="sect3">
+<h4 id="_contact_us">Contact Us.</h4>
+<div class="paragraph">
+<p><a href="http://chronicle.software/">Chronicle Software</a> provides one and two week workshop for starting new projects, training and consulting.  We provide <a href="http://chronicle.software/support/">Professional Support</a>. We sponsor open source software on github as well as a low latency FIX Engine and enterprise versions of a high performance <a href="http://chronicle.software/products/chronicle-queue/">Queue</a>, a key value store <a href="http://chronicle.software/products/chronicle-map/">Map</a> and a data distributions <a href="http://chronicle.software/products/chronicle-engine/">Engine</a></p>
+</div>
+<div class="paragraph">
+<p>You can email us on <a href="mailto:sales@chronicle.software">sales@chronicle.software</a></p>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Best Practice]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 30 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Light weight Microservices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_what_do_we_see_as_light_weight_microservices">What do we see as light weight Microservices?</h3>
 <div class="paragraph">
 <p>A key requirements for productivity is a short development lifecycle.
