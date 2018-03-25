@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Improving percentile latencies in Chronicle Queue</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Improving percentile latencies in Chronicle Queue">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Improving percentile latencies in Chronicle Queue">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522007307600"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522007307600"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522007307600"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522007307600"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Improving percentile latencies in Chronicle Queue" />
+    <meta property="og:description" content="Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100). What tools and tricks did we use to achieve that? What are we testing? Chronicle Queue appends messages to a file while another thread or process can" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html" />
+    <meta property="article:published_time" content="2017-02-06T00:00:00.000Z" />
+    <meta property="article:tag" content="Chronicle Queue" />
+    <meta property="article:tag" content="Low Latency" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Improving percentile latencies in Chronicle Queue" />
+    <meta name="twitter:description" content="Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100). What tools and tricks did we use to achieve that? What are we testing? Chronicle Queue appends messages to a file while another thread or process can" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Improving percentile latencies in Chronicle Queue",
+    "url": "https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html",
+    "datePublished": "2017-02-06T00:00:00.000Z",
+    "keywords": "Chronicle Queue, Low Latency",
+    "description": "Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100). What tools and tricks did we use to achieve that? What are we testing? Chronicle Queue appends messages to a file while another thread or process can"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Chronicle-Queue tag-Low-Latency">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Chronicle-Queue tag-Low-Latency">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2017-02-06" itemprop="datePublished">
+                  a year ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Chronicle-Queue/">Chronicle Queue</a>, <a href="https://vanilla-java.github.io/tag/Low-Latency/">Low Latency</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Improving percentile latencies in Chronicle Queue">Improving percentile latencies in Chronicle Queue</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100).
+What tools and tricks did we use to achieve that?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_are_we_testing">What are we testing?</h3>
+<div class="paragraph">
+<p>Chronicle Queue appends messages to a file while another thread or process can be reading it.  This gives you persisted IPC (InterProcess Communication).</p>
+</div>
+<div class="paragraph">
+<p>For our clients with higher expectations for latency, they are looking to have the whole service which is under 100 micro-seconds 99% of the time.</p>
+</div>
+<div class="paragraph">
+<p>For our test, we have chosen to find the throughput you can achieve and still be under 10 micro-seconds 99% of the time. The test writes 20 million 40 bytes messages, which contains the time the message should have been sent to avoid co-ordinated omission, and read by another thread. The difference in time is recorded.</p>
+</div>
+<div class="paragraph">
+<p>We have also added encryption support for our enterprise solution. We test here a salted AES 128-bit encryption.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_improvement">The improvement</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput where 99%ile is 10 microseconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">March 2016, unencrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;&nbsp;&nbsp;100 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, encrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;&nbsp;&nbsp;700 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, unencrypted<br>
+Windows 10 Laptop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,200 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, unencrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,400 K/s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>What makes this improvement significant, is that we added correction for co-ordinated omission.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sampling_tool">Sampling tool</h3>
+<div class="paragraph">
+<p>While profilers are very useful, one thing they struggle with is helping you find the cause of latency outliers.  This is because profilers show you averages, and unless your outliers are really large, they don&#8217;t show up as significant.</p>
+</div>
+<div class="paragraph">
+<p>To address this we added a class which acts as a basic stack sampler.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package net.openhft.chronicle.core.threads;
+
+import java.util.concurrent.locks.LockSupport;
+
+/**
+ * Created by peter on 04/02/17.
+ */
+public class StackSampler {
+    private final Thread sampler;
+    private volatile Thread thread = null;
+    private volatile StackTraceElement[] stack = null;
+
+    public StackSampler() {
+        sampler = new Thread(this::sampling, "Thread sampler");
+        sampler.setDaemon(true);
+        sampler.start();
+    }
+
+    void sampling() {
+        while (!Thread.currentThread().isInterrupted()) {
+            Thread t = thread;
+            if (t != null) {
+                StackTraceElement[] stack0 = t.getStackTrace();
+                if (thread == t)
+                    stack = stack0;
+            }
+            LockSupport.parkNanos(10_000);
+        }
+    }
+
+    public void stop() {
+        sampler.interrupt();
+    }
+
+    public void thread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public StackTraceElement[] getAndReset() {
+        StackTraceElement[] stack = this.stack;
+        thread = null;
+        this.stack = null;
+        return stack;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can accumulate the results in a <code>Map&lt;String, Integer&gt;</code> which is nothing special. Except we can filter only those which contributed to an outlier e.g. a delay of over 10 microseconds.</p>
+</div>
+<div class="paragraph">
+<p>The results are pretty crude, however we found issues in code that the profile didn&#8217;t show.  The issue which came up again and again was <code>default</code> methods. As of Java 8 update 121, they just don&#8217;t seem to be optimised as well as methods in classes. We found that copying the default method to selected classes and only for the selected methods in this sampler, we saw a reduction in outliers which allowed us to increase the throughput further.</p>
+</div>
+<div class="paragraph">
+<p>There were other optimisations more specific to our problem, but using class methods instead of default methods is a trick we have used before.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Not all default methods are bad, we still use them often without a problem. Only override a default method for performance if you can show this helps.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_charting_the_99_ile_latency">Charting the 99%ile latency.</h3>
+<div class="paragraph">
+<p>For the unencrypted messages we achieve reasonable (less than 10 micro-seconds) latencies in the 99.9%ile up to 1.4 million messages per second and in the 99%ile up to 2.3 million per second.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://github.com/Vanilla-Java/vanilla-java.github.io/blob/master/images/latency-for-throughput.png?raw=true" alt="latency for throughput.png?raw=true">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>It is possible to have low latency encrypted messages where the 99%ile is less than 10 microseconds, however we need to have a throughput of less than 700K messages per second (or use multiple threads / queues).</p>
+</div>
+<div class="paragraph">
+<p>While minimising the latency of outliers is tricky, reducing the 99%ile latency can improve the consistency dramatically and increase the throughput you can safely sustain.</p>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">February 06, 2017</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522007307600"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>

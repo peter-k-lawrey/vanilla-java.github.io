@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:47:42 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Can you have encryption and low latency in Java]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:48:27 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Can you have encryption and low latency in Java]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>While using encryption is slower than writing raw messages, how much slower is it and does it have to be a performance problem?</p>
@@ -42,7 +42,166 @@ The timestamp used is the time the message should have been written rather than 
 For the purposes of this test we are looking at what throughput do we get low latency as well .</p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</guid><category><![CDATA[Encryption]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/03/03/Can-you-have-encryption-and-low-latency-in-Java.html</guid><category><![CDATA[Encryption]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving percentile latencies in Chronicle Queue]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Compared to a year ago, we have significantly improved the throughput at which we can achieve the 99%ile (worst one in 100).
+What tools and tricks did we use to achieve that?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_are_we_testing">What are we testing?</h3>
+<div class="paragraph">
+<p>Chronicle Queue appends messages to a file while another thread or process can be reading it.  This gives you persisted IPC (InterProcess Communication).</p>
+</div>
+<div class="paragraph">
+<p>For our clients with higher expectations for latency, they are looking to have the whole service which is under 100 micro-seconds 99% of the time.</p>
+</div>
+<div class="paragraph">
+<p>For our test, we have chosen to find the throughput you can achieve and still be under 10 micro-seconds 99% of the time. The test writes 20 million 40 bytes messages, which contains the time the message should have been sent to avoid co-ordinated omission, and read by another thread. The difference in time is recorded.</p>
+</div>
+<div class="paragraph">
+<p>We have also added encryption support for our enterprise solution. We test here a salted AES 128-bit encryption.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_improvement">The improvement</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput where 99%ile is 10 microseconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">March 2016, unencrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;&nbsp;&nbsp;100 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, encrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;&nbsp;&nbsp;700 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, unencrypted<br>
+Windows 10 Laptop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,200 K/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">February 2017, unencrypted<br>
+Centos 7 server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,400 K/s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>What makes this improvement significant, is that we added correction for co-ordinated omission.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sampling_tool">Sampling tool</h3>
+<div class="paragraph">
+<p>While profilers are very useful, one thing they struggle with is helping you find the cause of latency outliers.  This is because profilers show you averages, and unless your outliers are really large, they don&#8217;t show up as significant.</p>
+</div>
+<div class="paragraph">
+<p>To address this we added a class which acts as a basic stack sampler.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">package net.openhft.chronicle.core.threads;
+
+import java.util.concurrent.locks.LockSupport;
+
+/**
+ * Created by peter on 04/02/17.
+ */
+public class StackSampler {
+    private final Thread sampler;
+    private volatile Thread thread = null;
+    private volatile StackTraceElement[] stack = null;
+
+    public StackSampler() {
+        sampler = new Thread(this::sampling, "Thread sampler");
+        sampler.setDaemon(true);
+        sampler.start();
+    }
+
+    void sampling() {
+        while (!Thread.currentThread().isInterrupted()) {
+            Thread t = thread;
+            if (t != null) {
+                StackTraceElement[] stack0 = t.getStackTrace();
+                if (thread == t)
+                    stack = stack0;
+            }
+            LockSupport.parkNanos(10_000);
+        }
+    }
+
+    public void stop() {
+        sampler.interrupt();
+    }
+
+    public void thread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public StackTraceElement[] getAndReset() {
+        StackTraceElement[] stack = this.stack;
+        thread = null;
+        this.stack = null;
+        return stack;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can accumulate the results in a <code>Map&lt;String, Integer&gt;</code> which is nothing special. Except we can filter only those which contributed to an outlier e.g. a delay of over 10 microseconds.</p>
+</div>
+<div class="paragraph">
+<p>The results are pretty crude, however we found issues in code that the profile didn&#8217;t show.  The issue which came up again and again was <code>default</code> methods. As of Java 8 update 121, they just don&#8217;t seem to be optimised as well as methods in classes. We found that copying the default method to selected classes and only for the selected methods in this sampler, we saw a reduction in outliers which allowed us to increase the throughput further.</p>
+</div>
+<div class="paragraph">
+<p>There were other optimisations more specific to our problem, but using class methods instead of default methods is a trick we have used before.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Not all default methods are bad, we still use them often without a problem. Only override a default method for performance if you can show this helps.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_charting_the_99_ile_latency">Charting the 99%ile latency.</h3>
+<div class="paragraph">
+<p>For the unencrypted messages we achieve reasonable (less than 10 micro-seconds) latencies in the 99.9%ile up to 1.4 million messages per second and in the 99%ile up to 2.3 million per second.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://github.com/Vanilla-Java/vanilla-java.github.io/blob/master/images/latency-for-throughput.png?raw=true" alt="latency for throughput.png?raw=true">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>It is possible to have low latency encrypted messages where the 99%ile is less than 10 microseconds, however we need to have a throughput of less than 700K messages per second (or use multiple threads / queues).</p>
+</div>
+<div class="paragraph">
+<p>While minimising the latency of outliers is tricky, reducing the 99%ile latency can improve the consistency dramatically and increase the throughput you can safely sustain.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</guid><category><![CDATA[Chronicle Queue]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 06 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you use a standard JVM like the Oracle JVM, or the OpenJDK, you might find that as the heap size grows the performance of your JVM can drop as GC pause time escalates.  This tends to be a problem around 32 GB of heap, but it often depends on the application at which point the size of you heap becomes a problem.</p>
