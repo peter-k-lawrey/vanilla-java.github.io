@@ -1,4 +1,321 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:16:55 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices in the Chronicle world - Part 1]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sun, 25 Mar 2018 19:30:10 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microservices in the Chronicle world - Part 2]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this part we look at turning a component into a service.</p>
+</div>
+<div class="paragraph">
+<p>In <a href="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html">Part 1</a>, we looked at how we can easily create and test components which expect <a href="http://www.webopedia.com/TERM/A/asynchronous_messaging.html">asynchronous messages</a><sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> in and produce asynchronous messages out.  However, how do we turn this into a <strong>service</strong>?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_turning_our_components_into_a_service">Turning our components into a service.</h3>
+<div class="paragraph">
+<p>The key thing which is missing from our components is a <strong>transport</strong>.  A lack of a transport simplifies testing, profiling and debugging, but we need to distribute our components, and for this we need a transport.</p>
+</div>
+<div class="paragraph">
+<p>There is a wide range of possible transports available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://chronicle.software/products/chronicle-queue/">Chronicle Queue</a></p>
+</li>
+<li>
+<p>Raw TCP messages or UDP packets with a library like <a href="http://netty.io/">Netty</a><sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p><a href="https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html">JMS Messaging</a><sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services">REST API</a><sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup></p>
+</li>
+<li>
+<p>Database tables via <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/">JDBC</a><sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup></p>
+</li>
+<li>
+<p>Files dropped into a directory and use the directory <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html">WatchService</a><sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup></p>
+</li>
+<li>
+<p>a thread safe Queue, like <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html">BlockingQueue</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Shared_memory">shared memory</a><sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup></p>
+</li>
+<li>
+<p><a href="http://aries.apache.org/">Apache Aries</a><sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup> for pluggable transports</p>
+</li>
+<li>
+<p>no transport at all (method calls are fine for a given use case)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is the Chronicle Queue we will be looking at in the post.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_queue_in_a_unit_test">Using queue in a unit test</h3>
+<div class="paragraph">
+<p>Chronicle Queue is persisted, however in unit tests you usually want to start fresh and remove the queue afterwards.  The <strong>idiom</strong> you can use is as follows;</p>
+</div>
+<div class="listingblock">
+<div class="title">Creating a temporary Queue</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">File queuePath = new File(OS.TARGET, "testName-" + System.nanoTime());
+try {
+    try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+        // use the queue
+    }
+
+} finally {
+    IOTools.shallowDeleteDirWithFiles(queuePath);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This creates a queue which is stored in a single file.  The file is rolled daily by default and includes the current date in the path.</p>
+</div>
+<div class="sect3">
+<h4 id="_writing_events">Writing events</h4>
+<div class="paragraph">
+<p>If we repeat our test as before, instead of using a <strong>mock listener</strong>, we can use a listener which writes each method called to a queue:</p>
+</div>
+<div class="listingblock">
+<div class="title">Write methods called to a queue for either interface</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">OrderIdeaListener orderManager = queue.createAppender()
+                                      .methodWriter(OrderIdeaListener.class, MarketDataListener.class);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Our combiner writes to this queue, as does our test:</p>
+</div>
+<div class="listingblock">
+<div class="title">The SidedPrice combiner</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">SidedMarketDataCombiner combiner = new SidedMarketDataCombiner((MarketDataListener) orderManager);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can also repeat the events inbound.  Putting all this together we get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+    OrderIdeaListener orderManager = queue.createAppender().methodWriter(OrderIdeaListener.class, MarketDataListener.class);
+    SidedMarketDataCombiner combiner = new SidedMarketDataCombiner((MarketDataListener) orderManager);
+
+    // events in
+    orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1180, 2e6)); // not expected to trigger
+
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789000L, Side.Sell, 1.1172, 2e6));
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1160, 2e6));
+
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1167, 2e6));
+
+    orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1165, 1e6)); // expected to trigger
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once we have written all the events to our queue, we can process the queue in our test. A more realistic example would be to run these two components in different threads, processes or on different machines, however this just complicates the tests and the result should be the same provided the transport does it&#8217;s job.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reading_events">Reading events.</h4>
+<div class="paragraph">
+<p>When we read the events we need a component which implements the methods called above and a mock listener to ensure it triggers the right events.</p>
+</div>
+<div class="listingblock">
+<div class="title">Read all the events and check the right output</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">// what we expect to happen
+OrderListener listener = createMock(OrderListener.class);
+listener.onOrder(new Order("EURUSD", Side.Buy, 1.1167, 1_000_000));
+replay(listener);
+
+try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+    // build our scenario
+    OrderManager orderManager = new OrderManager(listener); <i class="conum" data-value="1"></i><b>(1)</b>
+    MethodReader reader = queue.createTailer().methodReader(orderManager); <i class="conum" data-value="2"></i><b>(2)</b>
+    for (int i = 0; i &lt; 5; i++)
+        assertTrue(reader.readOne()); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    assertFalse(reader.readOne()); <i class="conum" data-value="4"></i><b>(4)</b>
+    System.out.println(queue.dump()); <i class="conum" data-value="5"></i><b>(5)</b>
+}
+
+verify(listener);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>our component to test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>our queue reader which will call the methods</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>loop to read/process one method at a time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>we have no more messages</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>dump the queue contents so we can see what the input was.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Finally, the test dumps the raw contents of the queue. This reads the data stored in the file that queue uses.  This dump is only useful for smaller queue with a few MB of data. If you have a few GB, it won&#8217;t be able to be stored in a String.  You can use <a href="https://github.com/OpenHFT/Chronicle-Queue/blob/master/src/main/java/net/openhft/chronicle/queue/DumpQueueMain.java">DumpQueueMain</a> f</p>
+</div>
+<div class="listingblock">
+<div class="title">The output of dump()</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">--- !!meta-data #binary
+header: !SCQStore {
+  wireType: !WireType BINARY,
+  writePosition: 777,
+  roll: !SCQSRoll {
+    length: 86400000,
+    format: yyyyMMdd,
+    epoch: 0
+    },
+  indexing: !SCQSIndexing {
+    indexCount: !int 8192,
+    indexSpacing: 64,
+    index2Index: 0,
+    lastIndex: 0
+    }
+}
+# position: 227
+--- !!data #binary
+onOrderIdea: {
+  symbol: EURUSD,
+  side: Buy,
+  limitPrice: 1.118,
+  quantity: 2000000.0
+}
+# position: 306
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789000,
+  buyPrice: NaN,
+  buyQuantity: 0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 434
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789100,
+  buyPrice: 1.116,
+  buyQuantity: 2000000.0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 566
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789100,
+  buyPrice: 1.1167,
+  buyQuantity: 2000000.0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 698
+--- !!data #binary
+onOrderIdea: {
+  symbol: EURUSD,
+  side: Buy,
+  limitPrice: 1.1165,
+  quantity: 1000000.0
+}
+...
+# 83885299 bytes remaining</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run the test and dump the queue in my IDE took 233 ms.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We can test components stand alone with a queue or in a chain by using more queues. More importantly we can test our components without the infrastructure complicating the debugging process.  When our components work without a transport, we can show they do the same thing with a transport.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_in_our_next_part">In our next part</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html">In part 3, we will look at benchmarking and profiling with Queue</a>.  While Queue is designed to be simple and transparent, it is also designed to be faster than other persisted transports, even with no tuning.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_glossary">Glossary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Idiom</strong>- "A means of expressing a recurring construct in one or more programming languages."<sup class="footnote">[<a id="_footnoteref_9" class="footnote" href="#_footnote_9" title="View footnote.">9</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p><strong>Mock listener</strong>- Method call/messages can be sent to a mock listener. This acts as a pretend Object for the purposes of testing in order to see that would happen to a Concrete Object.</p>
+</div>
+<div class="paragraph">
+<p><strong>Service</strong>- A program that is available to other programs to run and make use of.</p>
+</div>
+<div class="paragraph">
+<p><strong>Transport</strong>- A program or hardware that takes data from ome process to another.e.g <a href="http://www.webopedia.com/TERM/M/middleware.html">Middleware</a><sup class="footnote">[<a id="_footnoteref_10" class="footnote" href="#_footnote_10" title="View footnote.">10</a>]</sup>// = Your Blog title</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. Beal, V. (2016). What is asynchronous messaging? Webopedia Definition. Online. Webopedia.com. Available at: <a href="http://www.webopedia.com/TERM/A/asynchronous_messaging.html" class="bare">http://www.webopedia.com/TERM/A/asynchronous_messaging.html</a>. Accessed Jul. 2016
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. Netty.io. (2016). Netty: Home. Online. Available at: <a href="http://netty.io/" class="bare">http://netty.io/</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. Oracle (2013). The JMS API Programming Model - The Java EE 6 Tutorial. Online. Available at: <a href="https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html" class="bare">https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_4">
+<a href="#_footnoteref_4">4</a>. Wikipedia. (2016). Java API for RESTful Web Services. Online. Available at: <a href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services" class="bare">https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services</a>. Accessed  Mar. 2016
+</div>
+<div class="footnote" id="_footnote_5">
+<a href="#_footnoteref_5">5</a>. Docs.oracle.c(2016). Java JDBC API. Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/" class="bare">https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_6">
+<a href="#_footnoteref_6">6</a>. Oracle (2016). WatchService (Java Platform SE 8 ). Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html.Accessed" class="bare">https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html.Accessed</a> 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_7">
+<a href="#_footnoteref_7">7</a>. Oracle (2016). BlockingQueue (Java Platform SE 8 ). Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html" class="bare">https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html</a> Accessed 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_8">
+<a href="#_footnoteref_8">8</a>. Apache Aries. (2016). Apache Aries - Index. Online. Available at: <a href="http://aries.apache.org/" class="bare">http://aries.apache.org/</a>. Accessed 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_9">
+<a href="#_footnoteref_9">9</a>. Wikipedia. (2016). Programming idiom. Online. Available at: <a href="https://en.wikipedia.org/wiki/Programming_idiom" class="bare">https://en.wikipedia.org/wiki/Programming_idiom</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_10">
+<a href="#_footnoteref_10">10</a>. Beal, V. (2016). What is Middleware? Webopedia Definition. Online. Webopedia.com. Available at: <a href="http://www.webopedia.com/TERM/M/middleware.html" class="bare">http://www.webopedia.com/TERM/M/middleware.html</a>. Accessed Jul. 2016
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Chronicle-Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 24 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 1]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>At a high level, different <strong>Microservice</strong> strategies have a lot in common.  They subscribe to the same ideals.

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Microservices in the Chronicle world - Part 2</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Microservices in the Chronicle world - Part 2">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Microservices in the Chronicle world - Part 2">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1522006210688"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1522006210688"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1522006210688"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1522006210688"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Microservices in the Chronicle world - Part 2" />
+    <meta property="og:description" content="In this part we look at turning a component into a service. In Part 1, we looked at how we can easily create and test components which expect asynchronous messages[1] in and produce asynchronous messages out.  However, how do we turn this into a service? Turning our components into" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html" />
+    <meta property="article:published_time" content="2016-03-24T00:00:00.000Z" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content="Chronicle-Queue" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Microservices in the Chronicle world - Part 2" />
+    <meta name="twitter:description" content="In this part we look at turning a component into a service. In Part 1, we looked at how we can easily create and test components which expect asynchronous messages[1] in and produce asynchronous messages out.  However, how do we turn this into a service? Turning our components into" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Microservices in the Chronicle world - Part 2",
+    "url": "https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html",
+    "datePublished": "2016-03-24T00:00:00.000Z",
+    "keywords": "Microservices, Chronicle-Queue",
+    "description": "In this part we look at turning a component into a service. In Part 1, we looked at how we can easily create and test components which expect asynchronous messages[1] in and produce asynchronous messages out.  However, how do we turn this into a service? Turning our components into"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Microservices tag-Chronicle-Queue">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Microservices tag-Chronicle-Queue">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-03-24" itemprop="datePublished">
+                  2 years ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Chronicle-Queue/">Chronicle-Queue</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Microservices in the Chronicle world - Part 2">Microservices in the Chronicle world - Part 2</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this part we look at turning a component into a service.</p>
+</div>
+<div class="paragraph">
+<p>In <a href="https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html">Part 1</a>, we looked at how we can easily create and test components which expect <a href="http://www.webopedia.com/TERM/A/asynchronous_messaging.html">asynchronous messages</a><sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> in and produce asynchronous messages out.  However, how do we turn this into a <strong>service</strong>?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_turning_our_components_into_a_service">Turning our components into a service.</h3>
+<div class="paragraph">
+<p>The key thing which is missing from our components is a <strong>transport</strong>.  A lack of a transport simplifies testing, profiling and debugging, but we need to distribute our components, and for this we need a transport.</p>
+</div>
+<div class="paragraph">
+<p>There is a wide range of possible transports available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://chronicle.software/products/chronicle-queue/">Chronicle Queue</a></p>
+</li>
+<li>
+<p>Raw TCP messages or UDP packets with a library like <a href="http://netty.io/">Netty</a><sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p><a href="https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html">JMS Messaging</a><sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services">REST API</a><sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup></p>
+</li>
+<li>
+<p>Database tables via <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/">JDBC</a><sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup></p>
+</li>
+<li>
+<p>Files dropped into a directory and use the directory <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html">WatchService</a><sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup></p>
+</li>
+<li>
+<p>a thread safe Queue, like <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html">BlockingQueue</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Shared_memory">shared memory</a><sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup></p>
+</li>
+<li>
+<p><a href="http://aries.apache.org/">Apache Aries</a><sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup> for pluggable transports</p>
+</li>
+<li>
+<p>no transport at all (method calls are fine for a given use case)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is the Chronicle Queue we will be looking at in the post.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_queue_in_a_unit_test">Using queue in a unit test</h3>
+<div class="paragraph">
+<p>Chronicle Queue is persisted, however in unit tests you usually want to start fresh and remove the queue afterwards.  The <strong>idiom</strong> you can use is as follows;</p>
+</div>
+<div class="listingblock">
+<div class="title">Creating a temporary Queue</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">File queuePath = new File(OS.TARGET, "testName-" + System.nanoTime());
+try {
+    try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+        // use the queue
+    }
+
+} finally {
+    IOTools.shallowDeleteDirWithFiles(queuePath);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This creates a queue which is stored in a single file.  The file is rolled daily by default and includes the current date in the path.</p>
+</div>
+<div class="sect3">
+<h4 id="_writing_events">Writing events</h4>
+<div class="paragraph">
+<p>If we repeat our test as before, instead of using a <strong>mock listener</strong>, we can use a listener which writes each method called to a queue:</p>
+</div>
+<div class="listingblock">
+<div class="title">Write methods called to a queue for either interface</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">OrderIdeaListener orderManager = queue.createAppender()
+                                      .methodWriter(OrderIdeaListener.class, MarketDataListener.class);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Our combiner writes to this queue, as does our test:</p>
+</div>
+<div class="listingblock">
+<div class="title">The SidedPrice combiner</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">SidedMarketDataCombiner combiner = new SidedMarketDataCombiner((MarketDataListener) orderManager);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can also repeat the events inbound.  Putting all this together we get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+    OrderIdeaListener orderManager = queue.createAppender().methodWriter(OrderIdeaListener.class, MarketDataListener.class);
+    SidedMarketDataCombiner combiner = new SidedMarketDataCombiner((MarketDataListener) orderManager);
+
+    // events in
+    orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1180, 2e6)); // not expected to trigger
+
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789000L, Side.Sell, 1.1172, 2e6));
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1160, 2e6));
+
+    combiner.onSidedPrice(new SidedPrice("EURUSD", 123456789100L, Side.Buy, 1.1167, 2e6));
+
+    orderManager.onOrderIdea(new OrderIdea("EURUSD", Side.Buy, 1.1165, 1e6)); // expected to trigger
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once we have written all the events to our queue, we can process the queue in our test. A more realistic example would be to run these two components in different threads, processes or on different machines, however this just complicates the tests and the result should be the same provided the transport does it&#8217;s job.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reading_events">Reading events.</h4>
+<div class="paragraph">
+<p>When we read the events we need a component which implements the methods called above and a mock listener to ensure it triggers the right events.</p>
+</div>
+<div class="listingblock">
+<div class="title">Read all the events and check the right output</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">// what we expect to happen
+OrderListener listener = createMock(OrderListener.class);
+listener.onOrder(new Order("EURUSD", Side.Buy, 1.1167, 1_000_000));
+replay(listener);
+
+try (SingleChronicleQueue queue = SingleChronicleQueueBuilder.binary(queuePath).build()) {
+    // build our scenario
+    OrderManager orderManager = new OrderManager(listener); <i class="conum" data-value="1"></i><b>(1)</b>
+    MethodReader reader = queue.createTailer().methodReader(orderManager); <i class="conum" data-value="2"></i><b>(2)</b>
+    for (int i = 0; i &lt; 5; i++)
+        assertTrue(reader.readOne()); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    assertFalse(reader.readOne()); <i class="conum" data-value="4"></i><b>(4)</b>
+    System.out.println(queue.dump()); <i class="conum" data-value="5"></i><b>(5)</b>
+}
+
+verify(listener);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>our component to test</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>our queue reader which will call the methods</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>loop to read/process one method at a time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>we have no more messages</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>dump the queue contents so we can see what the input was.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Finally, the test dumps the raw contents of the queue. This reads the data stored in the file that queue uses.  This dump is only useful for smaller queue with a few MB of data. If you have a few GB, it won&#8217;t be able to be stored in a String.  You can use <a href="https://github.com/OpenHFT/Chronicle-Queue/blob/master/src/main/java/net/openhft/chronicle/queue/DumpQueueMain.java">DumpQueueMain</a> f</p>
+</div>
+<div class="listingblock">
+<div class="title">The output of dump()</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">--- !!meta-data #binary
+header: !SCQStore {
+  wireType: !WireType BINARY,
+  writePosition: 777,
+  roll: !SCQSRoll {
+    length: 86400000,
+    format: yyyyMMdd,
+    epoch: 0
+    },
+  indexing: !SCQSIndexing {
+    indexCount: !int 8192,
+    indexSpacing: 64,
+    index2Index: 0,
+    lastIndex: 0
+    }
+}
+# position: 227
+--- !!data #binary
+onOrderIdea: {
+  symbol: EURUSD,
+  side: Buy,
+  limitPrice: 1.118,
+  quantity: 2000000.0
+}
+# position: 306
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789000,
+  buyPrice: NaN,
+  buyQuantity: 0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 434
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789100,
+  buyPrice: 1.116,
+  buyQuantity: 2000000.0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 566
+--- !!data #binary
+onTopOfBookPrice: {
+  symbol: EURUSD,
+  timestamp: 123456789100,
+  buyPrice: 1.1167,
+  buyQuantity: 2000000.0,
+  sellPrice: 1.1172,
+  sellQuantity: 2000000.0
+}
+# position: 698
+--- !!data #binary
+onOrderIdea: {
+  symbol: EURUSD,
+  side: Buy,
+  limitPrice: 1.1165,
+  quantity: 1000000.0
+}
+...
+# 83885299 bytes remaining</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run the test and dump the queue in my IDE took 233 ms.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We can test components stand alone with a queue or in a chain by using more queues. More importantly we can test our components without the infrastructure complicating the debugging process.  When our components work without a transport, we can show they do the same thing with a transport.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_in_our_next_part">In our next part</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html">In part 3, we will look at benchmarking and profiling with Queue</a>.  While Queue is designed to be simple and transparent, it is also designed to be faster than other persisted transports, even with no tuning.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_glossary">Glossary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Idiom</strong>- "A means of expressing a recurring construct in one or more programming languages."<sup class="footnote">[<a id="_footnoteref_9" class="footnote" href="#_footnote_9" title="View footnote.">9</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p><strong>Mock listener</strong>- Method call/messages can be sent to a mock listener. This acts as a pretend Object for the purposes of testing in order to see that would happen to a Concrete Object.</p>
+</div>
+<div class="paragraph">
+<p><strong>Service</strong>- A program that is available to other programs to run and make use of.</p>
+</div>
+<div class="paragraph">
+<p><strong>Transport</strong>- A program or hardware that takes data from ome process to another.e.g <a href="http://www.webopedia.com/TERM/M/middleware.html">Middleware</a><sup class="footnote">[<a id="_footnoteref_10" class="footnote" href="#_footnote_10" title="View footnote.">10</a>]</sup>// = Your Blog title</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. Beal, V. (2016). What is asynchronous messaging? Webopedia Definition. Online. Webopedia.com. Available at: <a href="http://www.webopedia.com/TERM/A/asynchronous_messaging.html" class="bare">http://www.webopedia.com/TERM/A/asynchronous_messaging.html</a>. Accessed Jul. 2016
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. Netty.io. (2016). Netty: Home. Online. Available at: <a href="http://netty.io/" class="bare">http://netty.io/</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. Oracle (2013). The JMS API Programming Model - The Java EE 6 Tutorial. Online. Available at: <a href="https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html" class="bare">https://docs.oracle.com/javaee/6/tutorial/doc/bnceh.html</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_4">
+<a href="#_footnoteref_4">4</a>. Wikipedia. (2016). Java API for RESTful Web Services. Online. Available at: <a href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services" class="bare">https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services</a>. Accessed  Mar. 2016
+</div>
+<div class="footnote" id="_footnote_5">
+<a href="#_footnoteref_5">5</a>. Docs.oracle.c(2016). Java JDBC API. Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/" class="bare">https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_6">
+<a href="#_footnoteref_6">6</a>. Oracle (2016). WatchService (Java Platform SE 8 ). Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html.Accessed" class="bare">https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html.Accessed</a> 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_7">
+<a href="#_footnoteref_7">7</a>. Oracle (2016). BlockingQueue (Java Platform SE 8 ). Online. Available at: <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html" class="bare">https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html</a> Accessed 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_8">
+<a href="#_footnoteref_8">8</a>. Apache Aries. (2016). Apache Aries - Index. Online. Available at: <a href="http://aries.apache.org/" class="bare">http://aries.apache.org/</a>. Accessed 23 Mar. 2016
+</div>
+<div class="footnote" id="_footnote_9">
+<a href="#_footnoteref_9">9</a>. Wikipedia. (2016). Programming idiom. Online. Available at: <a href="https://en.wikipedia.org/wiki/Programming_idiom" class="bare">https://en.wikipedia.org/wiki/Programming_idiom</a>. Accessed Mar. 2016
+</div>
+<div class="footnote" id="_footnote_10">
+<a href="#_footnoteref_10">10</a>. Beal, V. (2016). What is Middleware? Webopedia Definition. Online. Webopedia.com. Available at: <a href="http://www.webopedia.com/TERM/M/middleware.html" class="bare">http://www.webopedia.com/TERM/M/middleware.html</a>. Accessed Jul. 2016
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">March 24, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1522006210688"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
