@@ -1,0 +1,8 @@
+= Blockchain Design considerations
+Peter Lawrey
+// :hp-image: /covers/cover.png
+:published_at: 2018-03-25
+:hp-tags: Blockchain, Architecture Design
+// :hp-alt-title: My English Title
+
+After I announced the release of Chronicle Accelerate, a high throughput blockchain solution in Java. One of the questions which came up was; What were the design considerations that went into the solution, particularly around throughput vs latency?
