@@ -47,11 +47,13 @@ Using sub-chains, different providers can offer innovative solutions, without ev
 
 ==== Built in fee support
 
-As the system controls the flow of value, it can also include settlement of fees and cut off participants. e.g. if a participant, for what ever reason, starts spamming the system, this will cost them and result in them being cut off.
+As the system controls the flow of value, it can also include settlement of fees and cut off participants as a result of exceeding some limit. e.g. if a participant, for what ever reason, starts spamming the system, this will cost them and result in them being cut off.
 
 === Does a blockchain need to have it's own currency?
 
-A blockchain offers a virtualised currency.  This can be one backed by fiat or another digital currency, or it's own currency or both.  If the system has fees to cover the cost of running the service, it needs to be in a supported currency.  This could be in USD or EUR rather a new currency, however a crypto currency has the advantage that the actual cost can have a floating exchanging rate with fiat currencies. e.g. each transaction could cost 1 TXN and the value of this can be determined by an exchange.
+A blockchain offers a virtualisation of currencies.  These can be backed by fiat or another digital currencies, or a new currency or both.  If the system has fees to cover the cost of running the service, it needs to be in a supported currency.  This could be in USD or EUR rather a new currency, however a crypto currency has the advantage that the actual cost can have a floating exchanging rate with fiat currencies. e.g. each transaction could cost 1 TXN and the value of this can be determined by an exchange.
+
+New currencies can have novel features such as only being usable after a future date. You could have a 1000 USD token which is only usable after 1st Jan 2020, but can be bought now at a discount.
 
 === Conclusion
 
