@@ -39,7 +39,7 @@ When participants trust a protocol, they don't have to trust each other as much.
 
 Reduced security impacts via a https://www.forbes.com/sites/bernardmarr/2017/08/10/practical-examples-of-how-blockchains-are-used-in-banking-and-the-financial-services-sector/[immutable ledger] This means a new provider can joins without all the existing providers needing to be fully comfortable with their security setup. 
 
-NOTE: A high percentage of hacks involve disgruntled former employees. If you trust every noded from every provider you have to trust every person operating it.
+NOTE: A high percentage of hacks involve disgruntled former employees. If you trust every node from every provider you have to trust every person operating it.
 
 ==== Innovative solutions
 
