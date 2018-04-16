@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 16 Apr 2018 20:10:57 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 16 Apr 2018 20:19:14 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>I was recently asked; when is using a Blockchain really needed?</p>
@@ -76,14 +76,17 @@ A high percentage of hacks involve disgruntled former employees. If you trust ev
 <div class="sect3">
 <h4 id="_built_in_fee_support">Built in fee support</h4>
 <div class="paragraph">
-<p>As the system controls the flow of value, it can also include settlement of fees and cut off participants. e.g. if a participant, for what ever reason, starts spamming the system, this will cost them and result in them being cut off.</p>
+<p>As the system controls the flow of value, it can also include settlement of fees and cut off participants as a result of exceeding some limit. e.g. if a participant, for what ever reason, starts spamming the system, this will cost them and result in them being cut off.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_does_a_blockchain_need_to_have_it_s_own_currency">Does a blockchain need to have it&#8217;s own currency?</h3>
 <div class="paragraph">
-<p>A blockchain offers a virtualised currency.  This can be one backed by fiat or another digital currency, or it&#8217;s own currency or both.  If the system has fees to cover the cost of running the service, it needs to be in a supported currency.  This could be in USD or EUR rather a new currency, however a crypto currency has the advantage that the actual cost can have a floating exchanging rate with fiat currencies. e.g. each transaction could cost 1 TXN and the value of this can be determined by an exchange.</p>
+<p>A blockchain offers a virtualisation of currencies.  These can be backed by fiat or another digital currencies, or a new currency or both.  If the system has fees to cover the cost of running the service, it needs to be in a supported currency.  This could be in USD or EUR rather a new currency, however a crypto currency has the advantage that the actual cost can have a floating exchanging rate with fiat currencies. e.g. each transaction could cost 1 TXN and the value of this can be determined by an exchange.</p>
+</div>
+<div class="paragraph">
+<p>New currencies can have novel features such as only being usable after a future date. You could have a 1000 USD token which is only usable after 1st Jan 2020, but can be bought now at a discount.</p>
 </div>
 </div>
 <div class="sect2">
