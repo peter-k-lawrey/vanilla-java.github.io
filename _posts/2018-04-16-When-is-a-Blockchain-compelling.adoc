@@ -43,7 +43,7 @@ NOTE: A high percentage of hacks involve disgruntled former employees. If you tr
 
 ==== Innovative solutions
 
-Using sub-chains, different providers can offer innovative solutions, without every one else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it probably not that innovative/disruptive. If every node needs to be trusted, how can't offer a solution/transaction type unless every provider is comfortable with the risk associated with it.
+Using sub-chains, different providers can offer innovative solutions, without every one else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it probably not that innovative/disruptive. If every node needs to be trusted, you can't offer a solution/transaction type unless every provider is comfortable with the risk associated with it.
 
 ==== Built in fee support
 
