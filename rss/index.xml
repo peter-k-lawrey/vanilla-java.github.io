@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 16 Apr 2018 20:09:12 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 16 Apr 2018 20:10:57 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>I was recently asked; when is using a Blockchain really needed?</p>
@@ -70,7 +70,7 @@ A high percentage of hacks involve disgruntled former employees. If you trust ev
 <div class="sect3">
 <h4 id="_innovative_solutions">Innovative solutions</h4>
 <div class="paragraph">
-<p>Using sub-chains, different providers can offer innovative solutions, without every one else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it probably not that innovative/disruptive. If every node needs to be trusted, how can&#8217;t offer a solution/transaction type unless every provider is comfortable with the risk associated with it.</p>
+<p>Using sub-chains, different providers can offer innovative solutions, without every one else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it probably not that innovative/disruptive. If every node needs to be trusted, you can&#8217;t offer a solution/transaction type unless every provider is comfortable with the risk associated with it.</p>
 </div>
 </div>
 <div class="sect3">
