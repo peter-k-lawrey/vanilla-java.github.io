@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Tue, 17 Apr 2018 07:27:31 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is using a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 18 Apr 2018 05:32:50 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[When is using a Blockchain compelling]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>I was recently asked; when is using a Blockchain really needed?</p>
+<p>I was recently asked, when is using a Blockchain really needed?</p>
 </div>
 <div class="paragraph">
 <p>IMHO the main benefit is <strong>ease of provider integration</strong> Blockchain allows providers to join a system, with a much lower barrier to entry. If you are looking to build a network of new and innovative providers, which don&#8217;t have to trust each other, instead they trust the protocol, a blockchain is a compelling solution.</p>
@@ -11,30 +11,30 @@
 <div class="sect2">
 <h3 id="_when_is_blockchain_not_a_compelling_reason">When is Blockchain not a compelling reason?</h3>
 <div class="paragraph">
-<p>First I feel I should debunk some reasons often stated</p>
+<p>First I feel I should debunk some reasons often stated.</p>
 </div>
 <div class="sect3">
 <h4 id="_blockchain_doesn_t_make_everything_better">Blockchain doesn&#8217;t make everything better</h4>
 <div class="paragraph">
-<p>In many cases when a blockchain is proposed, it is used as little more than a log of changes in a database. In some cases, a distributed ledger could be used when a centralised database isn&#8217;t enough. Blockchain projects are easier to get approved these days as companies and individuals want to improve their blockchain skill sets but this doesn&#8217;t make it compelling from a technical point of view IMHO.</p>
+<p>In many cases, when a blockchain is proposed, it is used as little more than a log of changes in a database. In some cases, a distributed ledger could be used when a centralised database isn&#8217;t enough. Blockchain projects are easier to get approved these days as companies and individuals want to improve their blockchain skill sets but this doesn&#8217;t make it compelling from a technical point of view IMHO.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_blockchain_is_unlikely_to_make_things_faster">Blockchain is unlikely to make things faster</h4>
 <div class="paragraph">
-<p>In most cases you will still need a database for reporting services, so adding a blockchain is highly likely to make it more complicated and slower, not simpler and faster than a database alone. <a href="https://www2.deloitte.com/nl/nl/pages/financial-services/articles/5-blockchain-use-cases-in-financial-services.html">To speed up a process</a></p>
+<p>In most cases you will still need a database for reporting services, so adding a blockchain is highly likely to make it more complicated and slower, not simpler and faster than a database alone. <a href="https://www2.deloitte.com/nl/nl/pages/financial-services/articles/5-blockchain-use-cases-in-financial-services.html">See this article which mention speeding up payments</a></p>
 </div>
 <div class="paragraph">
-<p>Blockchain can make a system faster if it can replace enough of an existing system which already implements the features a blockchain offers but in a less efficient manner.</p>
+<p>Blockchain can make a system faster if it can replace enough of an existing system which already implements the features a blockchain offers, but in a less efficient manner.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_blockchain_doesn_t_address_all_security_concerns">Blockchain doesn&#8217;t address all security concerns</h4>
 <div class="paragraph">
-<p>To compromise a cluster of nodes you can employ a <a href="https://learncryptography.com/cryptocurrency/51-attack">51% attack</a>. If you control a majority of nodes, you control the whole system.  This could happen by adding or hacking enough nodes. A state level organisation could do this, potentially even with the most popular crypto currencies, however most govenments have easier/cheaper ways of exercising policy or influence.</p>
+<p>To compromise a cluster of nodes you can employ a <a href="https://learncryptography.com/cryptocurrency/51-attack">51% attack</a>. If you control a majority of nodes, you control the whole system.  This could happen by adding or hacking enough nodes. A state level organisation could do this, potentially even with the most popular crypto currencies, however most governments have easier/cheaper ways of exercising policy or influence.</p>
 </div>
 <div class="paragraph">
-<p>Many cryptocurrencies are public which is a real privacy concern when some of the bank balances are very high (or at least high to the individuals holding them)</p>
+<p>Many cryptocurrencies are public which is a real privacy concern when some of the bank balances are very high (or at least high to the individuals holding them).</p>
 </div>
 <div class="paragraph">
 <p>At the time of writing <a href="https://bitinfocharts.com/bitcoin/address/3D2oetdNuZUqQHPJmcMDDHYoqkyNVsFk9r">This bitcoin address</a> has $1.5 bn, and this <a href="https://etherscan.io/address/0x281055afc982d96fab65b3a49cac8b878184cb16">ethereum address</a> has around $770 m which makes them targets for hackers and organised crime.</p>
@@ -52,7 +52,7 @@
 <div class="sect3">
 <h4 id="_security">Security</h4>
 <div class="paragraph">
-<p>Reduced security impacts via a <a href="https://www.forbes.com/sites/bernardmarr/2017/08/10/practical-examples-of-how-blockchains-are-used-in-banking-and-the-financial-services-sector/">immutable ledger</a> This means a new provider can joins without all the existing providers needing to be fully comfortable with their security setup.</p>
+<p>Reduced security impacts via a <a href="https://www.forbes.com/sites/bernardmarr/2017/08/10/practical-examples-of-how-blockchains-are-used-in-banking-and-the-financial-services-sector/">immutable ledger</a> This means a new provider can join without all the existing providers needing to be fully comfortable with their security setup.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -70,18 +70,18 @@ A high percentage of hacks involve disgruntled former employees. If you trust ev
 <div class="sect3">
 <h4 id="_innovative_solutions">Innovative solutions</h4>
 <div class="paragraph">
-<p>Using sub-chains, different providers can offer innovative solutions, without every one else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it probably not that innovative/disruptive. If every node needs to be trusted, you can&#8217;t offer a solution/transaction type unless every provider is comfortable with the risk associated with it.</p>
+<p>Using sub-chains, different providers can offer innovative solutions, without everyone else in the system needing to be comfortable with those solutions. By the time every participant is comfortable with a new solution, it&#8217;s probably not that innovative/disruptive. If every node needs to be trusted, you can&#8217;t offer a solution/transaction type unless every provider is comfortable with the risk associated with it.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_built_in_fee_support">Built in fee support</h4>
 <div class="paragraph">
-<p>As the system controls the flow of value, it can also include settlement of fees and cut off participants as a result of exceeding some limit. e.g. if a participant, for what ever reason, starts spamming the system, this will cost them and result in them being cut off.</p>
+<p>As the system controls the flow of value, it can also include settlement of fees and cut off participants as a result of exceeding some limit. e.g. if a participant, for whatever reason, starts spamming the system, this will cost them and result in them being cut off.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_does_a_blockchain_need_to_have_it_s_own_currency">Does a blockchain need to have it&#8217;s own currency?</h3>
+<h3 id="_does_a_blockchain_need_to_have_its_own_currency">Does a blockchain need to have its own currency?</h3>
 <div class="paragraph">
 <p>A blockchain offers a virtualisation of currencies.  These can be backed by fiat or another digital currencies, or a new currency or both.  If the system has fees to cover the cost of running the service, it needs to be in a supported currency.  This could be in USD or EUR rather a new currency, however a crypto currency has the advantage that the actual cost can have a floating exchanging rate with fiat currencies. e.g. each transaction could cost 1 TXN and the value of this can be determined by an exchange.</p>
 </div>
@@ -92,7 +92,7 @@ A high percentage of hacks involve disgruntled former employees. If you trust ev
 <div class="sect2">
 <h3 id="_conclusion">Conclusion</h3>
 <div class="paragraph">
-<p>While I feel than many blockchain soltuions could have used a database instead, there are some compelling use cases which allow multiple providers to offer innovating solutions to customers.</p>
+<p>While I feel than many blockchain solutions could have used a database instead, there are some compelling use cases which allow multiple providers to offer innovating solutions to customers.</p>
 </div>
 </div>]]></description><link>https://vanilla-java.github.io/2018/04/16/When-is-using-a-Blockchain-compelling.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/04/16/When-is-using-a-Blockchain-compelling.html</guid><category><![CDATA[Block Chain]]></category><category><![CDATA[Use Case]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 16 Apr 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Blockchain Design considerations]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
