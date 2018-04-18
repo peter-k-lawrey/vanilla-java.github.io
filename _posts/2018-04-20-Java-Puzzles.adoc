@@ -1,0 +1,168 @@
+= Java Puzzles
+Peter Lawrey
+:published_at: 2018-04-20
+
+Here are some odd quiz questions in Java which might have interesting answers.
+
+== Questions
+
+=== void arrays
+
+Which of the following doesn't compile
+
+[source, Java]
+----
+void[] voids = new void[1]; // <1>
+Void[] voids = new Void[1]; // <2>
+Void[] voids = { }; // <3>
+Object voids = Array.newInstance(void.class, 1); // <4>
+----
+
+See the answer at the end.
+
+=== null reference
+
+What does this do?
+
+[source, Java]
+----
+Thread t = null; 
+t.yield();
+----
+
+1. A compiler error
+1. A runtime error
+1. The JVM crashes
+1. The JVM pauses briefly
+
+What does this do?
+
+=== Creating an array of generic
+
+Which of the following creates an array of a generic type `T` which extends Object.
+
+[source, Java]
+-----
+T[] ts = new T[1]; // <1>
+T[] ts = { new T(); }; // <2>
+T[] ts = (T[]) new Object[1]; // <3>
+T[] ts = Array.newArray(T.class, 1); // <4>
+-----
+
+=== Multiplying characters
+
+The following code compiles but what does it print?
+
+[source, Java]
+----
+char ch = '1';
+ch /= 0.9;
+System.out.println(ch);
+----
+
+prints
+
+1. 1
+1. 1.111111111111111
+1. 1.9
+1. 6
+
+=== Decimals
+
+Which of the following prints `0.3`
+
+[source, Java]
+----
+int x = 3;
+System.out.println(x / 10); // <1>
+System.out.println(x * 0.1); // <2>
+System.out.println(x / 10.0); // <3>
+System.out.println(0 + '.' + x); // <4>
+System.out.println(0 + "." + x); // <5>
+----
+
+== Answers
+
+=== void arrays
+[source, Java]
+----
+void[] voids = new void[1]; // <1>
+Void[] voids = new Void[1]; // <2>
+Void[] voids = { }; // <3>
+Object voids = Array.newInstance(void.class, 1); // <4>
+----
+<1> a `void[]` isn't allowed.
+<2> An array of any class is allowed even the `Void` class
+<3> Also creates an empty `Void[]`
+<4> This triggers a runtime error, but not a compile error. The compiler has very little knowledge of how libraries work and doesn't pick this up as an issue.
+
+=== null reference
+
+This code
+[source, Java]
+----
+Thread t = null; 
+t.yield();
+----
+is the same as
+[source, Java]
+----
+Thread t = null; 
+Thread.yield(); // the method is static
+----
+
+So the answer is 4 as it just pauses briefly.
+
+=== Creating an array of generic
+
+Which of the following creates an array of a generic type `T` which extends Object.
+
+[source, Java]
+-----
+T[] ts = new T[1]; // <1>
+T[] ts = { new T(); }; // <2>
+T[] ts = (T[]) new Object[1]; // <3>
+T[] ts = Array.newArray(T.class, 1); // <4>
+-----
+
+Only option (3) compiles. This makes it clear that the raw array is an Object array not the runtime type of `T[]`
+
+=== Multiplying characters
+
+The following code compiles but what does it print?
+
+[source, Java]
+----
+char ch = '1';
+ch /= 0.9;
+System.out.println(ch);
+----
+
+prints `6`. 
+
+Each `char` is an unsigned 16-bit value which holds the unicode of the character. `'1'` has a unicode of 49. `49 / 0.9` is `54.4444444` however this is cast back to a `char` in the `/=` operation so `ch = (char) 54` which is the unicode for `'6'`
+
+NOTE: Each assignment operator implicitly converts the result back to the type of the variable so `ch /= 0.9` is like `ch = (char) ((double) ch / 0.9);`
+
+=== Decimals
+
+Which of the following prints `0.3`
+
+[source, Java]
+----
+int x = 3;
+System.out.println(x / 10); // <1>
+System.out.println(x * 0.1); // <2>
+System.out.println(x / 10.0); // <3>
+System.out.println(0 + '.' + x); // <4>
+System.out.println(0 + "." + x); // <5>
+----
+<1> This uses integer division; 3 / 10 is 0 with 3 remainder.
+<2> 0.1 has a representation error which means it is slight larger than 0.1 and when multipied with 3 gets `0.30000000000000004`
+<3> This prints 0.3 as 10.0 can be represented without error.
+<4> This uses integer addition i.e. `0 + (int) '.' + x`	which is `49`
+<5> This uses String addition so is ok.
+
+In short, lines 3 and 5 print `0.3`
+
+
