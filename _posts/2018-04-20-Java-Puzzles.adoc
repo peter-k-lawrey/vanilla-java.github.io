@@ -81,6 +81,22 @@ System.out.println(0 + '.' + x); // <4>
 System.out.println(0 + "." + x); // <5>
 ----
 
+=== try with null
+
+What is NOT true about this code?
+
+[source, Java]
+----
+    public static void main(String... args) {
+        try (PrintWriter pw = null) { }
+    }
+----
+
+1. It compiles but it doesn't if you replace `PrintWriter` with `Writer`.
+1. It produces no error at compile time or runtime.
+1. The code won't compile if `{ }` is replaced with `;`.
+1. It doesn't compile.
+
 == Answers
 
 === void arrays
@@ -164,5 +180,22 @@ System.out.println(0 + "." + x); // <5>
 <5> This uses String addition so is ok.
 
 In short, lines 3 and 5 print `0.3`
+
+=== try with null
+
+What is NOT true about this code?
+
+[source, Java]
+----
+    public static void main(String... args) {
+        try (PrintWriter pw = null) { }
+    }
+----
+
+1. It compiles but it doesn't if you replace `PrintWriter` with `Writer`. True as `Writer.close()` throws an `IOException` but `PrintWriter.close()` doesn't
+1. It produces no error at compile time or runtime. True as a `null` Closeable is silently ignored at runtime.
+1. The code won't compile if `{ }` is replaced with `;`. True as `;` is not allowed as a nexted statement of a try-with-resource block unlike `while`, `if` or `for` 
+1. It doesn't compile. False, it compiles.
+
 
 
