@@ -1,0 +1,89 @@
+= High throughput Consensus
+Peter Lawrey
+:published_at: 2018-04-25
+:hp-tags: Blockchain, Consensus, Latency, Throughput
+
+When achieving consensus across a distributed network, the latency of that network is an important constraint. How can we increase throughput? How does Little's law help?
+
+=== Time to consensus
+
+To achieve https://en.wikipedia.org/wiki/Consensus_(computer_science)[consensus], each node on a network needs to send information to each other.  Depending on your consensus model. It may have to send multiple series of messages to achieve consensus.
+
+==== Minimum latency
+
+In latency sensitive trading systems, you send every message https://en.wikipedia.org/wiki/Message_queue#Synchronous_vs._asynchronous[asynchronously] and wait for acknowledgments as little as possible. The goal is to minimise the cost of recovery after a failure, with the expectation some data will be lost, no guarantee each node see messages in the same order (each producers messages should be ordered)  
+
+A constraint on the time to get a copy of the data is the network https://en.wikipedia.org/wiki/Latency_(engineering)[latency] one way, or half the round trip time (link). The delay is apparent only to systems receiving a copy of the data rather than the system producing the data.
+
+==== Using  sequencer
+
+If you need to have total ordering between nodes, a "sequencer" can be added.  This centralised service listens for messages and broadcasts the order it has chosen for the messages.  Typically this is the order it sees them, but it could order them in any manner.  This node has a key/trusted role and the impact of going down is significant.  Provided the sequencer is simple and on reliable hardware, the likelihood of failure can be minimised.
+
+Using a sequencer adds latency to all message processing, even messages processed on the same node as the producer as the sequencer needs to order the messages before they are processed.
+
+==== Decentralised consensus 
+
+What if you don’t have one trusted, centralised sequencer? What if you need to protect against https://en.wikipedia.org/wiki/Byzantine_fault_tolerance[Byzantine Failures]?
+
+In this situation, each of the nodes need to play a role and achieving consensus where trust is in the super majority rather than any individual node.
+
+This is more complicated and requires multiple rounds of messages to achieve agreement, however it handles random failure best as it assumes from the start that nodes are actively trying to disrupt the system.
+
+In the case of http://www.chronicle-accelerate.com/[Chronicle Accelerate], it has 4 phases to achieve consensus, meaning the time to consensus is a minimum of 4x the networks latency. In the design we assume the minimum round time is 5x the round trip time to include transmission and processing delays. 
+
+[cols="1,1,3"]
+.Round time depending on network latency
+|===
+| Network Latency | Round time (5x) | Example
+| 0.2 ms | 1 ms | Multiple servers in the same data centre
+| 0.6 ms | 3 ms | Multiple data centres close together
+| 2 ms | 10 ms | Within a modest sized city
+| 6 ms | 30 ms | Across a large city
+| 20 ms | 100 ms | Across cities in the same country
+| 60 ms | 300 ms | Europe to North Amercia
+| 200 ms | 1000 ms | Across continents with slower links
+| 600 ms | 3000 ms | World wide, hetrogenous network
+|===
+
+NOTE: 600 ms is twice as long as quality network between London and Japan. This is likely to be an up limit on the sort of network which might be used.
+
+==== Little’s law and achieving high throughputs
+
+A common technique for increasing the throughput when latency is a concern, is to increase the batch (or block) size. To paraphrase Little’s law:
+
+Average number of messages = processing throughput * average time to process
+
+This determines how large the block size needs to achieve a desire throughput for a given latency.
+
+.Batch size needed to achieve a given throughput
+[width="60%",cols="5*>",frame="topbot",options="header,footer"]
+|====
+| Consensus Latency | 100/s |1 K/s | 10 K/s | 100 K/s
+| 10 ms | 1 txn | 10 txn | 100 txn | 1K txn
+| 30 ms | 3 txn | 30 txn | 300 txn | 3K txn
+| 100 ms | 10 txn | 100 txn | 1K txn | 10K txn
+| 300 ms | 30 txn | 300 txn | 3K txn | 30K txn
+| 1000 ms | 100 txn | 1K txn | 10K txn | 100K txn
+| 3000 ms | 300 txn | 3K txn | 30K txn | 300K txn
+|====
+
+IMHO, I feel more comfortable with batch size of 1 to 1000 as larger sizes have proven to be cumbersome in the past.
+
+This all assumes that in each round, only one block is added, as most blockchain solutions do this.  In Accelerate’s case, each node can add one block in a round significantly reducing the size each block needs to be. (You could consider the collection of blocks produced across each node to be one batch making the difference somewhat semantic.)
+
+.Batch size needed with 25 servers in a cluster
+[width="60%",cols="5*>",frame="topbot",options="header,footer"]
+|====
+| Consensus Latency | 100/s | 1 K/s | 10 K/s | 100 K/s
+| 10 ms | [green]#1 txn# | [green]#1 txn# | [green]#4 txn# | [green]#40 txn#
+| 30 ms | [green]#1 txn# | [green]#2 txn# | [green]#12 txn# | 120 txn
+| 100 ms | [green]#1 txn# | [green]#4 txn# | [green]#40 txn# | 400 txn
+| 300 ms | [green]#2 txn# | [green]#12 txn# | 120 txn | [orange]#1.2K txn#
+| 1000 ms | [green]#4 txn# | [green]#40 txn# | 400 txn | [orange]#4K txn#
+| 3000 ms | [green]#12 txn# | 120 txn | [orange]#1.2K txn# | [orange]#12K txn#
+|====
+
+=== Conclusion
+
+Latency is a constraint but using larger batch sizes can increase the throughput which can be achieved within reason.  As batches get larger they add to transmission time increasing latency further placing a practical constraints on the batch size.
+
