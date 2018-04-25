@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 25 Apr 2018 15:08:47 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 25 Apr 2018 15:10:33 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When achieving consensus across a distributed network, the latency of that network is an important constraint. How can we increase throughput? How does Little&#8217;s law help?</p>
@@ -8,7 +8,7 @@
 <div class="sect2">
 <h3 id="_time_to_consensus">Time to consensus</h3>
 <div class="paragraph">
-<p>To achieve <a href="https://en.wikipedia.org/wiki/Consensus_(computer_science)">consensus</a>, each node on a network needs to send information to each other.  Depending on your consensus model. It may have to send multiple series of messages to achieve consensus.</p>
+<p>To achieve <a href="https://en.wikipedia.org/wiki/Consensus_(computer_science)">consensus</a>, each node on a network needs to send information to each other.  Depending on your consensus model, it may have to send multiple series of messages to achieve consensus.</p>
 </div>
 <div class="sect3">
 <h4 id="_minimum_latency">Minimum latency</h4>
