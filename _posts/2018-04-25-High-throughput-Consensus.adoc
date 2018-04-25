@@ -7,7 +7,7 @@ When achieving consensus across a distributed network, the latency of that netwo
 
 === Time to consensus
 
-To achieve https://en.wikipedia.org/wiki/Consensus_(computer_science)[consensus], each node on a network needs to send information to each other.  Depending on your consensus model. It may have to send multiple series of messages to achieve consensus.
+To achieve https://en.wikipedia.org/wiki/Consensus_(computer_science)[consensus], each node on a network needs to send information to each other.  Depending on your consensus model, it may have to send multiple series of messages to achieve consensus.
 
 ==== Minimum latency
 
