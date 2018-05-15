@@ -1,16 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 09 May 2018 14:12:33 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Test blog entry]]></title><description><![CDATA[<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>This is a test blog entry</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_sub_heading">Sub heading</h2>
-<div class="sectionbody">
-
-</div>
-</div>]]></description><link>https://vanilla-java.github.io/2018/05/09/Test-blog-entry.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/05/09/Test-blog-entry.html</guid><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 09 May 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Tue, 15 May 2018 10:07:10 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When achieving consensus across a distributed network, the latency of that network is an important constraint. How can we increase throughput? How does Little&#8217;s law help?</p>
@@ -1038,93 +1026,6 @@ The cost of consensus doesn&#8217;t increase with throughput, and is largely con
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The Oracle JVM version 8 creates about 10,000 objects running this program.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_how_many_stringbuffers_does_this_create">How many StringBuffers does this create?</h3>
-<div class="paragraph">
-<p>Ok, so it has to create lots of objects to start the JVM, but legacy classes with a drop in replacement which have been around for 10+ years wouldn&#8217;t be used right?</p>
-</div>
-<div class="listingblock">
-<div class="title">How many StringBuffers does this create?</div>
-<div class="content">
-<pre>public class Main {
-    public static void main(String[] args) throws IOException {
-        System.out.println("Waiting");
-        System.in.read();
-    }
-}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>While the process is running we can run</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">jmap -histo {pid} | grep StringBuffer</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and this prints</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">  18:           129           3096  java.lang.StringBuffer</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>129</code> is for the number of instances produced on Java 8 update 121.  This is lower than the last time I checked about a year ago, but still a little surprising.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_so_there_is_still_some_legacy_code">So there is still some legacy code</h3>
-<div class="paragraph">
-<p>What about a new feature like lambdas and Streams.  They were written entirely in the last ten years and they use some external libraries such as Objectwebs ASM, but these developers really know the internals of the JVM and is designed to be as light weight as possible.</p>
-</div>
-<div class="listingblock">
-<div class="title">How many StringBuffers does this create?</div>
-<div class="content">
-<pre>public class Main {
-    public static void main(String[] args) throws IOException {
-        IntStream.range(0, 4).forEach(System.out::println);
-        System.out.println("Waiting");
-        System.in.read();
-    }
-}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>So running <code>jmap</code> again, what do we see?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">  17:           545          13080  java.lang.StringBuffer</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>So an additional 416 objects using a simple Stream and a lambda!</p>
-</div>
-<div class="paragraph">
-<p>BTW The above program creates</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">Total         35486        4027224</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or 35,486 objects!</p>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_conclusion">Conclusion</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Using <code>StringBuffer</code> on startup doesn&#8217;t make much difference, but given it has a well known, drop in replacement, and it is still used, even in new functionality more than ten years later shows how hard it can be to clean up legacy code or to change thinking to get people to use best practice libraries.</p>
-</div>
-</div>
 </div>]]></description><link>https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/04/13/String-Buffer-and-how-hard-it-is-to-get-rid-of-legacy-code.html</guid><category><![CDATA[Pet Hates]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 13 Apr 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Object Pools revisited]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -1169,7 +1070,7 @@ The cost of consensus doesn&#8217;t increase with throughput, and is largely con
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/bytesToString.png" alt="bytesToString.png">
+<img src="https://vanilla-java.github.io/images/bytesToString.png" alt="bytesToString">
 </div>
 </div>
 </div>
@@ -1269,7 +1170,7 @@ For the purposes of this test we are looking at what throughput do we get low la
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/AES128-latency.png" alt="AES128 latency.png">
+<img src="https://vanilla-java.github.io/images/AES128-latency.png" alt="AES128 latency">
 </div>
 </div>
 <div class="paragraph">
@@ -1428,7 +1329,7 @@ Not all default methods are bad, we still use them often without a problem. Only
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://github.com/Vanilla-Java/vanilla-java.github.io/blob/master/images/latency-for-throughput.png?raw=true" alt="latency for throughput.png?raw=true">
+<img src="https://github.com/Vanilla-Java/vanilla-java.github.io/blob/master/images/latency-for-throughput.png?raw=true" alt="latency for throughput">
 </div>
 </div>
 </div>
@@ -1466,7 +1367,7 @@ Not all default methods are bad, we still use them often without a problem. Only
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/JVM-1TB.png" alt="JVM 1TB.png">
+<img src="https://vanilla-java.github.io/images/JVM-1TB.png" alt="JVM 1TB">
 </div>
 <div class="title">Figure 1. top on a machine with 128 GB of memory, and a JVM with 1 TB of queue data</div>
 </div>
@@ -1484,7 +1385,7 @@ Not all default methods are bad, we still use them often without a problem. Only
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/read-time-1gb.png" alt="read time 1gb.png">
+<img src="https://vanilla-java.github.io/images/read-time-1gb.png" alt="read time 1gb">
 </div>
 <div class="title">Figure 2. The read time is fairly consistent for this test</div>
 </div>
@@ -1508,7 +1409,7 @@ While the machine has 128 GB of memory, it has two NUMA regions of 64 GB.  This 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/write-time-1gb.png" alt="write time 1gb.png">
+<img src="https://vanilla-java.github.io/images/write-time-1gb.png" alt="write time 1gb">
 </div>
 <div class="title">Figure 3. The write time is fairly consistent beyond 192 GB</div>
 </div>
@@ -1920,7 +1821,7 @@ A: We have a HTML5 GUI for monitoring sessions and querying logs of messages.</p
 <a href="https://twitter.com/lucyleid" class="twitter-follow-button" data-show-count="false">Follow @lucyleid</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 <div class="sect2">
-<h3 id="__bodil">☭ 🚀 🐶 Bodil  🐶 🚀☭</h3>
+<h3 id="_bodil">☭ 🚀 🐶 Bodil  🐶 🚀☭</h3>
 <div class="paragraph">
 <p>The Hound of the SJWs. 11.1K followers</p>
 </div>
@@ -2168,21 +2069,21 @@ A: We have a HTML5 GUI for monitoring sessions and querying logs of messages.</p
 <h2 id="_1_k_followers">1+K followers</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_claude_falgui_re">Claude Falguière</h3>
+<h3 id="_claude_falguière">Claude Falguière</h3>
 <div class="paragraph">
 <p>Java, Performance, DevOps, Clojure, DataScience, funny ways to learn programming, Devoxx4Kids, ParisJUG, Devoxx, Duchess</p>
 </div>
 <a href="https://twitter.com/cfalguiere" class="twitter-follow-button" data-show-count="false">Follow @cfalguiere</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 <div class="sect2">
-<h3 id="_st_phanie_hertrich">Stéphanie Hertrich</h3>
+<h3 id="_stéphanie_hertrich">Stéphanie Hertrich</h3>
 <div class="paragraph">
 <p>Developer Evangelist Girl @Microsoft, Technical Angel for #startup ❤️, I&#8217;m a coder and a speaker for Tech event, Proud @duchessfr</p>
 </div>
 <a href="https://twitter.com/stepheUp" class="twitter-follow-button" data-show-count="false">Follow @stepheUp</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 <div class="sect2">
-<h3 id="_agn_s_crepet">Agnès Crepet</h3>
+<h3 id="_agnès_crepet">Agnès Crepet</h3>
 <div class="paragraph">
 <p>Java Champion &amp; JS Newbie, @ninjasquad Co-Founder, @MINES_StEtienne CS Teacher &amp; Agile Learning Facilitator, @mixIT_lyon Co-Founder, @duchessfr Leader</p>
 </div>
@@ -2374,14 +2275,14 @@ Some problems have inherent limits to the number of independant tasks you have. 
 <p>If the latency is 3 milli-seconds, how many independant tasks do you need to have to reach a desired throughput?</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency.png" alt="Chronicle vs Kafka Concurrency.png"></span></p>
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency.png" alt="Chronicle vs Kafka Concurrency"></span></p>
 </div>
 <div class="paragraph">
 <p>To achieve higher throughputs, you need more independant tasks. What if you only have 1 to 100 independant tasks?</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency-Scaled.png" alt="Chronicle vs Kafka Concurrency Scaled.png">
+<img src="https://vanilla-java.github.io/images/Chronicle-vs-Kafka-Concurrency-Scaled.png" alt="Chronicle vs Kafka Concurrency Scaled">
 </div>
 </div>
 <div class="paragraph">
@@ -2634,7 +2535,7 @@ After delta-ring you can still use generic compression to obtain a further reduc
 <p>Looking to contribute to a high peformance Open Source library in Java. This may be a good place to start.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="http://chronicle.software/wp-content/uploads/2014/09/Chronicle.png" alt="Chronicle.png"></span></p>
+<p><span class="image"><img src="http://chronicle.software/wp-content/uploads/2014/09/Chronicle.png" alt="Chronicle"></span></p>
 </div>
 <div class="paragraph">
 <p>There is a number of ways to contribute to OpenHFT/Chronicle Software.  You need to;</p>
@@ -2779,7 +2680,7 @@ for (int i = 0; i &lt; tests; i++) {
 <p>The test is run for ten minutes and the distribution of latenices plotted.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-to-993.png" alt="Latency to 993.png"></span></p>
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-to-993.png" alt="Latency to 993"></span></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2800,7 +2701,7 @@ There is a step in latency at around 10 million message per second jumps as the 
 <p>The 99.9%ile and 99.93%ile are a function of how quickly the system can recover after a delay.  The higher the throughput, the less head room the system has to recover form a delay.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-from-993.png" alt="Latency from 993.png"></span></p>
+<p><span class="image"><img src="https://vanilla-java.github.io/images/Latency-from-993.png" alt="Latency from 993"></span></p>
 </div>
 <div class="sect2">
 <h3 id="_summary">Summary</h3>
@@ -3761,7 +3662,7 @@ public interface ThrowingSupplier&lt;V, T extends Throwable&gt; {
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Exception-handling-mix.png" alt="Exception handling mix.png">
+<img src="https://vanilla-java.github.io/images/Exception-handling-mix.png" alt="Exception handling mix">
 </div>
 </div>
 <div class="paragraph">
@@ -4058,7 +3959,7 @@ default void get(Object key, ThrowableConsumer&lt;V&gt; consumer) {
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Request-Response.jpg" alt="Request Response.jpg">
+<img src="https://vanilla-java.github.io/images/Request-Response.jpg" alt="Request Response">
 </div>
 </div>
 <div class="paragraph">
@@ -4110,7 +4011,7 @@ reply: !MyResponse {
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Request-Proxy.jpg" alt="Request Proxy.jpg">
+<img src="https://vanilla-java.github.io/images/Request-Proxy.jpg" alt="Request Proxy">
 </div>
 </div>
 <div class="paragraph">
@@ -4206,7 +4107,7 @@ reply: true <i class="conum" data-value="2"></i><b>(2)</b>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Request-Callback.jpg" alt="Request Callback.jpg">
+<img src="https://vanilla-java.github.io/images/Request-Callback.jpg" alt="Request Callback">
 </div>
 </div>
 <div class="paragraph">
@@ -4264,7 +4165,7 @@ resultTwo: [
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Request-Visitor.jpg" alt="Request Visitor.jpg">
+<img src="https://vanilla-java.github.io/images/Request-Visitor.jpg" alt="Request Visitor">
 </div>
 </div>
 <div class="listingblock">
@@ -4316,7 +4217,7 @@ reply: 1024
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Request-Subscription.jpg" alt="Request Subscription.jpg">
+<img src="https://vanilla-java.github.io/images/Request-Subscription.jpg" alt="Request Subscription">
 </div>
 </div>
 <div class="listingblock">
@@ -4383,7 +4284,7 @@ cancelled: "By request"
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Client-Injected-Handler.jpg" alt="Client Injected Handler.jpg">
+<img src="https://vanilla-java.github.io/images/Client-Injected-Handler.jpg" alt="Client Injected Handler">
 </div>
 </div>
 <div class="listingblock">
@@ -4457,7 +4358,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Lambda-Architecture.jpg" alt="Lambda Architecture.jpg">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture.jpg" alt="Lambda Architecture">
 </div>
 </div>
 <div class="paragraph">
@@ -4471,7 +4372,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Lambda-Architecture-With-State.jpg" alt="Lambda Architecture With State.jpg">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-With-State.jpg" alt="Lambda Architecture With State">
 </div>
 </div>
 <div class="paragraph">
@@ -4488,7 +4389,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Chained.jpg" alt="Lambda Architecture Services Chained.jpg">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Chained.jpg" alt="Lambda Architecture Services Chained">
 </div>
 </div>
 <div class="paragraph">
@@ -4502,7 +4403,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Feedback.jpg" alt="Lambda Architecture Services Feedback.jpg">
+<img src="https://vanilla-java.github.io/images/Lambda-Architecture-Services-Feedback.jpg" alt="Lambda Architecture Services Feedback">
 </div>
 </div>
 <div class="paragraph">
@@ -4900,7 +4801,7 @@ You want fast feedback to ensure you stay productive.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/omg_wtf.jpg" alt="omg wtf.jpg">
+<img src="https://vanilla-java.github.io/images/omg_wtf.jpg" alt="omg wtf">
 </div>
 </div>
 <div class="paragraph">
@@ -5433,7 +5334,7 @@ Every message is being persisted at each stage and is available on restart. As t
 </div>
 <div class="imageblock" style="text-align: center">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/mtm-typical-vs-rate.png" alt="mtm typical vs rate.png">
+<img src="https://vanilla-java.github.io/images/mtm-typical-vs-rate.png" alt="mtm typical vs rate">
 </div>
 <div class="title">Figure 1. Worst Typical was the highest of 15, 2 minute runs.</div>
 </div>
@@ -5451,7 +5352,7 @@ Every message is being persisted at each stage and is available on restart. As t
 </div>
 <div class="imageblock" style="text-align: center">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/mtm-99-vs-rate.png" alt="mtm 99 vs rate.png">
+<img src="https://vanilla-java.github.io/images/mtm-99-vs-rate.png" alt="mtm 99 vs rate">
 </div>
 <div class="title">Figure 2. The worst 1 in 100 gets higher as the throughput increases.</div>
 </div>
@@ -5460,7 +5361,7 @@ Every message is being persisted at each stage and is available on restart. As t
 </div>
 <div class="imageblock" style="text-align: center">
 <div class="content">
-<img src="https://vanilla-java.github.io/images/mtm-999-vs-rate.png" alt="mtm 999 vs rate.png">
+<img src="https://vanilla-java.github.io/images/mtm-999-vs-rate.png" alt="mtm 999 vs rate">
 </div>
 <div class="title">Figure 3. The worst 1 in 1000 gets higher as the throughput increases.</div>
 </div>
