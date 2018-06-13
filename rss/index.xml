@@ -1,4 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Tue, 15 May 2018 10:07:10 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 13 Jun 2018 16:44:30 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Chronicle downloads exceed 6 million in a month]]></title><description><![CDATA[<div class="paragraph">
+<p>In the last three months we have seen a significant increase in downloads of our libraries.  Wider adoption of our libraries into popular frameworks appears to be driving this growth in downloads.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/chronicle-downloads-2018-05.png" alt="chronicle downloads 2018 05">
+</div>
+</div>
+<div class="paragraph">
+<p>A total of 6.3 million downloads across 450 thousand unique IPs is a huge increase for us. If you are not familar with all our open source products, these are our most popular:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Java Thread Affinity <a href="https://chronicle.software/products/affinity/" class="bare">https://chronicle.software/products/affinity/</a></p>
+</li>
+<li>
+<p>Zero Allocation Hashing <a href="https://chronicle.software/products/zeroallocationhashing/" class="bare">https://chronicle.software/products/zeroallocationhashing/</a></p>
+</li>
+<li>
+<p>Chronicle Core (Low level JVM access) <a href="https://github.com/OpenHFT/Chronicle-Core" class="bare">https://github.com/OpenHFT/Chronicle-Core</a></p>
+</li>
+<li>
+<p>Java Runtime Compiler <a href="https://github.com/OpenHFT/Java-Runtime-Compiler" class="bare">https://github.com/OpenHFT/Java-Runtime-Compiler</a></p>
+</li>
+<li>
+<p>Chronicle Bytes (Thread safe native memory access for text and binary) <a href="https://github.com/OpenHFT/Chronicle-Bytes" class="bare">https://github.com/OpenHFT/Chronicle-Bytes</a></p>
+</li>
+<li>
+<p>Chronicle Wire (Low GC serialization of text/binary to native memory) <a href="https://github.com/OpenHFT/Chronicle-Wire" class="bare">https://github.com/OpenHFT/Chronicle-Wire</a></p>
+</li>
+<li>
+<p>Chronicle Threads <a href="https://github.com/OpenHFT/Chronicle-Threads" class="bare">https://github.com/OpenHFT/Chronicle-Threads</a></p>
+</li>
+<li>
+<p>Chronicle Queue (Low latency journalled IPC) <a href="https://chronicle.software/products/queue/" class="bare">https://chronicle.software/products/queue/</a></p>
+</li>
+<li>
+<p>Chronicle Map (Low latency peristed key-value store) <a href="https://chronicle.software/products/map/" class="bare">https://chronicle.software/products/map/</a></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If you have trouble getting started, ask us on <a href="https://stackoverflow.com/questions/tagged/chronicle" class="bare">https://stackoverflow.com/questions/tagged/chronicle</a></p>
+</div>
+<div class="paragraph">
+<p>Chronicle also provides consulting, custom execution engines, and commercial support and well as enterprise extensions to many of these libraries. You can check out our new web site <a href="https://chronicle.software">chronicle.software</a> Email <a href="mailto:sales@chronicle.software">sales@chronicle.software</a> for more details.</p>
+</div>]]></description><link>https://vanilla-java.github.io/2018/06/13/Chronicle-downloads-exceed-6-million-in-a-month.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/06/13/Chronicle-downloads-exceed-6-million-in-a-month.html</guid><category><![CDATA[Downloads]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 13 Jun 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[High throughput Consensus]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When achieving consensus across a distributed network, the latency of that network is an important constraint. How can we increase throughput? How does Little&#8217;s law help?</p>
