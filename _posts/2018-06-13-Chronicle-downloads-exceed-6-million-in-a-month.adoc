@@ -1,0 +1,28 @@
+= Chronicle downloads exceed 6 million in a month
+Peter Lawrey
+:published_at: 2018-06-13
+:hp-tags: Downloads
+
+In the last three months we have seen a significant increase in downloads of our libraries.  Wider adoption of our libraries into popular frameworks appears to be driving this growth in downloads.
+
+image::chronicle-downloads-2018-05.png[]
+
+A total of 6.3 million downloads across 450 thousand unique IPs is a huge increase for us. If you are not familar with all our open source products, these are our most popular;
+
+1. Java Thread Affinity https://chronicle.software/products/affinity/
+2. Zero Allocation Hashing https://chronicle.software/products/zeroallocationhashing/
+3. Chronicle Core (Low level JVM access) https://github.com/OpenHFT/Chronicle-Core
+4. Java Runtime Compiler https://github.com/OpenHFT/Java-Runtime-Compiler
+5. Chronicle Bytes (Thread safe native memory access for text and binary) https://github.com/OpenHFT/Chronicle-Bytes
+6. Chronicle Wire (Low GC serialization of text/binary to native memory) https://github.com/OpenHFT/Chronicle-Wire
+7. Chronicle Threads https://github.com/OpenHFT/Chronicle-Threads
+8. Chronicle Queue (Low latency journalled IPC) https://chronicle.software/products/queue/
+9. Chronicle Map (Low latency peristed key-value store) https://chronicle.software/products/map/
+
+If you have trouble getting started, ask us on https://stackoverflow.com/questions/tagged/chronicle
+
+Chronicle also provides consulting, custom execution engines, and commercial support and well as enterprise extensions to many of these libraries. You can check out our new web site https://chronicle.software[chronicle.software] Email mailto:sales@chronicle.software[sales@chronicle.software] for more details.
+
+
+
+
