@@ -7,7 +7,7 @@ In the last three months we have seen a significant increase in downloads of our
 
 image::chronicle-downloads-2018-05.png[]
 
-A total of 6.3 million downloads across 450 thousand unique IPs is a huge increase for us. If you are not familar with all our open source products, these are our most popular;
+A total of 6.3 million downloads across 450 thousand unique IPs is a huge increase for us. If you are not familar with all our open source products, these are our most popular:
 
 1. Java Thread Affinity https://chronicle.software/products/affinity/
 2. Zero Allocation Hashing https://chronicle.software/products/zeroallocationhashing/
