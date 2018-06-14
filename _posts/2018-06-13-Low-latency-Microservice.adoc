@@ -3,11 +3,11 @@ Peter Lawrey
 :published_at: 2018-06-13
 :hp-tags: Low Latency, Microservices
 
-It is common for a vendor to publish benchmarks with synthetic loads and code.  However, what can be reasonably achieve in a real application?  In this post, I discuss what we achieve with Chronicle Services, a framework for low latency microservices.
+It is common for a vendor to publish benchmarks with synthetic loads and code.  However, what can be reasonably achieve in a real application?  In this post, I discuss what we achieve with Chronicle Services for a client's use case, a framework for low latency microservices.
 
 == What are we benchmarking?
 
-In Chronicle Services we favour a high level interface where a publisher makes a method call, and the consumer is called back on the same method. 
+In Chronicle Services we favour a high level interface where a publisher makes a method call, and the consumer is called back on the same method. This is slower than more direct access approaches but easier to maintain, esp for Java developers who want to develop in natural Java.
 
 .Microservice interface
 [source, java]
@@ -17,13 +17,22 @@ public interface NewOrderSingleListener {
 }
 ----
 
-This makes writing mocking services, creating data driven and integration tests natural and simple.
+A simple interface for messages in and a simple interface for messages out makes writing mocking services, creating data driven and integration tests natural and simple.
 
 When used in the framework, every message is persisted in a logged/replayable manner and the publisher and consumer can be different JVMs or even different machines.
 
-In this test we include the time to serialize, write to shared memory, read from shared memory and deserialize a NewOrderSingle which is a standard FIX message with 28 fields in addition to the standard fields.  A significant portion of the time spent is in string handling.  The class for NewOrderSingle was generated for the FIX protocol schema using https://chronicle.software/products/fix/[Chronicle FIX]
+In this performance test, we include the time to:
 
-The test was run for 10,000,000 orders at a rate of 10,000 per second on a dual  CPU E5-2650 v4 @ 2.20GHz server running Centos 7.  Each of the service was single threaded. Higher throughputs can be achieved by adding more threads, or with poorer latencies.
+- mock the interface
+- serialize the NewOrderSingle with 28 FIX fields, including String(s).
+- write to shared memory
+- read from shared memory in another microservice
+- deserialize a NewOrderSingle
+- make a method call to the component in the service.
+
+A significant portion of the time spent is in string handling.  The class for NewOrderSingle was generated for the FIX protocol schema using https://chronicle.software/products/fix/[Chronicle FIX]
+
+The test was run for 10,000,000 orders at a rate of 10,000 per second on a dual  CPU E5-2650 v4 @ 2.20GHz server running Centos 7.  Each of the service was single threaded. Higher throughputs can be achieved by adding more threads, or with poorer latency profiles i.e the 99.9% is higher.
 
 image::NOS-latency.png[]
 
@@ -33,7 +42,7 @@ NOTE: In this test, no minor or major GCs were triggered.
 
 == How does this compare to other messaging solutions?
 
-It is hard to find comparable benchmark results on the latency of messaging solutions.  One good option might be to use a benchmark like https://github.com/openmessaging/openmessaging-benchmark although this doesn't consider the serialization cost which can be relatively high, esp in Java if it triggers GCs.
+It is hard to find comparable benchmark results on the latency of messaging solutions.  One good option might be to use a benchmark like https://github.com/openmessaging/openmessaging-benchmark although this doesn't consider the serialization cost which can be relatively high, esp in Java if it triggers GCs. I couldn't find any published benchmark results other than to say that Pulsar was faster than Kafka.
 
 Most messaging solutions do not include the cost of serialization which can be higher than the cost of messaging.  Some only consider the time to publish or consume a message.  It is important to choose a benchmark which is representative of your use case.
 
