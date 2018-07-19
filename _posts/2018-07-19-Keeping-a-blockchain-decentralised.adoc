@@ -30,5 +30,8 @@ https://github.com/OpenHFT/RFC/blob/master/Proof-of-IP/Proof-of-IP-1.0.adoc[Proo
 
 A working implementation of a block chain which both records the IP verifications and can be extended to support other transactions is in active development.
 
+The github project is https://github.com/OpenHFT/Chronicle-Accelerate[Chronicle Accelerate on GitHub]
+
+
 
 
