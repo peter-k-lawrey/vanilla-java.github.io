@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Thu, 19 Jul 2018 11:39:11 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Keeping a blockchain decentralised]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Thu, 19 Jul 2018 11:40:41 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Keeping a blockchain decentralised]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>This article proposes a Proof of IP (PoIP) to favour diversity of IP addresses over large number of server concentrated by IP address.</p>
@@ -42,6 +42,9 @@
 <h3 id="_can_i_play_with_it">Can I play with it?</h3>
 <div class="paragraph">
 <p>A working implementation of a block chain which both records the IP verifications and can be extended to support other transactions is in active development.</p>
+</div>
+<div class="paragraph">
+<p>The github project is <a href="https://github.com/OpenHFT/Chronicle-Accelerate">Chronicle Accelerate on GitHub</a></p>
 </div>
 </div>]]></description><link>https://vanilla-java.github.io/2018/07/19/Keeping-a-blockchain-decentralised.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/07/19/Keeping-a-blockchain-decentralised.html</guid><category><![CDATA[Decentralised]]></category><category><![CDATA[Blockchain]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 19 Jul 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microsecond latency Microservice Benchmarked]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
