@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Thu, 19 Jul 2018 11:40:47 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Microsecond latency Microservice Benchmarked]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Thu, 19 Jul 2018 11:47:50 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Keeping a blockchain decentralised]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This article proposes a Proof of IP (PoIP) to favour diversity of IP addresses over large number of server concentrated by IP address.</p>
+</div>
+<div class="paragraph">
+<p>While blockchain solutions using Proof of Work (PoW) and Proof of Stake (PoS) can be decentralised, individuals or companies which are more efficient, or better funded to grow than others will naturally push out smaller players.  This can lead to a centralisation of those providing the service to those who have the most capital.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_blockchain_lakes">Blockchain lakes</h3>
+<div class="paragraph">
+<p>When a company achieves greater economies of scale, it push out the competition which is less efficient.  This leads to a small number of big players, who can offer a service at a lower price.  This become a problem when a small number of players can start to dictate terms even increasing the cost of service.</p>
+</div>
+<div class="paragraph">
+<p>For PoW, access to cheap power and specialised hardware gives those companies an advantage.  This create lakes of processing power centralised around these locations and companies.  Companies with significant investment need to ensure they maintain their advantage, which might not always be in the best interest of the users.</p>
+</div>
+<div class="paragraph">
+<p>For PoS, access to capital determines who can provide the service.  This has its advantages, but also means the direction of solution will be determined by companies and individuals with significant capital who want to protect their investment.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_proof_of_ip">Proof of IP</h3>
+<div class="paragraph">
+<p>Proof of IP uses verified IP address for each running node. Voting for each of the ~56,000 /16 domains is equal, ensuring that even a company with 65,000 servers doesn&#8217;t have a significant advantage.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_consensus">Consensus</h3>
+<div class="paragraph">
+<p>Each node can add a block of transaction per round. This enables a high degree of concurrency.  Voting is required to determine which blocks are added to the chain (and thus in what order)  Voting is balanced by the top bits of the IP making it much harder to buy up significant portions of the voting rights.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_want_to_know_more">Want to know more</h3>
+<div class="paragraph">
+<p><a href="https://github.com/OpenHFT/RFC/blob/master/Proof-of-IP/Proof-of-IP-1.0.adoc">Proof of IP RFC</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_can_i_play_with_it">Can I play with it?</h3>
+<div class="paragraph">
+<p>A working implementation of a block chain which both records the IP verifications and can be extended to support other transactions is in active development.</p>
+</div>
+<div class="paragraph">
+<p>The github project is <a href="https://github.com/OpenHFT/Chronicle-Accelerate">Chronicle Accelerate on GitHub</a></p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2018/07/19/Keeping-a-blockchain-decentralised.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/07/19/Keeping-a-blockchain-decentralised.html</guid><category><![CDATA[Decentralised]]></category><category><![CDATA[Blockchain]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 19 Jul 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microsecond latency Microservice Benchmarked]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>It is common for a vendor to publish benchmarks with synthetic loads and code.  However, what can be reasonably achieve in a real application?  In this post, I discuss what we achieve with Chronicle Services for a client&#8217;s use case, a framework for low latency microservices.</p>
