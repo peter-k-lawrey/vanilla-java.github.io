@@ -475,7 +475,7 @@ NOTE: When strings have the same hashCode and combination of them, of the same l
 
 == Conclusion
 
-No matter what hashing strategy is used, collisions are enevitable however some hashes are worse than others. You can expect String to be fairly poor.
+No matter what hashing strategy is used, collisions are inevitable however, some hashes are worse than others. You can expect String's hashCode() to be fairly poor.
 
 
 // p.s. Sabrina is amazing.
