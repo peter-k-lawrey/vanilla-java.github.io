@@ -20,7 +20,7 @@ Due to ongoing success and growth within the Chronicle business, we have grown o
 
 Rob and Andrew in conjunction with Commercial Director Paul Hienkens are here to help you with any enquiries you may have around consulting or licensing our software solutions. 
 
-If you wish to discuss how our Chronicle Software experts can help you or wish to receive ongoing selected updates from Chronicle please contact us mailto:sales@chronicle-software.com
+If you wish to discuss how our Chronicle Software experts can help you or wish to receive ongoing selected updates from Chronicle please contact us mailto:sales@chronicle-software.com[sales@chronicle-software.com]
 
 Chronicle Software were founded in 2013 by Peter Lawrey the technical architect behind our software stack, as the company has grown Peter has assembled some of the best Java engineers and subject matter experts in the industry. The company’s heritage is firmly rooted in financial services, our business experts and developers are renowned for their proven track records 
 
