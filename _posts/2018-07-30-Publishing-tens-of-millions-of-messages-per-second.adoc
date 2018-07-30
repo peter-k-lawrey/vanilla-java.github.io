@@ -2,7 +2,8 @@
 Peter Lawrey
 :hp-tags: Consulting, News Letter, Case Study
 
-Welcome to our first newsletter from Chronicle giving you updates on developments at Chronicle Software plus tips and case studies around how Chronicle have helped clients to maximise value from their implementation. 
+Welcome to our first newsletter from Chronicle giving you updates on developments at Chronicle Software plus tips and case studies around how Chronicle have helped clients to maximise value from their implementation.
+
 === Case Study
 We have many examples where we have helped clients who are using our open source software to optimise their solution below is a recent example:-
 
@@ -11,6 +12,7 @@ We helped a client achieve a 12.5x throughput improvement for Chronicle Queue wi
 A large Petrochemical company engaged us to help with performance issues they were seeing writing market data to our Chronicle Queue. The way they were using queue with an older version was limited to about 3.5 million messages per second (per queue). Rather than use more queues they needed to improve the throughput of each one.  After tuning their solution and using the last version of Chronicle Queue, they were able to achieve 8.5 million messages per second from Java.  What they really needed was a faster, low level way to write from C++ so we produced a bespoke solution for their use case which achieved 44 million messages per second.
 
 NOTE: This was the throughput just to write the messages and didn’t include their logic.
+
 === Commercial Update
 Due to ongoing success and growth within the Chronicle business, we have grown our Commercial team recruiting 2 experienced sales and business development professionals Rob Hunt and Andrew Twigg.  Rob has over 20 years experience within the financial markets, starting as a hedge fund trader he subsequently moved into software sales successfully selling to both buyside and sellside institutions. Andrew joins us from BGC where he was selling market data to financial institutions across Europe prior to that he worked in various senior sales roles within the financial markets at organisations including Thomson Reuters and Dow Jones.
 
