@@ -1,0 +1,92 @@
+= Making blockchains simple
+Peter Lawrey
+:hp-tags: Blockchain, Accelerate, Testing
+
+One of the challenges of building blockchain solutions is testing it.  Chronicle Accelerate has a framework to make adding custom transactions with the state using data-driven tests. i.e. without the need to write code.
+
+=== Example: Appreciation
+
+The following application allows participants to show appreciation for each other by giving "likes".  They have a fixed number of likes to give each other each week on a use or lose it basis.  Users with the most likes might get a reward on a monthly basis, which halves their likes.
+
+The data-driven tests are available here https://github.com/OpenHFT/Chronicle-Accelerate/tree/master/examples/appreciation/src/test/resources/give[Appreciation Give tests]
+
+
+.setup.yaml sets up the test, giving it an initial state
+[source, yaml]
+----
+openingBalance: {
+  publicKey: !!binary RWUHCYzTzADL+4kJ9r90rWHBo6J/Wng5FmlXFjv8bd8=, # <1>
+  amount: 100.0
+}
+---
+openingBalance: {
+  publicKey: !!binary Sq1s3liIh6LkceZYP+qh6MlMRRqCNJ5Dvl9oyAiZHe8=, # <2>
+  amount: 10.0
+}
+---
+----
+<1> Public key of account 1
+<1> Public key of account 2
+
+.in.yaml defines the messages whose outputs are tested
+[source, yaml]
+----
+startBatch: {
+  batchKey: !!binary RWUHCYzTzADL+4kJ9r90rWHBo6J/Wng5FmlXFjv8bd8=, # <1>
+  batchTimeUS: "1970-01-01T00:00:00"
+}
+---
+give: { # <2>
+  publicKey: !!binary Sq1s3liIh6LkceZYP+qh6MlMRRqCNJ5Dvl9oyAiZHe8=, # <3>
+  amount: 20.0 # <4>
+}
+---
+endBatch: ""
+---
+----
+<1> Account 1
+<2> gives
+<3> Account 2
+<4> 20.0 likes
+
+produces an output of
+
+.output.yaml describes the extends outputs
+[source, yaml]
+----
+---
+to: !!binary RWUHCYzTzADL+4kJ9r90rWHBo6J/Wng5FmlXFjv8bd8= # <1>
+onBalance: { # <2>
+  publicKey: !!binary RWUHCYzTzADL+4kJ9r90rWHBo6J/Wng5FmlXFjv8bd8=, 
+  amount: 80.0 # <3>
+}
+to: !!binary Sq1s3liIh6LkceZYP+qh6MlMRRqCNJ5Dvl9oyAiZHe8= # <4>
+onBalance: { # <5>
+  publicKey: !!binary Sq1s3liIh6LkceZYP+qh6MlMRRqCNJ5Dvl9oyAiZHe8=,
+  amount: 30.0 # <6>
+}
+---
+---
+----
+<1> Account 1
+<2> is notified that it's balances is now
+<3> 80.0 likes
+<4> Account 2
+<5> is notified that it's balance is now
+<5> 30.0 likes
+
+The two key classes are the gateway class
+
+https://github.com/OpenHFT/Chronicle-Accelerate/blob/master/examples/appreciation/src/main/java/town/lost/examples/appreciation/VanillaAppreciationGateway.java[VanillaAppreciationGateway.java]
+
+and the post blockchain class is
+
+https://github.com/OpenHFT/Chronicle-Accelerate/blob/master/examples/appreciation/src/main/java/town/lost/examples/appreciation/VanillaAppreciationTransactionListener.java[VanillaAppreciationTransactionListener.java]
+
+NOTE: `lost.town` is a domain I use for examples and games I write.
+
+If you would like to get updates on Chronicle Accelerate, https://twitter.com/ChronicleXCL[join us on Twitter]
+
+If you would like to see how our platform can be used to build your blockchain solution mailto:sales@chronicle-software.com[Contact us on sales@chronicle-software.com]
+
+
