@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Why do I think String.hashCode() is poor</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Why do I think String.hashCode() is poor">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:url" content="https://vanilla-java.github.io">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Why do I think String.hashCode() is poor">
+    <meta property="og:description" content="">
+    <meta property="og:site_name" content="Vanilla Java">
+
+    <meta itemprop="name" content="Why do I think String.hashCode() is poor">
+    <meta itemprop="description" content="">
+
+    <meta name="twitter:site" content="@yourblogtwitter">
+    
+    <meta name="twitter:creator" content="@yourtwitter">
+    
+    <meta property="article:author" content="https://www.facebook.com/yourprofile">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/yourblogprofile">
+    
+    <meta property="fb:admins" content="">
+    
+    <meta name="google-site-verification" content="">
+    
+    <link rel="author" href="https://plus.google.com/yourprofile">
+    
+    <meta name="theme-color" content="">
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1534086390514">
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1534086390514"/>
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1534086390514"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Why do I think String.hashCode() is poor" />
+    <meta property="og:description" content="In response to an article I wrote HERE, a recent article HERE pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does &quot;poor&quot; mean to me and does it even matter? What is the purpose of a hashcode? A" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html" />
+    <meta property="article:published_time" content="2018-08-12T00:00:00.000Z" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Why do I think String.hashCode() is poor" />
+    <meta name="twitter:description" content="In response to an article I wrote HERE, a recent article HERE pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does &quot;poor&quot; mean to me and does it even matter? What is the purpose of a hashcode? A" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Why do I think String.hashCode() is poor",
+    "url": "https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html",
+    "datePublished": "2018-08-12T00:00:00.000Z",
+    "description": "In response to an article I wrote HERE, a recent article HERE pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does &quot;poor&quot; mean to me and does it even matter? What is the purpose of a hashcode? A"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/themes/prism-okaidia.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="/" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2018-08-12" itemprop="datePublished">
+                  16 hours ago
+                </time>
+              </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html" itemprop="url" data-pjax title="Why do I think String.hashCode() is poor">Why do I think String.hashCode() is poor</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In response to an article I wrote <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">HERE</a>, a recent article <a href="http://sigpwned.com/2018/08/10/string-hashcode-is-plenty-unique/">HERE</a> pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does "poor" mean to me and does it even matter?</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_the_purpose_of_a_hashcode">What is the purpose of a hashcode?</h3>
+<div class="paragraph">
+<p>A hashcode attempts to produce a number for each input, in a somewhat random and unique way.  If the input already contains a significant amount of randomness the hashing strategy largely doesn&#8217;t matter. Even Integer.hashCode() works well for random (and even sequential numbers)
+Long strings, for example, are likely to contain a significant amount of randomness so the behaviour for a hash for long strings isn&#8217;t a good test of the hash.  However, for that use case, it likely it doesn&#8217;t matter unless someone has planned a deliberate attack, in which case you have to do more than change the hashing strategy.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_might_we_test_whether_a_hash_code_is_good_or_not">How might we test whether a hash code is good or not?</h3>
+<div class="paragraph">
+<p>One approach is to score it compared to similar hashcode functions for an assumed use case.
+In this case, I have used words from the dictionary, selecting words of lengths 1 to 16 and estimated their collision rate in a HashMap with default settings.</p>
+</div>
+<div class="paragraph">
+<p>HashMap manipulates the hashcode in two ways.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it agitates the hashcode to ensure the higher bits are used</p>
+</li>
+<li>
+<p>it masks the hashcode by the capacity - 1 where the capacity is the number of buckets and a power of 2. A mask is used as it&#8217;s faster than division.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>String.hashCode() calculates the hashCode based iterating over the characters in a String and multiplying the hashcode by 31 each time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_is_31_a_good_number_to_use">Is 31 a good number to use?</h3>
+<div class="paragraph">
+<p>It is widely regarded that prime numbers are better to use for hashcodes on  balance <a href="https://stackoverflow.com/questions/3613102/why-use-a-prime-number-in-hashcode" class="bare">https://stackoverflow.com/questions/3613102/why-use-a-prime-number-in-hashcode</a></p>
+</div>
+<div class="paragraph">
+<p>However, lets test how it compares to other moderately sizes prime numbers. In the following test I look at the percentage of collisions a HashMap is likely to have for words of length 1 to 16. I take into account that HashMap agitates the hashcode and then masks it. The size to mask is based on the default size the HashMap would be for that many keys. I give extra weight for the worst outcome.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class Main {
+
+    public static void main(String[] args) throws IOException {
+        List&lt;String&gt; words = Files.readAllLines(Paths.get("/usr/share/dict/words")); <i class="conum" data-value="1"></i><b>(1)</b>
+        Map&lt;Integer, List&lt;Integer&gt;&gt; scored = IntStream.range(2, 1024).parallel() <i class="conum" data-value="2"></i><b>(2)</b>
+                .filter(Main::isPrime)
+                .boxed()
+                .collect(Collectors.groupingBy(i -&gt; scoreFor(words, i),
+                                               TreeMap::new, Collectors.toList())); <i class="conum" data-value="3"></i><b>(3)</b>
+        scored.entrySet().stream().forEach(System.out::println);
+
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Read all the words from a file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Try all the primes between 2 and 1024 in parallel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Build a map of primes sorted by score</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    private static int scoreFor(List&lt;String&gt; words, int prime) {
+        int score = 0;
+        int max = 0;
+        for (int length = 1; length &lt; 17; length++) {
+            int finalLength = length;
+            List&lt;String&gt; words2 = words.stream()
+                                       .filter(l -&gt; l.length() == finalLength)
+                                      .collect(Collectors.toList()); <i class="conum" data-value="1"></i><b>(1)</b>
+            int leading = Integer.numberOfLeadingZeros(words2.size() * 10 / 7);
+            int nextPowerOf2 = 1 &lt;&lt; -leading; <i class="conum" data-value="2"></i><b>(2)</b>
+
+            Map&lt;Integer, List&lt;String&gt;&gt; collect = words2.stream()
+                    .collect(Collectors.groupingBy(s -&gt; hash2(s, nextPowerOf2, prime)));
+            int collisions = collect.values().stream()
+                                             .mapToInt(l -&gt; l.size() - 1)
+                                             .sum(); <i class="conum" data-value="3"></i><b>(3)</b>
+            int perc = collisions * 100 / words2.size();
+            score += perc; <i class="conum" data-value="4"></i><b>(4)</b>
+            max = Math.max(perc, max);
+        }
+        score += max; <i class="conum" data-value="5"></i><b>(5)</b>
+        return score;
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>for all the words of a given length</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>take the next power of two (after considering a load factor of 0.7)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>count the number of collisions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>add the percentage</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>add the worst percentage twice.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    static int hash2(String s, int n, int prime) {
+        char val[] = s.toCharArray();
+        int h = 0;
+        for (int i = 0; i &lt; val.length; i++) {
+            h = prime * h +  val[i];
+        }
+        // agitate like HashMap in Java 8.
+        h ^= h &gt;&gt;&gt; 16;
+        // select a bucket.
+        return h &amp; (n - 1);
+    }
+
+    static boolean isPrime(long n) {
+        if (n &gt; 2 &amp;&amp; (n &amp; 1) == 0) return false;
+        if (n &gt; 3 &amp;&amp; n % 3 == 0) return false;
+        if (n &gt; 5 &amp;&amp; n % 5 == 0) return false;
+        for (int i = 7, max = (int) Math.sqrt(n); i &lt;= max; i++)
+            if (n % i == 0)
+                return false;
+        return true;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Not too surprisingly, 2 is the worst prime number to use for this test and has the highest score for collisions.  Given that there is 26 letters in the alphabet lets assume we could have ignored prime numbers less than 26. Let&#8217;s also assume that numbers over 256 (possible values for a byte) could have been discounted. Primes over 256 don&#8217;t find scores outside the range of those we get with 26 to 256. How does each of our prime numbers rank?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>297=[109]
+301=[103, 173]
+302=[223]
+304=[29, 73, 167, 179, 211, 251]
+305=[79, 101]
+308=[41, 83, 151, 199]
+309=[37, 47, 67, 89, 139, 239] <i class="conum" data-value="1"></i><b>(1)</b>
+310=[43, 97]
+311=[149]
+312=[163]
+314=[53, 193]
+316=[197]
+317=[31, 131, 233] <i class="conum" data-value="2"></i><b>(2)</b>
+318=[61, 71, 137]
+319=[107]
+320=[59]
+322=[229]
+323=[181]
+324=[113]
+330=[191]
+331=[241]
+343=[157]
+364=[227]
+374=[127]</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Median score</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Score for 31 as a prime factor.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For this test at least, 31 is in the worst half of the possible prime numbers to use. In my initial cut, 31 was the worst number to choose, but I felt the test wouldn&#8217;t be general enough.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_isn_t_there_another_implicit_factors">Isn&#8217;t there another implicit factors?</h3>
+<div class="paragraph">
+<p>The main computation line could be written like this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    h = (prime * h +  1 * val[i]) &amp; 0xFFFFFFFF;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>How much difference does it make to change one of these factors instead?</p>
+</div>
+<div class="sect3">
+<h4 id="_trying_different_multipliers">Trying different multipliers</h4>
+<div class="paragraph">
+<p>Say we make the search of this nature</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    h = (31 * h +  prime * val[i]) &amp; 0xFFFFFFFF;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and you get results like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>311=[5]
+312=[23, 89]
+313=[3]
+315=[13, 61]
+316=[71, 239]
+317=[1, 7, 31, 241]
+....</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So in this case, using 5 instead of 1 might have been better, however, this adds computational cost. What if we use 109 as the prime</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>297=[1, 3]
+299=[5]
+302=[19]
+303=[11]
+306=[13, 23]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, a multiplier of 1 is a good choice.</p>
+</div>
+<div class="paragraph">
+<p>How about we change the use of an int to a long. This could be slower on some systems, but does it make much difference?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">    static int hash2(String s, int n, int prime) {
+        char val[] = s.toCharArray();
+        long h = 0;
+        for (int i = 0; i &lt; val.length; i++) {
+            h = prime * h + val[i];
+        }
+        h ^= h &gt;&gt;&gt; 32;
+        // agitate like HashMap in Java 8.
+        h ^= h &gt;&gt;&gt; 16;
+        // select a bucket.
+        return (int) (h &amp; (n - 1));
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>produces a scores like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">298=[179]
+301=[109, 251]
+302=[103, 173, 223]
+303=[167, 211]
+304=[79, 101]
+305=[73, 151]
+....</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I couldn&#8217;t say this is any better, but it might be slower, so I would say it is best to leave it with an int calculation.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_comparing_the_number_of_collisions_for_a_two_character_ascii_string">Comparing the number of collisions for a two character ASCII string</h3>
+<div class="paragraph">
+<p>We can generate all the possible two character String and compare the number of collisions using 31 and 109 as the prime number.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public class CollisionsMain {
+    public static void main(String[] args) {
+        {
+            Map&lt;Integer, List&lt;String&gt;&gt; freqMap = IntStream.range(' ', 127)
+                    .mapToObj(i -&gt; Character.toString((char) i))
+                    .flatMap(c -&gt; IntStream.range(' ', 127)
+                            .mapToObj(c2 -&gt; c + (char) c2))
+                    .collect(Collectors.groupingBy(String::hashCode));
+            long collision = freqMap.values().stream().mapToInt(l -&gt; l.size() - 1).sum();
+            System.out.println("with prime = 31, there are " + collision + " collisions");
+        }
+        {
+            Map&lt;Integer, List&lt;String&gt;&gt; freqMap = IntStream.range(' ', 127)
+                    .mapToObj(i -&gt; Character.toString((char) i))
+                    .flatMap(c -&gt; IntStream.range(' ', 127)
+                            .mapToObj(c2 -&gt; c + (char) c2))
+                    .collect(Collectors.groupingBy(s -&gt; hash2(s)));
+            long collision = freqMap.values().stream().mapToInt(l -&gt; l.size() - 1).sum();
+            System.out.println("with prime = 109, there are " + collision + " collisions");
+        }
+    }
+
+    static int hash2(String s) {
+        int h = 0;
+        for (int i = 0; i &lt; s.length(); i++) {
+            h = h * 109 + s.charAt(i);
+        }
+        return h;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This prints</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>with prime = 31, there are 5952 collisions
+with prime = 109, there are 0 collisions</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And for 3 character strings</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>with prime = 31, there are 755968 collisions
+with prime = 109, there are 0 collisions</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For this use case, 109 is so much better as the range of ASCII characters I am using is 32 to 126 inclusive which is a range of fewer than 109 values. Using 109 has no collisions for 4 characters either but takes to many resources to run this way.
+</td>
+</tr>
+</table>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>But because String.hashCode()‘s hash space is small and it runs so fast,</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>There is plenty of int values to allow every 0 to 4 letter ASCII String to have a unique hashcode.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>I have always found (anecdotally) that String.hashCode() manages collisions quite well for Real World Data.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>I agree that in general, it does it&#8217;s job quite well and HashMap degrading to a tree instead of a list for collisions (in Java 8) mitigates this significantly.</p>
+</div>
+<div class="paragraph">
+<p>However, let&#8217;s say that using 109 instead of 31 is 5% better, imagine how much processing power has been wasted on the millions of devices over the decades for the change of one number.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>So what does a “poor” hash function look like? And what does a “good” hash function look like? And where does String.hashCode() fall on that spectrum?</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>I would say that in terms of prime factors that could have reasonably been chosen, it&#8217;s on the "poor" end of the scale.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>In conclusion, I feel the String.hashCode() is poor as most prime numbers between 26 and 256 would have been a better choice than 31. The nearest prime 29 is likely to be better and 109 might be even better.
+A more extensive study of a range of use cases would be needed to settle on one number better in most cases.</p>
+</div>
+<div class="paragraph">
+<p>I would favour, the hashing strategy for HashMap should be configurable (like Comparator for TreeMap)</p>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">August 12, 2018</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+
+      <section class="post-comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+        var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </section>
+
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>© 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Proudly published with <a href="https://hubpress.github.io" target="_blank">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/prism.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        // hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1534086390514"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
