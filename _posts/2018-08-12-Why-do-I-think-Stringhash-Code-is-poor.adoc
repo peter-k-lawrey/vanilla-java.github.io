@@ -1,0 +1,277 @@
+= Why do I think String.hashCode() is poor
+Peter Lawrey
+
+In response to an article I wrote https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html[HERE], a recent article http://sigpwned.com/2018/08/10/string-hashcode-is-plenty-unique/[HERE] pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does "poor" mean to me and does it even matter?
+
+=== What is the purpose of a hashcode?
+A hashcode attempts to produce a number for each input, in a somewhat random and unique way.  If the input already contains a significant amount of randomness the hashing strategy largely doesn't matter. Even Integer.hashCode() works well for random (and even sequential numbers)
+Long strings, for example, are likely to contain a significant amount of randomness so the behaviour for a hash for long strings isn't a good test of the hash.  However, for that use case, it likely it doesn't matter unless someone has planned a deliberate attack, in which case you have to do more than change the hashing strategy.
+
+=== How might we test whether a hash code is good or not?
+One approach is to score it compared to similar hashcode functions for an assumed use case.
+In this case, I have used words from the dictionary, selecting words of lengths 1 to 16 and estimated their collision rate in a HashMap with default settings.
+
+HashMap manipulates the hashcode in two ways.
+
+- it agitates the hashcode to ensure the higher bits are used
+- it masks the hashcode by the capacity - 1 where the capacity is the number of buckets and a power of 2. A mask is used as it's faster than division.
+
+String.hashCode() calculates the hashCode based iterating over the characters in a String and multiplying the hashcode by 31 each time.
+
+=== Is 31 a good number to use?
+It is widely regarded that prime numbers are better to use for hashcodes on  balance https://stackoverflow.com/questions/3613102/why-use-a-prime-number-in-hashcode
+
+However, lets test how it compares to other moderately sizes prime numbers. In the following test I look at the percentage of collisions a HashMap is likely to have for words of length 1 to 16. I take into account that HashMap agitates the hashcode and then masks it. The size to mask is based on the default size the HashMap would be for that many keys. I give extra weight for the worst outcome.
+
+[source, Java]
+----
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        List<String> words = Files.readAllLines(Paths.get("/usr/share/dict/words")); // <1>
+        Map<Integer, List<Integer>> scored = IntStream.range(2, 1024).parallel() // <2>
+                .filter(Main::isPrime)
+                .boxed()
+                .collect(Collectors.groupingBy(i -> scoreFor(words, i), 
+                                               TreeMap::new, Collectors.toList())); // <3>
+        scored.entrySet().stream().forEach(System.out::println);
+
+    }
+----
+<1> Read all the words from a file.
+<2> Try all the primes between 2 and 1024 in parallel
+<3> Build a map of primes sorted by score
+
+[source, Java]
+----
+    private static int scoreFor(List<String> words, int prime) {
+        int score = 0;
+        int max = 0;
+        for (int length = 1; length < 17; length++) {
+            int finalLength = length;
+            List<String> words2 = words.stream()
+                                       .filter(l -> l.length() == finalLength)
+                                      .collect(Collectors.toList()); // <1>
+            int leading = Integer.numberOfLeadingZeros(words2.size() * 10 / 7);
+            int nextPowerOf2 = 1 << -leading; // <2>
+
+            Map<Integer, List<String>> collect = words2.stream()
+                    .collect(Collectors.groupingBy(s -> hash2(s, nextPowerOf2, prime)));
+            int collisions = collect.values().stream()
+                                             .mapToInt(l -> l.size() - 1)
+                                             .sum(); // <3>
+            int perc = collisions * 100 / words2.size();
+            score += perc; // <4>
+            max = Math.max(perc, max);
+        }
+        score += max; // <5>
+        return score;
+    }
+----
+<1> for all the words of a given length
+<2> take the next power of two (after considering a load factor of 0.7)
+<3> count the number of collisions
+<4> add the percentage
+<5> add the worst percentage twice.
+
+[source, Java]
+----
+    static int hash2(String s, int n, int prime) {
+        char val[] = s.toCharArray();
+        int h = 0;
+        for (int i = 0; i < val.length; i++) {
+            h = prime * h +  val[i];
+        }
+        // agitate like HashMap in Java 8.
+        h ^= h >>> 16;
+        // select a bucket.
+        return h & (n - 1);
+    }
+
+    static boolean isPrime(long n) {
+        if (n > 2 && (n & 1) == 0) return false;
+        if (n > 3 && n % 3 == 0) return false;
+        if (n > 5 && n % 5 == 0) return false;
+        for (int i = 7, max = (int) Math.sqrt(n); i <= max; i++)
+            if (n % i == 0)
+                return false;
+        return true;
+    }
+}
+----
+
+Not too surprisingly, 2 is the worst prime number to use for this test and has the highest score for collisions.  Given that there is 26 letters in the alphabet lets assume we could have ignored prime numbers less than 26. Let's also assume that numbers over 256 (possible values for a byte) could have been discounted. Primes over 256 don't find scores outside the range of those we get with 26 to 256. How does each of our prime numbers rank?
+
+----
+297=[109]
+301=[103, 173]
+302=[223]
+304=[29, 73, 167, 179, 211, 251]
+305=[79, 101]
+308=[41, 83, 151, 199]
+309=[37, 47, 67, 89, 139, 239] // <1>
+310=[43, 97]
+311=[149]
+312=[163]
+314=[53, 193]
+316=[197]
+317=[31, 131, 233] // <2>
+318=[61, 71, 137]
+319=[107]
+320=[59]
+322=[229]
+323=[181]
+324=[113]
+330=[191]
+331=[241]
+343=[157]
+364=[227]
+374=[127]
+----
+<1> Median score
+<2> Score for 31 as a prime factor.
+
+For this test at least, 31 is in the worst half of the possible prime numbers to use. In my initial cut, 31 was the worst number to choose, but I felt the test wouldn't be general enough.
+
+=== Isn't there another implicit factors?
+The main computation line could be written like this.
+
+[source, Java]
+----
+    h = (prime * h +  1 * val[i]) & 0xFFFFFFFF;
+----
+How much difference does it make to change one of these factors instead?
+
+==== Trying different multipliers
+Say we make the search of this nature
+
+[source, Java]
+----
+    h = (31 * h +  prime * val[i]) & 0xFFFFFFFF;
+----
+and you get results like this
+
+----
+311=[5]
+312=[23, 89]
+313=[3]
+315=[13, 61]
+316=[71, 239]
+317=[1, 7, 31, 241]
+....
+----
+So in this case, using 5 instead of 1 might have been better, however, this adds computational cost. What if we use 109 as the prime
+
+----
+297=[1, 3]
+299=[5]
+302=[19]
+303=[11]
+306=[13, 23]
+----
+Now, a multiplier of 1 is a good choice.
+
+How about we change the use of an int to a long. This could be slower on some systems, but does it make much difference?
+
+[source, Java]
+----
+    static int hash2(String s, int n, int prime) {
+        char val[] = s.toCharArray();
+        long h = 0;
+        for (int i = 0; i < val.length; i++) {
+            h = prime * h + val[i];
+        }
+        h ^= h >>> 32;
+        // agitate like HashMap in Java 8.
+        h ^= h >>> 16;
+        // select a bucket.
+        return (int) (h & (n - 1));
+    }
+----
+produces a scores like this
+
+[source, Java]
+----
+298=[179]
+301=[109, 251]
+302=[103, 173, 223]
+303=[167, 211]
+304=[79, 101]
+305=[73, 151]
+....
+----
+I couldn't say this is any better, but it might be slower, so I would say it is best to leave it with an int calculation.
+
+=== Comparing the number of collisions for a two character ASCII string
+We can generate all the possible two character String and compare the number of collisions using 31 and 109 as the prime number.
+
+[source, Java]
+----
+public class CollisionsMain {
+    public static void main(String[] args) {
+        {
+            Map<Integer, List<String>> freqMap = IntStream.range(' ', 127)
+                    .mapToObj(i -> Character.toString((char) i))
+                    .flatMap(c -> IntStream.range(' ', 127)
+                            .mapToObj(c2 -> c + (char) c2))
+                    .collect(Collectors.groupingBy(String::hashCode));
+            long collision = freqMap.values().stream().mapToInt(l -> l.size() - 1).sum();
+            System.out.println("with prime = 31, there are " + collision + " collisions");
+        }
+        {
+            Map<Integer, List<String>> freqMap = IntStream.range(' ', 127)
+                    .mapToObj(i -> Character.toString((char) i))
+                    .flatMap(c -> IntStream.range(' ', 127)
+                            .mapToObj(c2 -> c + (char) c2))
+                    .collect(Collectors.groupingBy(s -> hash2(s)));
+            long collision = freqMap.values().stream().mapToInt(l -> l.size() - 1).sum();
+            System.out.println("with prime = 109, there are " + collision + " collisions");
+        }
+    }
+
+    static int hash2(String s) {
+        int h = 0;
+        for (int i = 0; i < s.length(); i++) {
+            h = h * 109 + s.charAt(i);
+        }
+        return h;
+    }
+}
+----
+This prints
+
+----
+with prime = 31, there are 5952 collisions
+with prime = 109, there are 0 collisions
+----
+
+And for 3 character strings
+
+----
+with prime = 31, there are 755968 collisions
+with prime = 109, there are 0 collisions
+----
+
+NOTE: For this use case, 109 is so much better as the range of ASCII characters I am using is 32 to 126 inclusive which is a range of fewer than 109 values. Using 109 has no collisions for 4 characters either but takes to many resources to run this way.
+
+> But because String.hashCode()‘s hash space is small and it runs so fast,
+
+There is plenty of int values to allow every 0 to 4 letter ASCII String to have a unique hashcode.
+
+> I have always found (anecdotally) that String.hashCode() manages collisions quite well for Real World Data.
+
+I agree that in general, it does it's job quite well and HashMap degrading to a tree instead of a list for collisions (in Java 8) mitigates this significantly.
+
+However, let's say that using 109 instead of 31 is 5% better, imagine how much processing power has been wasted on the millions of devices over the decades for the change of one number.
+
+> So what does a “poor” hash function look like? And what does a “good” hash function look like? And where does String.hashCode() fall on that spectrum?
+
+I would say that in terms of prime factors that could have reasonably been chosen, it's on the "poor" end of the scale.
+
+=== Conclusion
+In conclusion, I feel the String.hashCode() is poor as most prime numbers between 26 and 256 would have been a better choice than 31. The nearest prime 29 is likely to be better and 109 might be even better.
+A more extensive study of a range of use cases would be needed to settle on one number better in most cases. 
+
+I would favour, the hashing strategy for HashMap should be configurable (like Comparator for TreeMap)
+
+
