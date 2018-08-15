@@ -69,7 +69,7 @@ static int hashCode109(byte[] value) {
     return h;
 }
 ----
-<1> On the first iteration don't need to multiple the previous value.
+<1> On the first iteration don't need to multiply the previous value.
 <2> Afterwards, multiply by the factor to improve the outcomes for short inputs.
 
 The differences between hashing strategies are more obvious for shorter inputs.
