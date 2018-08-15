@@ -1,4 +1,218 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 15 Aug 2018 14:39:11 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Why do I think String.hashCode() is poor]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 15 Aug 2018 14:40:23 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Looking at randomness and performance for hash codes]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In these articles, <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">String.hashCode() is not even a little unique</a> and <a href="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html">Why do I this String.hashCode() is poor</a>, I looked at how String.hashCode() might have been made better with little change at the time it was last updated (in Java 1.2). However, given the current solution has been in place for 20 years, the default behaviour is unlikely to change. Additionally, if we were to consider different a different algorithm I would prefer something much faster and more random than just changing the prime factor from 31 to 109.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_can_we_evaluate_randomness">How can we evaluate randomness?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>One way of looking at randomness is to change the input by one bit and see how many bits change in the resulting hash. The input is first populated with random data and the resulting hashes are compared for a large sample. In this case, I took one million samples and plotted it against what you get for a <code>Random.nextInt()</code> call.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The ideal hash changes half of the bits on average, more than half bits changed is also a bias.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-64-bytes.png" alt="randomness 64 bytes">
+</div>
+<div class="title">Figure 1. The randomness of the hash code for different strategies for longer inputs compared with Random all have decent outcomes</div>
+</div>
+<div class="listingblock">
+<div class="title">Harness to estimate the randomness distribution of a hashing strategy.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static double[] randomnessDistribution(ToIntFunction&lt;byte[]&gt; hashCode, int length) {
+    double[] dist = new double[33];
+    Random random = new Random(length);
+    byte[] bytes = new byte[length];
+    int tests = 0;
+    for (int t = 0; t &lt; 1000000; t += length) {
+        for (int i = 0; i &lt; length; i++)
+            bytes[i] = (byte) (' ' + random.nextInt(96)); <i class="conum" data-value="1"></i><b>(1)</b>
+        int base = hashCode.applyAsInt(bytes);
+
+        for (int i = 0; i &lt; length; i++) {
+            for (int j = 0; j &lt; 8; j++) {
+                bytes[i] ^= 1 &lt;&lt; j;
+                int val = hashCode.applyAsInt(bytes);
+                int score2 = Integer.bitCount(base ^ val);
+                dist[score2]++;
+                tests++;
+                bytes[i] ^= 1 &lt;&lt; j;
+            }
+        }
+    }
+    for (int i = 0; i &lt; dist.length; i++)
+        dist[i] = Math.round(1000.0 * dist[i] / tests) / 10.0;
+    return dist;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>I assume the input is largely ASCII or positive bytes. This doesn&#8217;t change the results greatly.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Print the distribution of different strategies for charting.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">for(double[] dist: new double[][] {
+        randomnessDistribution(HashCodeBenchmarkMain::hashCode31, length),
+        randomnessDistribution(Arrays::hashCode, length),
+        randomnessDistribution(HashCodeBenchmarkMain::hashCode109, length),
+        randomnessDistribution(HashCodeBenchmarkMain::nativeHashCode, length),
+        randomnessDistribution(value -&gt; ThreadLocalRandom.current().nextInt(), length)}) {
+    System.out.println(Arrays.toString(dist).replaceAll("(\\[|\\])", ""));
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Modified form of the String.hashCode() using 109 as a prime.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static int hashCode109(byte[] value) {
+    if (value.length == 0) return 0;
+    int h = value[0]; <i class="conum" data-value="1"></i><b>(1)</b>
+    for (int i = 1; i &lt; value.length; i++) {
+        h = h * 109 + value[i];
+    }
+    h *= 109; <i class="conum" data-value="2"></i><b>(2)</b>
+    return h;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>On the first iteration don&#8217;t need to multiple the previous value.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Afterwards, multiply by the factor to improve the outcomes for short inputs.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The differences between hashing strategies are more obvious for shorter inputs.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-20-bytes.png" alt="randomness 20 bytes">
+</div>
+<div class="title">Figure 2. Most strategies tested do well for 20-byte inputs</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-8-bytes.png" alt="randomness 8 bytes">
+</div>
+<div class="title">Figure 3. For 8-byte inputs, some strategies are not ideal</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-4-bytes.png" alt="randomness 4 bytes">
+</div>
+<div class="title">Figure 4. For 4 byte inputs, String.hashCode() and Arrays.hashCode() are poor</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-2-bytes.png" alt="randomness 2 bytes">
+</div>
+<div class="title">Figure 5. For 2 byte inputs, String.hashCode() and Arrays.hashCode() are not great</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-1-byte.png" alt="randomness 1 byte">
+</div>
+<div class="title">Figure 6. For 1 byte inputs, String.hashCode() and Arrays.hashCode() might be fine as the number of possible keys is small.</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_this_native_hashcode">What is this "native" hashCode?</h3>
+<div class="paragraph">
+<p>A technique we use to speed up the processing of bytes is to attempt to process groups of them at once i.e. 4 bytes or 8 bytes at a time. This can speed up processing by 2-4x. We also see a benefit in using a larger prime as we pass through fewer iterations.</p>
+</div>
+<div class="listingblock">
+<div class="title">Hashing strategy which takes 4 bytes aa time</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">private static final int M2 = 0x7A646E4D;
+
+// read 4 bytes at a time from a byte[] assuming Java 9+ Compact Strings
+private static int getIntFromArray(byte[] value, int i) {
+    return UnsafeMemory.INSTANCE.UNSAFE.getInt(value, BYTE_ARRAY_OFFSET + i); <i class="conum" data-value="0"></i><b>(0)</b>
+}
+
+public static int nativeHashCode(byte[] value) {
+    long h = getIntFromArray(value, 0);
+    for (int i = 4; i &lt; value.length; i += 4)
+        h = h * M2 + getIntFromArray(value, i); <i class="conum" data-value="1"></i><b>(1)</b>
+    h *= M2;
+    return (int) h ^ (int) (h &gt;&gt;&gt; 25);
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>assess assumes all byte[] have zero byte padding at the end and aligned to a multiple of 4 bytes.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>in each iteration multiply by a large constant</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>agitate the results using some of the high bits</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_can_we_measure_how_they_perform">How can we measure how they perform?</h3>
+<div class="paragraph">
+<p>Using JMH, we can benchmark how long each operation takes on average.  To have reasonable coverage, the benchmark tried a number of sizes so this is the average for those sizes.</p>
+</div>
+<div class="listingblock">
+<div class="title">Benchmakr comparing the throughput of using String.hashCode with 31 or 109 and the native hashing strategy.</div>
+<div class="content">
+<pre>Benchmark                                      Mode  Cnt   Score   Error   Units
+HashCodeBenchmarkMain.String_hashCode         thrpt   25  15.586 ± 0.433  ops/us
+HashCodeBenchmarkMain.String_hashCode109      thrpt   25  13.480 ± 0.147  ops/us
+HashCodeBenchmarkMain.String_hashCode31       thrpt   25  16.173 ± 0.205  ops/us
+HashCodeBenchmarkMain.String_native_hashCode  thrpt   25  55.547 ± 2.051  ops/us</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The native implementation is around 3-4 times as it processes up to 4 bytes at a time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_code">The code</h3>
+<div class="paragraph">
+<p>A maven module of code exploring how String is hashed is <a href="https://github.com/peter-lawrey/Java-Lost/tree/master/java-string-hashcode">HERE</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>I believe it is possible to produce a hashing strategy which is both much faster and has a better hash distribution than the 20-year-old solution.  Changing the JVM is impractical however having a pluggable hashing strategy for XxxxHashMap might ensure backward compatibility while providing an option for a faster solution.</p>
+</div>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2018/08/15/Looking-at-randomness-and-performance-for-hash-codes.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/08/15/Looking-at-randomness-and-performance-for-hash-codes.html</guid><category><![CDATA[String]]></category><category><![CDATA[hashCode]]></category><category><![CDATA[performance]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 15 Aug 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Why do I think String.hashCode() is poor]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In response to an article I wrote <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">HERE</a>, a recent article <a href="http://sigpwned.com/2018/08/10/string-hashcode-is-plenty-unique/">HERE</a> pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does "poor" mean to me and does it even matter?</p>
