@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 15 Aug 2018 14:42:54 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Looking at randomness and performance for hash codes]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 15 Aug 2018 14:46:58 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Looking at randomness and performance for hash codes]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In these articles, <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">String.hashCode() is not even a little unique</a> and <a href="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html">Why do I this String.hashCode() is poor</a>, I looked at how String.hashCode() might have been made better with little change at the time it was last updated (in Java 1.2). However, given the current solution has been in place for 20 years, the default behaviour is unlikely to change. Additionally, if we were to consider different a different algorithm I would prefer something much faster and more random than just changing the prime factor from 31 to 109.</p>
@@ -98,7 +98,7 @@ The ideal hash changes half of the bits on average, more than half bits changed 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>On the first iteration don&#8217;t need to multiple the previous value.</td>
+<td>On the first iteration don&#8217;t need to multiply the previous value.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
