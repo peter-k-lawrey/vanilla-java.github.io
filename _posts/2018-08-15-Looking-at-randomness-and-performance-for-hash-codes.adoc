@@ -120,7 +120,7 @@ public static int nativeHashCode(byte[] value) {
 
 Using JMH, we can benchmark how long each operation takes on average.  To have reasonable coverage, the benchmark tried a number of sizes so this is the average for those sizes.
 
-.Benchmakr comparing the throughput of using String.hashCode with 31 or 109 and the native hashing strategy.
+.Benchmark comparing the throughput of using String.hashCode with 31 or 109 and the native hashing strategy.
 ----
 Benchmark                                      Mode  Cnt   Score   Error   Units
 HashCodeBenchmarkMain.String_hashCode         thrpt   25  15.586 ± 0.433  ops/us
