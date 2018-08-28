@@ -1,0 +1,102 @@
+= Reducing network latency
+Peter Lawrey
+:hp-tags: Network, Low Latency, Testing
+
+A look https://idioms.thefreedictionary.com/go+down+the+rabbit+hole[down the rabbit hole] of reducing network https://whatis.techtarget.com/definition/latency[latency].  How latency can be measured and what you can do about it in a Java application.
+
+== Ping latency
+A tool I used regularly when I was a Unix System Administrator was https://linux.die.net/man/8/ping[ping]
+
+    ping -f hostname
+
+This sends a "flood" of packets across the network.  It only sends 5 per second, but it gives you an idea of the round trip latency of the network.
+
+I have two servers which are close to each other, so I should be able to get their latencies pretty low.  `ping` reports an average latency of 107 μs (https://en.wikipedia.org/wiki/Microsecond[microseconds]) which seems reasonable to start with.
+
+NOTE: All these timings are for https://en.wikipedia.org/wiki/Round-trip_delay_time[round trip time] (RTT) which is the time to go from a process in one machine to a process in a second machine and back again.
+
+== Java to Java latency with new TCP connections
+Creating a new connection each time you want to send a request or a message is relatively expensive, however many applications still work this way so it is useful to get an idea of the latencies this incurs.
+
+.Using NettyEchoServer and Chronicle's EchoReconnectingClientMain via 1 Gb line
+|===
+| Throughput, 1 client | Typical | 99.9%ile
+| 200/s | 290 μs | 510 μs
+| 500/s | 280 μs | 692 μs
+| 1000/s | 260 μs | 670 μs
+| 2000/s | 260 μs | 1,700 μs
+| 3500/s | 300 μs | 6,500 μs
+|===
+At this point, I found I couldn't run the test for as long as the machine kept running out of resources. I could have given it more, but as you will see, opening connections each time isn't efficient even with a bit of tuning.
+
+=== Using a low latency connection.
+One way to improve performance is to use a low latency network card such as the http://solarflare.com/Media/Default/PDFs/SF-116323-CD-LATEST_Solarflare_SFN8522-PLUS_Product_Brief.pdf[Solarflare 8522-PLUS]. It is a 10 Gb card designed for http://solarflare.com/xtremescale-nics[low latency]
+
+The ping time for this connection was 26 μs (as you will see, this is still pretty slow)
+
+.Using NettyEchoServer and Chronicle's EchoReconnectingClientMain over 10 Gb Solarflare
+|===
+| Throughput, 1 client | Typical | 99.9%ile
+| 200/s | 160 μs | 252 μs
+| 500/s | 150 μs | 330 μs
+| 1000/s | 185 μs | 360 μs
+| 2000/s | 135 μs | 410 μs
+|===
+
+This is a significant improvement without having to change the software.
+
+== Reusing connections
+
+Reusing connections for streaming messages can achieve much higher throughputs and lower latencies.
+
+.Using NettyEchoServer and Chronicle's EchoClientMain via 10 Gb line
+|===
+| Throughput, 1 client | Typical | 99.9%ile
+| 20,000/s | 21 μs | 100 μs
+| 30,000/s | 23 μs | 260 μs
+| 40,000/s | 31 μs | 1,600 μs
+| 50,000/s | 110 μs | 1,700 μs
+| 60,000/s | na | na
+|===
+
+The https://github.com/OpenHFT/Chronicle-Network/blob/master/src/test/java/net/openhft/performance/tests/third/party/frameworks/netty/NettyEchoServer.java[Echo Server using Netty] was better than https://github.com/OpenHFT/Chronicle-Network[Chronicle Network] for thousands of connections, but in this test, we have just one connection.
+
+.Using Chronicle's EchoServer2Main and EchoClientMain via 10 Gb line
+|===
+| Throughput, 1 client | Typical | 99.9%ile
+| 20,000/s | 17 μs | 71 μs
+| 30,000/s | 18 μs | 84 μs
+| 40,000/s | 21 μs | 110 μs
+| 50,000/s | 31 μs | 205 μs
+| 60,000/s | na | na
+|===
+
+Lastly, to minimise latency, we use Solarflare's http://solarflare.com/software-extensions#Onload[onload] which enables a userspace TCP driver, bypassing the kernel without having to change our Java application to use Solarflare's library.
+
+.Using Chronicle's EchoServer2Main and EchoClientMain via 10 Gb line with `onload`
+|===
+| Throughput, 1 client | Typical | 99.9%ile
+| 20,000/s | 5.6 μs | 13 μs
+| 30,000/s | 5.6 μs | 15 μs
+| 40,000/s | 5.6 μs | 16 μs
+| 50,000/s | 5.6 μs | 17 μs
+| 60,000/s | 5.6 μs | 18 μs
+| 80,000/s | 5.6 μs | 21 μs
+| 100,000/s | 5.6 μs | 24 μs
+| 120,000/s | 5.9 μs | 30 μs
+| 150,000/s | 8.9 μs | 55 μs
+|===
+
+=== What if the services are on the same machine?
+
+I would recommend using a shared memory ring buffer e.g. https://github.com/real-logic/aeron[Aeron] or a durable https://github.com/OpenHFT/Chronicle-Queue[Chronicle Queue]. These solutions have lower latencies again and more consistent high percentile timings as well.
+
+== Conclusion
+To reduce the latency, and increase the throughput, I suggest
+
+- Reuse connections
+- Use a low latency network card
+- Use kernel bypass/userspace drivers.
+- Use our networking library designed for lower latencies
+
+For the same servers, using the same version of Java, the throughput can increase from maybe 5,000 messages per second to 150,000 messages per second, while the round trip latency can drop from 300 μs to less than 6 μs.
