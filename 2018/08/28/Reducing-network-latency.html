@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Reducing network latency</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Reducing network latency">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:url" content="https://vanilla-java.github.io">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Reducing network latency">
+    <meta property="og:description" content="">
+    <meta property="og:site_name" content="Vanilla Java">
+
+    <meta itemprop="name" content="Reducing network latency">
+    <meta itemprop="description" content="">
+
+    <meta name="twitter:site" content="@yourblogtwitter">
+    
+    <meta name="twitter:creator" content="@yourtwitter">
+    
+    <meta property="article:author" content="https://www.facebook.com/yourprofile">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/yourblogprofile">
+    
+    <meta property="fb:admins" content="">
+    
+    <meta name="google-site-verification" content="">
+    
+    <link rel="author" href="https://plus.google.com/yourprofile">
+    
+    <meta name="theme-color" content="">
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1535469070210">
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1535469070210"/>
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1535469070210"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Reducing network latency" />
+    <meta property="og:description" content="A look down the rabbit hole of reducing network latency.  How latency can be measured and what you can do about it in a Java application. Ping latency A tool I used regularly when I was a Unix System Administrator was ping ping -f hostname This sends a &quot;flood&quot; of" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html" />
+    <meta property="article:published_time" content="2018-08-28T00:00:00.000Z" />
+    <meta property="article:tag" content="Network" />
+    <meta property="article:tag" content="Low Latency" />
+    <meta property="article:tag" content="Testing" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Reducing network latency" />
+    <meta name="twitter:description" content="A look down the rabbit hole of reducing network latency.  How latency can be measured and what you can do about it in a Java application. Ping latency A tool I used regularly when I was a Unix System Administrator was ping ping -f hostname This sends a &quot;flood&quot; of" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter K Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "https://www.linkedin.com/in/peterlawrey/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Reducing network latency",
+    "url": "https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html",
+    "datePublished": "2018-08-28T00:00:00.000Z",
+    "keywords": "Network, Low Latency, Testing",
+    "description": "A look down the rabbit hole of reducing network latency.  How latency can be measured and what you can do about it in a Java application. Ping latency A tool I used regularly when I was a Unix System Administrator was ping ping -f hostname This sends a &quot;flood&quot; of"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/themes/prism-okaidia.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </head>
+  <body class="post-template tag-Network tag-Low-Latency tag-Testing">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="/" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Network tag-Low-Latency tag-Testing">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2018-08-28" itemprop="datePublished">
+                  16 hours ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                    <a itemprop="articleSection" href="/" data-pjax>Network</a>, 
+                    <a itemprop="keywords" href="/" data-pjax>Low Latency</a>, 
+                    <a itemprop="keywords" href="/" data-pjax>Testing</a> 
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html" itemprop="url" data-pjax title="Reducing network latency">Reducing network latency</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="https://www.linkedin.com/in/peterlawrey/" class="post-author-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter K Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="https://www.linkedin.com/in/peterlawrey/" class="post-author-name">
+                  Peter K Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A look <a href="https://idioms.thefreedictionary.com/go+down+the+rabbit+hole">down the rabbit hole</a> of reducing network <a href="https://whatis.techtarget.com/definition/latency">latency</a>.  How latency can be measured and what you can do about it in a Java application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ping_latency">Ping latency</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A tool I used regularly when I was a Unix System Administrator was <a href="https://linux.die.net/man/8/ping">ping</a></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>ping -f hostname</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This sends a "flood" of packets across the network.  It only sends 5 per second, but it gives you an idea of the round trip latency of the network.</p>
+</div>
+<div class="paragraph">
+<p>I have two servers which are close to each other, so I should be able to get their latencies pretty low.  <code>ping</code> reports an average latency of 107 μs (<a href="https://en.wikipedia.org/wiki/Microsecond">microseconds</a>) which seems reasonable to start with.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All these timings are for <a href="https://en.wikipedia.org/wiki/Round-trip_delay_time">round trip time</a> (RTT) which is the time to go from a process in one machine to a process in a second machine and back again.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_java_to_java_latency_with_new_tcp_connections">Java to Java latency with new TCP connections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Creating a new connection each time you want to send a request or a message is relatively expensive, however many applications still work this way so it is useful to get an idea of the latencies this incurs.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Using NettyEchoServer and Chronicle&#8217;s EchoReconnectingClientMain via 1 Gb line</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">290 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">510 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">280 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">692 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">670 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,700 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3500/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">300 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6,500 μs</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>At this point, I found I couldn&#8217;t run the test for as long as the machine kept running out of resources. I could have given it more, but as you will see, opening connections each time isn&#8217;t efficient even with a bit of tuning.</p>
+</div>
+<div class="sect2">
+<h3 id="_using_a_low_latency_connection">Using a low latency connection.</h3>
+<div class="paragraph">
+<p>One way to improve performance is to use a low latency network card such as the <a href="http://solarflare.com/Media/Default/PDFs/SF-116323-CD-LATEST_Solarflare_SFN8522-PLUS_Product_Brief.pdf">Solarflare 8522-PLUS</a>. It is a 10 Gb card designed for <a href="http://solarflare.com/xtremescale-nics">low latency</a></p>
+</div>
+<div class="paragraph">
+<p>The ping time for this connection was 26 μs (as you will see, this is still pretty slow)</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Using NettyEchoServer and Chronicle&#8217;s EchoReconnectingClientMain over 10 Gb Solarflare</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">160 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">252 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">150 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">330 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">185 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">360 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">135 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">410 μs</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This is a significant improvement without having to change the software.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reusing_connections">Reusing connections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Reusing connections for streaming messages can achieve much higher throughputs and lower latencies.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Using NettyEchoServer and Chronicle&#8217;s EchoClientMain via 10 Gb line</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">23 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">31 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,600 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">110 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,700 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The <a href="https://github.com/OpenHFT/Chronicle-Network/blob/master/src/test/java/net/openhft/performance/tests/third/party/frameworks/netty/NettyEchoServer.java">Echo Server using Netty</a> was better than <a href="https://github.com/OpenHFT/Chronicle-Network">Chronicle Network</a> for thousands of connections, but in this test, we have just one connection.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. Using Chronicle&#8217;s EchoServer2Main and EchoClientMain via 10 Gb line</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">71 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">18 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">84 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">110 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">31 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">205 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Lastly, to minimise latency, we use Solarflare&#8217;s <a href="http://solarflare.com/software-extensions#Onload">onload</a> which enables a userspace TCP driver, bypassing the kernel without having to change our Java application to use Solarflare&#8217;s library.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 5. Using Chronicle&#8217;s EchoServer2Main and EchoClientMain via 10 Gb line with <code>onload</code></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">18 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">24 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">120,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.9 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30 μs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">150,000/s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.9 μs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">55 μs</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_what_if_the_services_are_on_the_same_machine">What if the services are on the same machine?</h3>
+<div class="paragraph">
+<p>I would recommend using a shared memory ring buffer e.g. <a href="https://github.com/real-logic/aeron">Aeron</a> or a durable <a href="https://github.com/OpenHFT/Chronicle-Queue">Chronicle Queue</a>. These solutions have lower latencies again and more consistent high percentile timings as well.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To reduce the latency, and increase the throughput, I suggest</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reuse connections</p>
+</li>
+<li>
+<p>Use a low latency network card</p>
+</li>
+<li>
+<p>Use kernel bypass/userspace drivers.</p>
+</li>
+<li>
+<p>Use our networking library designed for lower latencies</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For the same servers, using the same version of Java, the throughput can increase from maybe 5,000 messages per second to 150,000 messages per second, while the round trip latency can drop from 300 μs to less than 6 μs.</p>
+</div>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="https://www.linkedin.com/in/peterlawrey/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter K Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="https://www.linkedin.com/in/peterlawrey/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter K Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="https://www.linkedin.com/in/peterlawrey/" rel="nofollow">https://www.linkedin.com/in/peterlawrey/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">August 28, 2018</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+
+      <section class="post-comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+        var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </section>
+
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>© 2018. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Proudly published with <a href="https://hubpress.github.io" target="_blank">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/prism/1.14.0/prism.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        // hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1535469070210"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
