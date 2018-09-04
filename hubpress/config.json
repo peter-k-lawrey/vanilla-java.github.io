@@ -32,12 +32,12 @@
     "opencollective": ""
   },
   "theme": {
-    "name": "ichi"
+    "name": "roon"
   },
   "urls": {
     "site": "https://vanilla-java.github.io",
     "hubpress": "https://vanilla-java.github.io",
-    "theme": "//vanilla-java.github.io/themes/casper",
+    "theme": "//vanilla-java.github.io/themes/ichi",
     "images": "https://vanilla-java.github.io/images"
   },
   "initialisationConfigComponent": {
