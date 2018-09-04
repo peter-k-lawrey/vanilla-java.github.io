@@ -2,7 +2,8 @@
   "meta": {
     "username": "vanilla-java",
     "repositoryName": "vanilla-java.github.io",
-    "branch": "master"
+    "branch": "master",
+    "cname": ""
   },
   "site": {
     "title": "Vanilla Java",
@@ -10,17 +11,28 @@
     "cover": "https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg",
     "postsPerPage": "25",
     "googleAnalytics": "UA-81039510-1",
-    "disqus": "vanillajava"
+    "disqus": "vanillajava",
+    "description": "",
+    "delay": "",
+    "blogPath": ""
   },
   "socialnetwork": {
     "twitter": "https://twitter.com/PeterLawrey",
     "googleplus": "https://plus.google.com/u/0/+PeterLawrey",
     "linkedin": "https://www.linkedin.com/in/peterlawrey",
     "github": "https://github.com/peter-lawrey",
-    "paypal": "https://www.paypal.me/PeterLawrey"
+    "paypal": "https://www.paypal.me/PeterLawrey",
+    "email": "",
+    "facebook": "",
+    "instagram": "",
+    "pinterest": "",
+    "flickr": "",
+    "stackoverflow": "",
+    "paypalme": "",
+    "opencollective": ""
   },
   "theme": {
-    "name": "ghostium"
+    "name": "casper"
   },
   "urls": {
     "site": "https://vanilla-java.github.io",
@@ -41,5 +53,6 @@
     "beforeCreate": [
       null
     ]
-  }
+  },
+  "navigation": []
 }
