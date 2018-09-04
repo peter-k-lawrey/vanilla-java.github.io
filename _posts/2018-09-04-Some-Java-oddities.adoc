@@ -35,7 +35,7 @@ static int printNM() {
     return 5;
 }
 ----
-Before a variable is assigned a value it is 0, false or null unless the value is known at compile time in which case it is also inlined.
+Before a variable is assigned a value it is `0`, `false` or `null` unless the value is known at compile time in which case it is also inlined.
 
 === Smiley faces
 
@@ -47,7 +47,7 @@ if (⁀‿⁀ != ⁀⁔⁀)
     System.out.println(¢);
 ----
 
-As _ and $ are allowed characters so all continuation and currency symbols are allowed.
+As `_` and `$` are allowed characters so all continuation and currency symbols are allowed.
 
 === Getting the top bit whether int or long.
 
@@ -101,7 +101,7 @@ for (int i : ints) // no exception
         ints.remove(i); 
 ----
 
-Wrapper pooling covers the range -128 to 127 for Byte, Short, Character, Integer and Long. (Possibly higher for Integer depending on command line options)
+Wrapper pooling covers the range -128 to 127 for `Byte`, `Short`, `Character`, `Integer` and `Long`. (Possibly higher for `Integer` depending on command line options.)
 
 [source, Java]
 ----
@@ -116,7 +116,7 @@ if (debug)
    System.out.println("Assertions are on");
 ----
 
-This shows you can easily determine is assertions are on for expensive checks. Another simple approach is
+This shows you can easily determine is assertions are on for expensive checks. Another simple approach is:
 
 [source, Java]
 ----
@@ -152,7 +152,7 @@ System.out.println(ch);
 ----
 
 === int and float
-Wider types don't always have more precision. a float is wider than int or long but has less precision for whole numbers inside the int and long ranges.
+Wider types don't always have more precision. A `float` is wider than an `int` or `long`, but has less precision for whole numbers inside the int and long ranges.
 
 [source, Java]
 ----
@@ -168,7 +168,7 @@ System.out.println(i == Integer.MAX_VALUE);
 ----
 
 === Unknown exit code
-One of the threads in you CommonThreadPool will be the first to call exit.
+One of the threads in your `ForkJoinPool.commonPoll()` will be the first to call exit.
 
 [source, Java]
 ----
@@ -186,7 +186,7 @@ class Nul { }
 class Con { String s = "\nHello World\n"; }
 ^Z
 
-C:\Users\peter>javac A.java // (1)
+C:\Users\peter>javac A.java # <1>
 ╩■║╛   4 
            s Ljava/lang/String; <init> ()V Code LineNumberTable
 SourceFile A.java    
@@ -201,12 +201,12 @@ C:\Users\peter>dir
 
 04/09/2018  13:51    <DIR>          .
 04/09/2018  13:51    <DIR>          ..
-04/09/2018  13:51                62 A.java // (2)
+04/09/2018  13:51                62 A.java // <2>
                1 File(s)             62 bytes
                2 Dir(s)  670,935,572,480 bytes free
 
 ----
-(1) Compiling the code dumps the `.class` to the screen.
-(2) Note: no `.class` files are written.
+<1> Compiling the code dumps the `.class` to the screen.
+<2> Note: no `.class` files are written.
 
 
