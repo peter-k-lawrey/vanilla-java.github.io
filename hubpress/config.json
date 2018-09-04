@@ -32,12 +32,12 @@
     "opencollective": ""
   },
   "theme": {
-    "name": "saga"
+    "name": "uno"
   },
   "urls": {
     "site": "https://vanilla-java.github.io",
     "hubpress": "https://vanilla-java.github.io",
-    "theme": "//vanilla-java.github.io/themes/roon",
+    "theme": "//vanilla-java.github.io/themes/saga",
     "images": "https://vanilla-java.github.io/images"
   },
   "initialisationConfigComponent": {
