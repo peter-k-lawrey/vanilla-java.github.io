@@ -1,0 +1,212 @@
+= Some Java oddities
+Peter Lawrey
+:hp-image: https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/4f32df54-31f0-4f39-bfb6-d2e9642a015e/File/f46882a15db05ac26d2e0dcff108304c/java_champions_twitter_001.png
+:hp-tags: Java
+
+I was recently asked for some simple pieces of code which some unusual uses of Java.
+
+Here are some of my favourites ;)
+
+=== stateless singleton implementing an interface
+[source, Java]
+----
+public enum RandomStrategy implements IntSupplier {
+    INSTANCE;
+
+    @Override
+    public int getAsInt() {
+        return ThreadLocalRandom.current().nextInt();
+    }
+}
+----
+This is useful for creating multiple implementations of a strategy pattern which share an interface. E.g. I have TimeProvider with 4 implementations depending on usage.
+
+=== Almost final
+
+[source, Java]
+----
+static final int l = printNM();
+static final int n = 10;
+static final int m = Math.min(10, 10);
+static final int o = printNM();
+
+static int printNM() {
+    System.out.println(n + " " + m); // 10 0 then 10 10
+    return 5;
+}
+----
+Before a variable is assigned a value it is 0, false or null unless the value is known at compile time in which case it is also inlined.
+
+=== Smiley faces
+
+[source, Java]
+----
+int ⁀‿⁀ = 0, ⁀⁔⁀ = 1, ¢ = 2;
+
+if (⁀‿⁀ != ⁀⁔⁀)
+    System.out.println(¢);
+----
+
+As _ and $ are allowed characters so all continuation and currency symbols are allowed.
+
+=== Getting the top bit whether int or long.
+
+[source, Java]
+----
+int i = -1;
+long l = -1;
+System.out.println("sign(i)=" + (i >> -1));
+System.out.println("sign(l)=" + (l >> -1));
+----
+
+The shift value is masked by the lower 5 bit for int or 6 bits for long.  The upshot is that a shift by -1 is either 31 or 63 depending on the type.
+
+=== A Throwable for tracing only
+[source, Java]
+----
+/**
+ * Throwable created purely for the purposes of reporting a stack trace.
+ * <p>
+ * This is not an Error or an Exception and is not expected to be thrown or caught.
+ * </p>
+ */
+public class StackTrace extends Throwable {
+    public StackTrace() {
+    }
+
+    public StackTrace(String message) {
+        super(message);
+    }
+
+    public StackTrace(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+----
+We use this for tracing where resources are allocated and/or closed to reporting on multi-threaded resource management
+
+=== No ConcurrentModificationException. 
+
+The check for iterations == size happens before the modification count for CME.
+
+[source, Java]
+----
+List<Integer> ints = new ArrayList<Integer>() {{
+    add(1);
+    add(2);
+    add(3);
+}};
+for (int i : ints) // no exception
+    if (i == 2)
+        ints.remove(i); 
+----
+
+Wrapper pooling covers the range -128 to 127 for Byte, Short, Character, Integer and Long. (Possibly higher for Integer depending on command line options)
+
+[source, Java]
+----
+Character a1 = 127, a2 = 127;
+Character b1 = 128, b2 = 128;
+System.out.println(a1 == a2); // true
+System.out.println(b1 == b2); // false
+Detected assertions are on.
+boolean debug = false;
+assert debug = true;
+if (debug)
+   System.out.println("Assertions are on");
+----
+
+This shows you can easily determine is assertions are on for expensive checks. Another simple approach is
+
+[source, Java]
+----
+public void method() {
+    assert validate();
+}
+
+private boolean validate() {
+    if (expensiveCheck())
+        throw new AssertionError("details");
+    return true;
+}
+----
+
+Legacy arrays on methods are allowed as easier compilers allowed this.
+
+[source, Java]
+----
+static int fun(int[] ints)[] { return ints; }
+
+public static void main(String... args) {
+    System.out.println(fun(new int[1]).length);
+}
+----
+
+=== char and floating point
+The assignment operator casts to the wider type and then narrows it implicitly.
+[source, Java]
+----
+char ch = '1';
+ch /= 0.9;
+System.out.println(ch);
+----
+
+=== int and float
+Wider types don't always have more precision. a float is wider than int or long but has less precision for whole numbers inside the int and long ranges.
+
+[source, Java]
+----
+int i = Integer.MAX_VALUE;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);
+i -= 63;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);
+i -= 64;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);
+----
+
+=== Unknown exit code
+One of the threads in you CommonThreadPool will be the first to call exit.
+
+[source, Java]
+----
+IntStream.range(0, 128)
+        .parallel()
+        .forEach(System::exit);
+----
+
+=== WindowsTF
+Windows treats certain file names as special devices, even if a path or file extension is provided.
+[source]
+----
+C:\Users\peter>more > A.java
+class Nul { }
+class Con { String s = "\nHello World\n"; }
+^Z
+
+C:\Users\peter>javac A.java // (1)
+╩■║╛   4 
+           s Ljava/lang/String; <init> ()V Code LineNumberTable
+SourceFile A.java    
+Hello World
+   Con java/lang/Object                       
+   #     *╖ *╡ ▒                
+C:\Users\peter>dir
+ Volume in drive C is OS
+ Volume Serial Number is 3EB6-6BBF
+
+ Directory of C:\Users\peter
+
+04/09/2018  13:51    <DIR>          .
+04/09/2018  13:51    <DIR>          ..
+04/09/2018  13:51                62 A.java // (2)
+               1 File(s)             62 bytes
+               2 Dir(s)  670,935,572,480 bytes free
+
+----
+(1) Compiling the code dumps the `.class` to the screen.
+(2) Note: no `.class` files are written.
+
+
