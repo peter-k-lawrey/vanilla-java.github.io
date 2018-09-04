@@ -1,26 +1,261 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Tue, 28 Aug 2018 15:11:10 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Reducing network latency]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Tue, 04 Sep 2018 12:59:11 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Some Java oddities]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A look <a href="https://idioms.thefreedictionary.com/go+down+the+rabbit+hole">down the rabbit hole</a> of reducing network <a href="https://whatis.techtarget.com/definition/latency">latency</a>.  How latency can be measured and what you can do about it in a Java application.</p>
+<p>I was recently asked for some simple pieces of code which some unusual uses of Java.</p>
+</div>
+<div class="paragraph">
+<p>Here are some of my favourites ;)</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stateless_singleton_implementing_an_interface">stateless singleton implementing an interface</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public enum RandomStrategy implements IntSupplier {
+    INSTANCE;
+
+    @Override
+    public int getAsInt() {
+        return ThreadLocalRandom.current().nextInt();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is useful for creating multiple implementations of a strategy pattern which share an interface. E.g. I have TimeProvider with 4 implementations depending on usage.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_almost_final">Almost final</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static final int l = printNM();
+static final int n = 10;
+static final int m = Math.min(10, 10);
+static final int o = printNM();
+
+static int printNM() {
+    System.out.println(n + " " + m); // 10 0 then 10 10
+    return 5;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Before a variable is assigned a value it is 0, false or null unless the value is known at compile time in which case it is also inlined.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_smiley_faces">Smiley faces</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">int ⁀‿⁀ = 0, ⁀⁔⁀ = 1, ¢ = 2;
+
+if (⁀‿⁀ != ⁀⁔⁀)
+    System.out.println(¢);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As _ and $ are allowed characters so all continuation and currency symbols are allowed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_getting_the_top_bit_whether_int_or_long">Getting the top bit whether int or long.</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">int i = -1;
+long l = -1;
+System.out.println("sign(i)=" + (i &gt;&gt; -1));
+System.out.println("sign(l)=" + (l &gt;&gt; -1));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The shift value is masked by the lower 5 bit for int or 6 bits for long.  The upshot is that a shift by -1 is either 31 or 63 depending on the type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_throwable_for_tracing_only">A Throwable for tracing only</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">/**
+ * Throwable created purely for the purposes of reporting a stack trace.
+ * &lt;p&gt;
+ * This is not an Error or an Exception and is not expected to be thrown or caught.
+ * &lt;/p&gt;
+ */
+public class StackTrace extends Throwable {
+    public StackTrace() {
+    }
+
+    public StackTrace(String message) {
+        super(message);
+    }
+
+    public StackTrace(String message, Throwable cause) {
+        super(message, cause);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We use this for tracing where resources are allocated and/or closed to reporting on multi-threaded resource management</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_no_concurrentmodificationexception">No ConcurrentModificationException.</h3>
+<div class="paragraph">
+<p>The check for iterations == size happens before the modification count for CME.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">List&lt;Integer&gt; ints = new ArrayList&lt;Integer&gt;() {{
+    add(1);
+    add(2);
+    add(3);
+}};
+for (int i : ints) // no exception
+    if (i == 2)
+        ints.remove(i);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wrapper pooling covers the range -128 to 127 for Byte, Short, Character, Integer and Long. (Possibly higher for Integer depending on command line options)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">Character a1 = 127, a2 = 127;
+Character b1 = 128, b2 = 128;
+System.out.println(a1 == a2); // true
+System.out.println(b1 == b2); // false
+Detected assertions are on.
+boolean debug = false;
+assert debug = true;
+if (debug)
+   System.out.println("Assertions are on");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This shows you can easily determine is assertions are on for expensive checks. Another simple approach is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">public void method() {
+    assert validate();
+}
+
+private boolean validate() {
+    if (expensiveCheck())
+        throw new AssertionError("details");
+    return true;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Legacy arrays on methods are allowed as easier compilers allowed this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static int fun(int[] ints)[] { return ints; }
+
+public static void main(String... args) {
+    System.out.println(fun(new int[1]).length);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_char_and_floating_point">char and floating point</h3>
+<div class="paragraph">
+<p>The assignment operator casts to the wider type and then narrows it implicitly.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">char ch = '1';
+ch /= 0.9;
+System.out.println(ch);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_int_and_float">int and float</h3>
+<div class="paragraph">
+<p>Wider types don&#8217;t always have more precision. a float is wider than int or long but has less precision for whole numbers inside the int and long ranges.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">int i = Integer.MAX_VALUE;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);
+i -= 63;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);
+i -= 64;
+i += 0.0f;
+System.out.println(i == Integer.MAX_VALUE);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unknown_exit_code">Unknown exit code</h3>
+<div class="paragraph">
+<p>One of the threads in you CommonThreadPool will be the first to call exit.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">IntStream.range(0, 128)
+        .parallel()
+        .forEach(System::exit);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_windowstf">WindowsTF</h3>
+<div class="paragraph">
+<p>Windows treats certain file names as special devices, even if a path or file extension is provided.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>C:\Users\peter&gt;more &gt; A.java
+class Nul { }
+class Con { String s = "\nHello World\n"; }
+^Z
+
+C:\Users\peter&gt;javac A.java // (1)
+╩■║╛   4 
+           s Ljava/lang/String; &lt;init&gt; ()V Code LineNumberTable
+SourceFile A.java    
+Hello World
+   Con java/lang/Object                       
+   #     *╖ *╡ ▒                
+C:\Users\peter&gt;dir
+ Volume in drive C is OS
+ Volume Serial Number is 3EB6-6BBF
+
+ Directory of C:\Users\peter
+
+04/09/2018  13:51    &lt;DIR&gt;          .
+04/09/2018  13:51    &lt;DIR&gt;          ..
+04/09/2018  13:51                62 A.java // (2)
+               1 File(s)             62 bytes
+               2 Dir(s)  670,935,572,480 bytes free</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(1) Compiling the code dumps the <code>.class</code> to the screen.
+(2) Note: no <code>.class</code> files are written.</p>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2018/09/04/Some-Java-oddities.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/09/04/Some-Java-oddities.html</guid><category><![CDATA[Java]]></category><dc:creator><![CDATA[Peter K Lawrey]]></dc:creator><pubDate>Tue, 04 Sep 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Looking at randomness and performance for hash codes]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In these articles, <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">String.hashCode() is not even a little unique</a> and <a href="https://vanilla-java.github.io/2018/08/12/Why-do-I-think-Stringhash-Code-is-poor.html">Why do I this String.hashCode() is poor</a>, I looked at how String.hashCode() might have been made better with little change at the time it was last updated (in Java 1.2). However, given the current solution has been in place for 20 years, the default behaviour is unlikely to change. Additionally, if we were to consider different a different algorithm I would prefer something much faster and more random than just changing the prime factor from 31 to 109.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_ping_latency">Ping latency</h2>
+<h2 id="_how_can_we_evaluate_randomness">How can we evaluate randomness?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A tool I used regularly when I was a Unix System Administrator was <a href="https://linux.die.net/man/8/ping">ping</a></p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>ping -f hostname</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This sends a "flood" of packets across the network.  It only sends 5 per second, but it gives you an idea of the round trip latency of the network.</p>
-</div>
-<div class="paragraph">
-<p>I have two servers which are close to each other, so I should be able to get their latencies pretty low.  <code>ping</code> reports an average latency of 107 μs (<a href="https://en.wikipedia.org/wiki/Microsecond">microseconds</a>) which seems reasonable to start with.</p>
+<p>One way of looking at randomness is to change the input by one bit and see how many bits change in the resulting hash. The input is first populated with random data and the resulting hashes are compared for a large sample. In this case, I took one million samples and plotted it against what you get for a <code>Random.nextInt()</code> call.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -29,298 +264,201 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-All these timings are for <a href="https://en.wikipedia.org/wiki/Round-trip_delay_time">round trip time</a> (RTT) which is the time to go from a process in one machine to a process in a second machine and back again.
+The ideal hash changes half of the bits on average, more than half bits changed is also a bias.
 </td>
 </tr>
 </table>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-64-bytes.png" alt="randomness 64 bytes">
+</div>
+<div class="title">Figure 1. The randomness of the hash code for different strategies for longer inputs compared with Random all have decent outcomes</div>
+</div>
+<div class="listingblock">
+<div class="title">Harness to estimate the randomness distribution of a hashing strategy.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static double[] randomnessDistribution(ToIntFunction&lt;byte[]&gt; hashCode, int length) {
+    double[] dist = new double[33];
+    Random random = new Random(length);
+    byte[] bytes = new byte[length];
+    int tests = 0;
+    for (int t = 0; t &lt; 1000000; t += length) {
+        for (int i = 0; i &lt; length; i++)
+            bytes[i] = (byte) (' ' + random.nextInt(96)); <i class="conum" data-value="1"></i><b>(1)</b>
+        int base = hashCode.applyAsInt(bytes);
+
+        for (int i = 0; i &lt; length; i++) {
+            for (int j = 0; j &lt; 8; j++) {
+                bytes[i] ^= 1 &lt;&lt; j;
+                int val = hashCode.applyAsInt(bytes);
+                int score2 = Integer.bitCount(base ^ val);
+                dist[score2]++;
+                tests++;
+                bytes[i] ^= 1 &lt;&lt; j;
+            }
+        }
+    }
+    for (int i = 0; i &lt; dist.length; i++)
+        dist[i] = Math.round(1000.0 * dist[i] / tests) / 10.0;
+    return dist;
+}</code></pre>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_java_to_java_latency_with_new_tcp_connections">Java to Java latency with new TCP connections</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Creating a new connection each time you want to send a request or a message is relatively expensive, however many applications still work this way so it is useful to get an idea of the latencies this incurs.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Using NettyEchoServer and Chronicle&#8217;s EchoReconnectingClientMain via 1 Gb line</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
+<div class="colist arabic">
+<table>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>I assume the input is largely ASCII or positive bytes. This doesn&#8217;t change the results greatly.</td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">200/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">290 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">510 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">500/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">280 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">692 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">670 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1,700 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3500/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">300 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">6,500 μs</p></td>
-</tr>
-</tbody>
 </table>
+</div>
+<div class="listingblock">
+<div class="title">Print the distribution of different strategies for charting.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">for(double[] dist: new double[][] {
+        randomnessDistribution(HashCodeBenchmarkMain::hashCode31, length),
+        randomnessDistribution(Arrays::hashCode, length),
+        randomnessDistribution(HashCodeBenchmarkMain::hashCode109, length),
+        randomnessDistribution(HashCodeBenchmarkMain::nativeHashCode, length),
+        randomnessDistribution(value -&gt; ThreadLocalRandom.current().nextInt(), length)}) {
+    System.out.println(Arrays.toString(dist).replaceAll("(\\[|\\])", ""));
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Modified form of the String.hashCode() using 109 as a prime.</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">static int hashCode109(byte[] value) {
+    if (value.length == 0) return 0;
+    int h = value[0]; <i class="conum" data-value="1"></i><b>(1)</b>
+    for (int i = 1; i &lt; value.length; i++) {
+        h = h * 109 + value[i];
+    }
+    h *= 109; <i class="conum" data-value="2"></i><b>(2)</b>
+    return h;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>On the first iteration don&#8217;t need to multiply the previous value.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Afterwards, multiply by the factor to improve the outcomes for short inputs.</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>At this point, I found I couldn&#8217;t run the test for as long as the machine kept running out of resources. I could have given it more, but as you will see, opening connections each time isn&#8217;t efficient even with a bit of tuning.</p>
+<p>The differences between hashing strategies are more obvious for shorter inputs.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-20-bytes.png" alt="randomness 20 bytes">
+</div>
+<div class="title">Figure 2. Most strategies tested do well for 20-byte inputs</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-8-bytes.png" alt="randomness 8 bytes">
+</div>
+<div class="title">Figure 3. For 8-byte inputs, some strategies are not ideal</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-4-bytes.png" alt="randomness 4 bytes">
+</div>
+<div class="title">Figure 4. For 4 byte inputs, String.hashCode() and Arrays.hashCode() are poor</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-2-bytes.png" alt="randomness 2 bytes">
+</div>
+<div class="title">Figure 5. For 2 byte inputs, String.hashCode() and Arrays.hashCode() are not great</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://vanilla-java.github.io/images/randomness-1-byte.png" alt="randomness 1 byte">
+</div>
+<div class="title">Figure 6. For 1 byte inputs, String.hashCode() and Arrays.hashCode() might be fine as the number of possible keys is small.</div>
 </div>
 <div class="sect2">
-<h3 id="_using_a_low_latency_connection">Using a low latency connection.</h3>
+<h3 id="_what_is_this_native_hashcode">What is this "native" hashCode?</h3>
 <div class="paragraph">
-<p>One way to improve performance is to use a low latency network card such as the <a href="http://solarflare.com/Media/Default/PDFs/SF-116323-CD-LATEST_Solarflare_SFN8522-PLUS_Product_Brief.pdf">Solarflare 8522-PLUS</a>. It is a 10 Gb card designed for <a href="http://solarflare.com/xtremescale-nics">low latency</a></p>
+<p>A technique we use to speed up the processing of bytes is to attempt to process groups of them at once i.e. 4 bytes or 8 bytes at a time. This can speed up processing by 2-4x. We also see a benefit in using a larger prime as we pass through fewer iterations.</p>
 </div>
-<div class="paragraph">
-<p>The ping time for this connection was 26 μs (as you will see, this is still pretty slow)</p>
+<div class="listingblock">
+<div class="title">Hashing strategy which takes 4 bytes aa time</div>
+<div class="content">
+<pre class="highlight"><code class="language-Java" data-lang="Java">private static final int M2 = 0x7A646E4D;
+
+// read 4 bytes at a time from a byte[] assuming Java 9+ Compact Strings
+private static int getIntFromArray(byte[] value, int i) {
+    return UnsafeMemory.INSTANCE.UNSAFE.getInt(value, BYTE_ARRAY_OFFSET + i); <i class="conum" data-value="0"></i><b>(0)</b>
+}
+
+public static int nativeHashCode(byte[] value) {
+    long h = getIntFromArray(value, 0);
+    for (int i = 4; i &lt; value.length; i += 4)
+        h = h * M2 + getIntFromArray(value, i); <i class="conum" data-value="1"></i><b>(1)</b>
+    h *= M2;
+    return (int) h ^ (int) (h &gt;&gt;&gt; 25);
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 2. Using NettyEchoServer and Chronicle&#8217;s EchoReconnectingClientMain over 10 Gb Solarflare</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>assess assumes all byte[] have zero byte padding at the end and aligned to a multiple of 4 bytes.</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">200/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">160 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">252 μs</p></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>in each iteration multiply by a large constant</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">500/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">150 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">330 μs</p></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>agitate the results using some of the high bits</td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">185 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">360 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">135 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">410 μs</p></td>
-</tr>
-</tbody>
 </table>
-<div class="paragraph">
-<p>This is a significant improvement without having to change the software.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_reusing_connections">Reusing connections</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Reusing connections for streaming messages can achieve much higher throughputs and lower latencies.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 3. Using NettyEchoServer and Chronicle&#8217;s EchoClientMain via 10 Gb line</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">100 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">23 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">260 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">31 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1,600 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">110 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1,700 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>The <a href="https://github.com/OpenHFT/Chronicle-Network/blob/master/src/test/java/net/openhft/performance/tests/third/party/frameworks/netty/NettyEchoServer.java">Echo Server using Netty</a> was better than <a href="https://github.com/OpenHFT/Chronicle-Network">Chronicle Network</a> for thousands of connections, but in this test, we have just one connection.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 4. Using Chronicle&#8217;s EchoServer2Main and EchoClientMain via 10 Gb line</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">17 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">71 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">18 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">84 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">110 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">31 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">205 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">na</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Lastly, to minimise latency, we use Solarflare&#8217;s <a href="http://solarflare.com/software-extensions#Onload">onload</a> which enables a userspace TCP driver, bypassing the kernel without having to change our Java application to use Solarflare&#8217;s library.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 5. Using Chronicle&#8217;s EchoServer2Main and EchoClientMain via 10 Gb line with <code>onload</code></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput, 1 client</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Typical</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">99.9%ile</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">20,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">13 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">30,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">15 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">40,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">16 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">50,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">17 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">60,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">18 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">80,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">21 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">100,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.6 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">24 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">120,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5.9 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">30 μs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">150,000/s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8.9 μs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">55 μs</p></td>
-</tr>
-</tbody>
-</table>
 <div class="sect2">
-<h3 id="_what_if_the_services_are_on_the_same_machine">What if the services are on the same machine?</h3>
+<h3 id="_how_can_we_measure_how_they_perform">How can we measure how they perform?</h3>
 <div class="paragraph">
-<p>I would recommend using a shared memory ring buffer e.g. <a href="https://github.com/real-logic/aeron">Aeron</a> or a durable <a href="https://github.com/OpenHFT/Chronicle-Queue">Chronicle Queue</a>. These solutions have lower latencies again and more consistent high percentile timings as well.</p>
+<p>Using JMH, we can benchmark how long each operation takes on average.  To have reasonable coverage, the benchmark tried a number of sizes so this is the average for those sizes.</p>
 </div>
+<div class="listingblock">
+<div class="title">Benchmark comparing the throughput of using String.hashCode with 31 or 109 and the native hashing strategy.</div>
+<div class="content">
+<pre>Benchmark                                      Mode  Cnt   Score   Error   Units
+HashCodeBenchmarkMain.String_hashCode         thrpt   25  15.586 ± 0.433  ops/us
+HashCodeBenchmarkMain.String_hashCode109      thrpt   25  13.480 ± 0.147  ops/us
+HashCodeBenchmarkMain.String_hashCode31       thrpt   25  16.173 ± 0.205  ops/us
+HashCodeBenchmarkMain.String_native_hashCode  thrpt   25  55.547 ± 2.051  ops/us</pre>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_conclusion">Conclusion</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To reduce the latency, and increase the throughput, I suggest</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Reuse connections</p>
-</li>
-<li>
-<p>Use a low latency network card</p>
-</li>
-<li>
-<p>Use kernel bypass/userspace drivers.</p>
-</li>
-<li>
-<p>Use our networking library designed for lower latencies</p>
-</li>
-</ul>
 </div>
 <div class="paragraph">
-<p>For the same servers, using the same version of Java, the throughput can increase from maybe 5,000 messages per second to 150,000 messages per second, while the round trip latency can drop from 300 μs to less than 6 μs.</p>
+<p>The native implementation is around 3-4 times as it processes up to 4 bytes at a time.</p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/08/28/Reducing-network-latency.html</guid><category><![CDATA[Network]]></category><category><![CDATA[Low Latency]]></category><category><![CDATA[Testing]]></category><dc:creator><![CDATA[Peter K Lawrey]]></dc:creator><pubDate>Tue, 28 Aug 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Why do I think String.hashCode() is poor]]></title><description><![CDATA[<div id="preamble">
+<div class="sect2">
+<h3 id="_the_code">The code</h3>
+<div class="paragraph">
+<p>A maven module of code exploring how String is hashed is <a href="https://github.com/peter-lawrey/Java-Lost/tree/master/java-string-hashcode">HERE</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>I believe it is possible to produce a hashing strategy which is both much faster and has a better hash distribution than the 20-year-old solution.  Changing the JVM is impractical however having a pluggable hashing strategy for XxxxHashMap might ensure backward compatibility while providing an option for a faster solution.</p>
+</div>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2018/08/15/Looking-at-randomness-and-performance-for-hash-codes.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/08/15/Looking-at-randomness-and-performance-for-hash-codes.html</guid><category><![CDATA[String]]></category><category><![CDATA[hashCode]]></category><category><![CDATA[performance]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 15 Aug 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Why do I think String.hashCode() is poor]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In response to an article I wrote <a href="https://vanilla-java.github.io/2018/07/26/Stringhash-Code-is-not-even-a-little-unique.html">HERE</a>, a recent article <a href="http://sigpwned.com/2018/08/10/string-hashcode-is-plenty-unique/">HERE</a> pointed out a number of things which could have been clearer in my claim that String.hashCode() is poor. What does "poor" mean to me and does it even matter?</p>
