@@ -72,14 +72,15 @@ The shift value is masked by the lower 5 bit for int or 6 bits for long.  The up
  */
 public class StackTrace extends Throwable {
     public StackTrace() {
+        this(null);
     }
 
     public StackTrace(String message) {
-        super(message);
+        this(message, null);
     }
 
     public StackTrace(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, false, false);
     }
 }
 ----
@@ -143,7 +144,7 @@ public static void main(String... args) {
 ----
 
 === char and floating point
-The assignment operator casts to the wider type and then narrows it implicitly.
+The compound assignment operator casts to the wider type and then narrows it implicitly.
 [source, Java]
 ----
 char ch = '1';
