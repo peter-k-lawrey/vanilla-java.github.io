@@ -276,7 +276,7 @@ public static void pause(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupted();
+            Thread.currentThread().interrupt();
         }
     } else {
         LockSupport.parkNanos(timeNanos);
